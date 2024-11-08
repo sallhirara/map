@@ -13,14 +13,21 @@
         padding: 0;
         box-sizing: border-box;
       }
+      
+      body {
+        padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+      }
+
+      
       #map {
           height: 100vh;
           width: 100%;
       }
       .menu {
           position: absolute;
-          top: 10px;
-          left: 10px;
+          height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+          top: calc(10px + env(safe-area-inset-top));
+          left: calc(10px + env(safe-area-inset-left));
           background: transparent;
           padding: 10px;
           border-radius: 8px;
