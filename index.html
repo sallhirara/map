@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,17 +20,25 @@
             width: 100%;
             /*margin-top: 20px;*/
         }
+      
         .leaflet-popup-content-wrapper {
             background: #f9f9f9;
             color: #333;
             border-radius: 8px;
             padding: 10px;
         }
+      
         .leaflet-marker-icon {
             filter: hue-rotate(0deg);
         }
+        
+        .basic-marker {
+          filter: invert(45%)
+        }
+        
     </style>
 </head>
+  
 <body>
     <!--<h1>Treasure Mapping System</h1>-->
     <div id="map"></div>
@@ -47,41 +54,107 @@
             attribution: '&copy; <a href="https://www.maptiler.com/copyright/">MapTiler</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
             maxZoom: 18
         }).addTo(map);
+      
 
-        // カスタムアイコンの作成
-        var simplePinIcon = L.icon({
+        // ▼▼▼▼▼▼▼▼▼▼　アイコンの作成　▼▼▼▼▼▼▼▼▼▼
+      
+        //　〇〇〇　Basic Facilities　〇〇〇
+        var basicIcon = L.icon({
             iconUrl: 'https://img.icons8.com/?size=100&id=uRRFz0DH6uYw&format=png&color=000000', // シンプルなピンアイコンのURL
-            iconSize: [40, 40], // アイコンのサイズ（幅, 高さ）
-            iconAnchor: [12, 40], // アイコンのアンカー（地図上の配置ポイント）
-            popupAnchor: [0, -40] // ポップアップの表示位置
+            iconSize: [30, 30], // アイコンのサイズ（幅, 高さ）
+            iconAnchor: [12, 30], // アイコンのアンカー（地図上の配置ポイント）
+            popupAnchor: [0, -30], // ポップアップの表示位置
+            className: 'basic-marker'
+        });      
+      
+      
+      　//　〇〇〇　Condominium　〇〇〇
+        var condoIcon = L.icon({
+            iconUrl: 'https://img.icons8.com/?size=100&id=uRRFz0DH6uYw&format=png&color=000000', // シンプルなピンアイコンのURL
+            iconSize: [30, 30], // アイコンのサイズ（幅, 高さ）
+            iconAnchor: [12, 30], // アイコンのアンカー（地図上の配置ポイント）
+            popupAnchor: [0, -30], // ポップアップの表示位置
+            className: 'condo-marker'
         });
+      
+      
+        // ▲▲▲▲▲▲▲▲▲▲　アイコンの作成　▲▲▲▲▲▲▲▲▲▲
+      
+      
+      
 
-        // 分譲マンションのデータ（位置情報）
-        var condos = [
+      
+        // ▼▼▼▼▼▼▼▼▼▼　データ（位置情報）▼▼▼▼▼▼▼▼▼▼
+      
+      　//　〇〇〇　Basic Facilityis　〇〇〇
+        var basics = [
             {
-                name: "Item A",
-                location: [21.041689079951386, 105.84772931050094],
-                description: "Explanation of A"
+                name: "Representative office",
+                location: [21.01324907853661, 105.85837095260105],
+                description: "7th Floor, Vinafor Building,"
             },
+          
             {
-                name: "Item B",
-                location: [21.073615275088688, 105.7424985704434],
-                description: "Explanation of B"
+                name: "The Authentic",
+                location: [21.0305875390932, 105.89263003403202],
+                description: "Sarviced Apartment by Haseko"
             },
+          
             {
                 name: "Item C",
                 location: [20.994043605431727, 105.86500930900625],
                 description: "Explanation of C"
             }
         ];
+      
+        //　〇〇〇　Condominium　〇〇〇
+         var condos = [
+            {
+                name: "Item A",
+                location: [21.041689079951386, 105.84772931050094],
+                description: "Explanation of A"
+            },
+          
+            {
+                name: "Item B",
+                location: [21.073615275088688, 105.7424985704434],
+                description: "Explanation of B"
+            },
+          
+            {
+                name: "Item C",
+                location: [20.994043605431727, 105.86500930900625],
+                description: "Explanation of C"
+            }
+        ];
+      
+      
+      
+        // ▲▲▲▲▲▲▲▲▲▲　データ（位置情報）　▲▲▲▲▲▲▲▲▲▲
+      
+      
 
-        // マンションの位置にカスタムアイコンのマーカーを配置
+        //　▼▼▼▼▼▼▼▼▼▼　アイコンのマーカーを配置　▼▼▼▼▼▼▼▼▼▼
+      
+        //　〇〇〇　Basic Facilityis　〇〇〇
+        basics.forEach(function(basic) {
+            L.marker(basic.location, { icon: basicIcon })
+                .addTo(map)
+                .bindPopup("<b>" + basic.name + "</b><br>" + basic.description);
+        });        
+        
+        //　〇〇〇　Condominium　〇〇〇
         condos.forEach(function(condo) {
-            L.marker(condo.location, { icon: simplePinIcon })
+            L.marker(condo.location, { icon: condoIcon })
                 .addTo(map)
                 .bindPopup("<b>" + condo.name + "</b><br>" + condo.description);
         });
+      
+        // ▲▲▲▲▲▲▲▲▲▲　アイコンのマーカーを配置　▲▲▲▲▲▲▲▲▲▲
+      
+      
 
+      
         // 特定エリアをポリゴンで表示
         var polygon = L.polygon([
             [20.997409155447436, 105.8337669377892],
