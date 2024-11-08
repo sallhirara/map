@@ -4,175 +4,203 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0", viewport-fit=cover>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Treasure Radar</title>
+    <title>Mapping system</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
     <style>
-      
       * {
         margin: 0;
-        padiing: 0;
+        padding: 0;
         box-sizing: border-box;
       }
-      
-        #map {
-            height: 100vh;
-            width: 100%;
-            /*margin-top: 20px;*/
-        }
-      
-        .leaflet-popup-content-wrapper {
-            background: #f9f9f9;
-            color: #333;
-            border-radius: 8px;
-            padding: 10px;
-        }
-      
-        .leaflet-marker-icon {
-            filter: hue-rotate(0deg);
-        }
-        
-        .basic-marker {
-          filter: invert(45%)
-        }
-        
+      #map {
+          height: 100vh;
+          width: 100%;
+      }
+      .menu {
+          position: absolute;
+          top: 10px;
+          left: 10px;
+          background: transparent;
+          padding: 10px;
+          border-radius: 8px;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+          z-index: 1000;
+          backdrop-filter: blur(5px);
+      }
+      .layer-group {
+          margin-top: 10px;
+      }
+      .individual-icon {
+          margin-left: 20px;
+      }
+      input[type="checkbox"] {
+          appearance: none;
+          width: 16px;
+          height: 16px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          background-color: #fff;
+          cursor: pointer;
+      }
+      input[type="checkbox"]:checked {
+          background-color: #4caf50;
+          border: 1px solid #4caf50;
+          position: relative;
+      }
+      input[type="checkbox"]:checked::before {
+          content: '\2714';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          color: white;
+      }
     </style>
 </head>
-  
 <body>
-    <!--<h1>Treasure Mapping System</h1>-->
     <div id="map"></div>
+    <div class="menu">
+        <div class="layer-group">
+            <label><input type="checkbox" id="toggleBasics" checked> Basic Facilities</label><br>
+            <div id="basicList"></div>
+        </div>
+        <div class="layer-group">
+            <label><input type="checkbox" id="toggleCondos" checked> Condominium</label><br>
+            <div id="condoList"></div>
+        </div>
+    </div>
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
         // 地図の初期化
-        var map = L.map('map').setView([21.03966820428092, 105.86461819490408], 12); // 東京の中心位置
+        var map = L.map('map').setView([21.03966820428092, 105.86461819490408], 12);
 
         // MapTilerタイルレイヤーの設定
-        var mapTilerApiKey = 'Sv80uSRLZxFEwRiW17Cg'; // ここにあなたのMapTiler APIキーを設定してください
+        var mapTilerApiKey = 'Sv80uSRLZxFEwRiW17Cg';
         L.tileLayer(`https://api.maptiler.com/maps/basic/{z}/{x}/{y}.png?key=Sv80uSRLZxFEwRiW17Cg`, {
             attribution: '&copy; <a href="https://www.maptiler.com/copyright/">MapTiler</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
             maxZoom: 18
         }).addTo(map);
-      
 
-        // ▼▼▼▼▼▼▼▼▼▼　アイコンの作成　▼▼▼▼▼▼▼▼▼▼
-      
-        //　〇〇〇　Basic Facilities　〇〇〇
+        // アイコンの作成
         var basicIcon = L.icon({
-            iconUrl: 'https://img.icons8.com/?size=100&id=uRRFz0DH6uYw&format=png&color=000000', // シンプルなピンアイコンのURL
-            iconSize: [30, 30], // アイコンのサイズ（幅, 高さ）
-            iconAnchor: [12, 30], // アイコンのアンカー（地図上の配置ポイント）
-            popupAnchor: [0, -30], // ポップアップの表示位置
+            iconUrl: 'https://img.icons8.com/?size=100&id=uRRFz0DH6uYw&format=png&color=000000',
+            iconSize: [30, 30],
+            iconAnchor: [12, 30],
+            popupAnchor: [0, -30],
             className: 'basic-marker'
-        });      
-      
-      
-      　//　〇〇〇　Condominium　〇〇〇
+        });
+
         var condoIcon = L.icon({
-            iconUrl: 'https://img.icons8.com/?size=100&id=uRRFz0DH6uYw&format=png&color=000000', // シンプルなピンアイコンのURL
-            iconSize: [30, 30], // アイコンのサイズ（幅, 高さ）
-            iconAnchor: [12, 30], // アイコンのアンカー（地図上の配置ポイント）
-            popupAnchor: [0, -30], // ポップアップの表示位置
+            iconUrl: 'https://img.icons8.com/?size=100&id=uRRFz0DH6uYw&format=png&color=000000',
+            iconSize: [30, 30],
+            iconAnchor: [12, 30],
+            popupAnchor: [0, -30],
             className: 'condo-marker'
         });
-      
-      
-        // ▲▲▲▲▲▲▲▲▲▲　アイコンの作成　▲▲▲▲▲▲▲▲▲▲
-      
-      
-      
 
-      
-        // ▼▼▼▼▼▼▼▼▼▼　データ（位置情報）▼▼▼▼▼▼▼▼▼▼
-      
-      　//　〇〇〇　Basic Facilityis　〇〇〇
+        // データ（位置情報）
         var basics = [
-            {
-                name: "Representative office",
-                location: [21.01324907853661, 105.85837095260105],
-                description: "7th Floor, Vinafor Building,"
-            },
-          
-            {
-                name: "The Authentic",
-                location: [21.0305875390932, 105.89263003403202],
-                description: "Sarviced Apartment by Haseko"
-            },
-          
-            {
-                name: "Item C",
-                location: [20.994043605431727, 105.86500930900625],
-                description: "Explanation of C"
-            }
+            { name: "Representative office", location: [21.01324907853661, 105.85837095260105], description: "7th Floor, Vinafor Building," },
+            { name: "The Authentic", location: [21.0305875390932, 105.89263003403202], description: "Serviced Apartment by Haseko" },
+            { name: "Item C", location: [20.994043605431727, 105.86500930900625], description: "Explanation of C" }
         ];
-      
-        //　〇〇〇　Condominium　〇〇〇
-         var condos = [
-            {
-                name: "Item A",
-                location: [21.041689079951386, 105.84772931050094],
-                description: "Explanation of A"
-            },
-          
-            {
-                name: "Item B",
-                location: [21.073615275088688, 105.7424985704434],
-                description: "Explanation of B"
-            },
-          
-            {
-                name: "Item C",
-                location: [20.994043605431727, 105.86500930900625],
-                description: "Explanation of C"
-            }
-        ];
-      
-      
-      
-        // ▲▲▲▲▲▲▲▲▲▲　データ（位置情報）　▲▲▲▲▲▲▲▲▲▲
-      
-      
 
-        //　▼▼▼▼▼▼▼▼▼▼　アイコンのマーカーを配置　▼▼▼▼▼▼▼▼▼▼
-      
-        //　〇〇〇　Basic Facilityis　〇〇〇
-        basics.forEach(function(basic) {
-            L.marker(basic.location, { icon: basicIcon })
-                .addTo(map)
-                .bindPopup("<b>" + basic.name + "</b><br>" + basic.description);
-        });        
-        
-        //　〇〇〇　Condominium　〇〇〇
-        condos.forEach(function(condo) {
-            L.marker(condo.location, { icon: condoIcon })
-                .addTo(map)
-                .bindPopup("<b>" + condo.name + "</b><br>" + condo.description);
+        var condos = [
+            { name: "Item A", location: [21.041689079951386, 105.84772931050094], description: "Explanation of A" },
+            { name: "Item B", location: [21.073615275088688, 105.7424985704434], description: "Explanation of B" },
+            { name: "Item C", location: [20.994043605431727, 105.86500930900625], description: "Explanation of C" }
+        ];
+
+        // マーカーの作成
+        var basicMarkers = basics.map(function(basic) {
+            return L.marker(basic.location, { icon: basicIcon }).bindPopup("<b>" + basic.name + "</b><br>" + basic.description);
         });
-      
-        // ▲▲▲▲▲▲▲▲▲▲　アイコンのマーカーを配置　▲▲▲▲▲▲▲▲▲▲
-      
-      
 
-      
-        // 特定エリアをポリゴンで表示
-        var polygon = L.polygon([
-            [20.997409155447436, 105.8337669377892],
-            [20.995485993300065, 105.8380584722970],
-            [20.988434186821443, 105.8401184088608],
-            [20.98907527389841, 105.8337669377892],
-            [20.984908158710137, 105.82278060944915],
-            [20.995806522045072, 105.81419754043348],
-            [20.999652813305783, 105.81848907494133],
-            [21.00045411151072, 105.82775878947825]
-        ], {
-          
-            color: 'blue',
-            fillColor: '#3388ff',
-            fillOpacity: 0.5
-        }).addTo(map).bindPopup("Area A");
-      
-      
+        var condoMarkers = condos.map(function(condo) {
+            return L.marker(condo.location, { icon: condoIcon }).bindPopup("<b>" + condo.name + "</b><br>" + condo.description);
+        });
+
+        // マーカーを地図に追加
+        basicMarkers.forEach(function(marker) { marker.addTo(map); });
+        condoMarkers.forEach(function(marker) { marker.addTo(map); });
+
+        // 個別のアイコン選択用のチェックボックスリストを作成
+        var basicList = document.getElementById('basicList');
+        basics.forEach(function(basic, index) {
+            var checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.id = 'basic' + index;
+            checkbox.checked = true;
+            checkbox.className = 'individual-icon';
+            checkbox.addEventListener('change', function() {
+                if (checkbox.checked) {
+                    basicMarkers[index].addTo(map);
+                } else {
+                    map.removeLayer(basicMarkers[index]);
+                }
+            });
+            var label = document.createElement('label');
+            label.htmlFor = 'basic' + index;
+            label.className = 'individual-icon';
+            label.appendChild(document.createTextNode(' ' + basic.name));
+            basicList.appendChild(checkbox);
+            basicList.appendChild(label);
+            basicList.appendChild(document.createElement('br'));
+        });
+
+        var condoList = document.getElementById('condoList');
+        condos.forEach(function(condo, index) {
+            var checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.id = 'condo' + index;
+            checkbox.checked = true;
+            checkbox.className = 'individual-icon';
+            checkbox.addEventListener('change', function() {
+                if (checkbox.checked) {
+                    condoMarkers[index].addTo(map);
+                } else {
+                    map.removeLayer(condoMarkers[index]);
+                }
+            });
+            var label = document.createElement('label');
+            label.htmlFor = 'condo' + index;
+            label.className = 'individual-icon';
+            label.appendChild(document.createTextNode(' ' + condo.name));
+            condoList.appendChild(checkbox);
+            condoList.appendChild(label);
+            condoList.appendChild(document.createElement('br'));
+        });
+
+        // チェックボックスのイベントリスナー
+        document.getElementById('toggleBasics').addEventListener('change', function(e) {
+            if (e.target.checked) {
+                basicMarkers.forEach(function(marker) { marker.addTo(map); });
+                basics.forEach(function(_, index) {
+                    document.getElementById('basic' + index).checked = true;
+                });
+            } else {
+                basicMarkers.forEach(function(marker) { map.removeLayer(marker); });
+                basics.forEach(function(_, index) {
+                    document.getElementById('basic' + index).checked = false;
+                });
+            }
+        });
+
+        document.getElementById('toggleCondos').addEventListener('change', function(e) {
+            if (e.target.checked) {
+                condoMarkers.forEach(function(marker) { marker.addTo(map); });
+                condos.forEach(function(_, index) {
+                    document.getElementById('condo' + index).checked = true;
+                });
+            } else {
+                condoMarkers.forEach(function(marker) { map.removeLayer(marker); });
+                condos.forEach(function(_, index) {
+                    document.getElementById('condo' + index).checked = false;
+                });
+            }
+        });
     </script>
 </body>
 </html>
