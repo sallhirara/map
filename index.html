@@ -84,6 +84,15 @@
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
+        //Full screen
+        function adjustMapHeight() {
+            var mapElement = document.getElementById('map');
+            mapElement.style.height = window.innerHeight + 'px';
+        }
+
+        window.addEventListener('load', adjustMapHeight);
+        window.addEventListener('resize', adjustMapHeight);
+
         // 地図の初期化
         var map = L.map('map', { zoomControl: false }).setView([21.03966820428092, 105.86461819490408], 12);
         
