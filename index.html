@@ -7,6 +7,7 @@
     <title>Mapping system</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -14,17 +15,15 @@
             box-sizing: border-box;
         }
         
-      
         #map {
             position:  absolute;
             height: 100%;
             width: 100%;
-
         }
         
         .menu {
             position: absolute;
-            top: calc(env(safe-area-inset-top) + 10px);
+            top: calc(env(safe-area-inset-top) + 30px);
             left: calc(env(safe-area-inset-left) + 10px);
             background: transparent;
             padding: 10px;
@@ -58,17 +57,18 @@
             position: relative;
         }
 
-      input[type="checkbox"]:checked::before {
-          content: '\2714';
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          color: white;
-      }
+        input[type="checkbox"]:checked::before {
+            content: '\2714';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+        }
     </style>
 </head>
 <body>
+    <input type="file" id="fileUpload" accept=".xlsx" />
     <div id="map"></div>
     <div class="menu">
         <div class="layer-group">
@@ -83,106 +83,151 @@
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
-        
-
         // 地図の初期化
         var map = L.map('map', { zoomControl: false }).setView([21.03966820428092, 105.86461819490408], 12);
         
         // MapTilerタイルレイヤーの設定
         var mapTilerApiKey = 'Sv80uSRLZxFEwRiW17Cg';
-        L.tileLayer(`https://api.maptiler.com/maps/basic/{z}/{x}/{y}.png?key=Sv80uSRLZxFEwRiW17Cg`, {
+        L.tileLayer(`https://api.maptiler.com/maps/basic/{z}/{x}/{y}.png?key=${mapTilerApiKey}`, {
             attribution: '&copy; <a href="https://www.maptiler.com/copyright/">MapTiler</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
             maxZoom: 18
         }).addTo(map);
 
-        // アイコンの作成
+        // アイコンの定義
         var basicIcon = L.icon({
             iconUrl: 'https://img.icons8.com/?size=100&id=uRRFz0DH6uYw&format=png&color=000000',
             iconSize: [30, 30],
             iconAnchor: [12, 30],
-            popupAnchor: [0, -30],
-            className: 'basic-marker'
+            popupAnchor: [0, -30]
         });
 
         var condoIcon = L.icon({
             iconUrl: 'https://img.icons8.com/?size=100&id=uRRFz0DH6uYw&format=png&color=000000',
             iconSize: [30, 30],
             iconAnchor: [12, 30],
-            popupAnchor: [0, -30],
-            className: 'condo-marker'
+            popupAnchor: [0, -30]
         });
 
-        // データ（位置情報）
-        var basics = [
-            { name: "Representative office", location: [21.01324907853661, 105.85837095260105], description: "7th Floor, Vinafor Building," },
-            { name: "The Authentic", location: [21.0305875390932, 105.89263003403202], description: "Serviced Apartment by Haseko" },
-            { name: "Item C", location: [20.994043605431727, 105.86500930900625], description: "Explanation of C" }
-        ];
+        var basicMarkers = [];
+        var condoMarkers = [];
 
-        var condos = [
-            { name: "Item A", location: [21.041689079951386, 105.84772931050094], description: "Explanation of A" },
-            { name: "Item B", location: [21.073615275088688, 105.7424985704434], description: "Explanation of B" },
-            { name: "Item C", location: [20.994043605431727, 105.86500930900625], description: "Explanation of C" }
-        ];
+        // ファイルアップロードの処理
+        document.getElementById('fileUpload').addEventListener('change', function(evt) {
+            var file = evt.target.files[0];
+            if (!file) {
+                return;
+            }
 
-        // マーカーの作成
-        var basicMarkers = basics.map(function(basic) {
-            return L.marker(basic.location, { icon: basicIcon }).bindPopup("<b>" + basic.name + "</b><br>" + basic.description);
-        });
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var data = new Uint8Array(e.target.result);
+                var workbook = XLSX.read(data, { type: 'array' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+                var jsonData = XLSX.utils.sheet_to_json(worksheet);
+                
+                // マーカーの初期化
+                basicMarkers.forEach(function(marker) { map.removeLayer(marker); });
+                condoMarkers.forEach(function(marker) { map.removeLayer(marker); });
+                basicMarkers = [];
+                condoMarkers = [];
+                document.getElementById('basicList').innerHTML = '';
+                document.getElementById('condoList').innerHTML = '';
 
-        var condoMarkers = condos.map(function(condo) {
-            return L.marker(condo.location, { icon: condoIcon }).bindPopup("<b>" + condo.name + "</b><br>" + condo.description);
-        });
+                // データに基づいてマーカーを地図に追加
+                // 1. jsonDataのループ内で、Unit PriceとLaunchのデータをフォーマットする
+                jsonData.forEach(function(item, index) {
+                    var category = item['Category 1'];
+                    var name = item['PJ name'];
+                    var location = [item['Latitude'], item['Longitude']];
+                    var description = item['Description'];
+                    var developer = item['Developer'];
+                    var category2 = item['Category 2']; // 新しいフィールドを取得
+                    
+                    // Unit Priceのフォーマット（$##,### /sqm）
+                    var unitPrice = item['Unit Price'];
+                    if (unitPrice) {
+                        unitPrice = parseFloat(unitPrice).toLocaleString('en-US', {
+                            style: 'currency',
+                            currency: 'USD',
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 0
+                        }) + ' /sqm';
+                    }
 
-        // マーカーを地図に追加
-        basicMarkers.forEach(function(marker) { marker.addTo(map); });
-        condoMarkers.forEach(function(marker) { marker.addTo(map); });
+                    // Launchの日付フォーマット（mmmm, dd, yyyy）
+                    var launch = item['Launch'];
+                    if (launch) {
+                        var launchDate = new Date(launch);
+                        var options = { year: 'numeric', month: 'long', day: '2-digit' };
+                        launch = launchDate.toLocaleDateString('en-US', options);
+                    }
+                    
+                    // ポップアップの内容をフォーマット
+                    var popupContent = "<b>" + name + "</b><br>" +
+                                    category2 + "<br>" +
+                                    "Developer: " + developer + "<br>" +
+                                    "Unit Price: " + unitPrice + "<br>" +
+                                    "Launch: " + launch + "<br>" + "<br>" +
+                                    "Note:" + "<br>" +
+                                    description;
 
-        // 個別のアイコン選択用のチェックボックスリストを作成
-        var basicList = document.getElementById('basicList');
-        basics.forEach(function(basic, index) {
-            var checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.id = 'basic' + index;
-            checkbox.checked = true;
-            checkbox.className = 'individual-icon';
-            checkbox.addEventListener('change', function() {
-                if (checkbox.checked) {
-                    basicMarkers[index].addTo(map);
-                } else {
-                    map.removeLayer(basicMarkers[index]);
-                }
-            });
-            var label = document.createElement('label');
-            label.htmlFor = 'basic' + index;
-            label.className = 'individual-icon';
-            label.appendChild(document.createTextNode(' ' + basic.name));
-            basicList.appendChild(checkbox);
-            basicList.appendChild(label);
-            basicList.appendChild(document.createElement('br'));
-        });
+                    var icon = category === 'basicIcon' ? basicIcon : condoIcon;
+                    var marker = L.marker(location, { icon: icon }).bindPopup(popupContent);
+                    
+                    if (category === 'basicIcon') {
+                        basicMarkers.push(marker);
+                        marker.addTo(map);
+                        var checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.id = 'basic' + index;
+                        checkbox.checked = true;
+                        checkbox.className = 'individual-icon';
+                        checkbox.addEventListener('change', function() {
+                            if (checkbox.checked) {
+                                marker.addTo(map);
+                            } else {
+                                map.removeLayer(marker);
+                            }
+                        });
+                        var label = document.createElement('label');
+                        label.htmlFor = 'basic' + index;
+                        label.className = 'individual-icon';
+                        label.appendChild(document.createTextNode(' ' + name));
+                        document.getElementById('basicList').appendChild(checkbox);
+                        document.getElementById('basicList').appendChild(label);
+                        document.getElementById('basicList').appendChild(document.createElement('br'));
+                    } else if (category === 'condoIcon') {
+                        condoMarkers.push(marker);
+                        marker.addTo(map);
+                        var checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.id = 'condo' + index;
+                        checkbox.checked = true;
+                        checkbox.className = 'individual-icon';
+                        checkbox.addEventListener('change', function() {
+                            if (checkbox.checked) {
+                                marker.addTo(map);
+                            } else {
+                                map.removeLayer(marker);
+                            }
+                        });
+                        var label = document.createElement('label');
+                        label.htmlFor = 'condo' + index;
+                        label.className = 'individual-icon';
+                        label.appendChild(document.createTextNode(' ' + name));
+                        document.getElementById('condoList').appendChild(checkbox);
+                        document.getElementById('condoList').appendChild(label);
+                        document.getElementById('condoList').appendChild(document.createElement('br'));
+                    }
+                });
 
-        var condoList = document.getElementById('condoList');
-        condos.forEach(function(condo, index) {
-            var checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.id = 'condo' + index;
-            checkbox.checked = true;
-            checkbox.className = 'individual-icon';
-            checkbox.addEventListener('change', function() {
-                if (checkbox.checked) {
-                    condoMarkers[index].addTo(map);
-                } else {
-                    map.removeLayer(condoMarkers[index]);
-                }
-            });
-            var label = document.createElement('label');
-            label.htmlFor = 'condo' + index;
-            label.className = 'individual-icon';
-            label.appendChild(document.createTextNode(' ' + condo.name));
-            condoList.appendChild(checkbox);
-            condoList.appendChild(label);
-            condoList.appendChild(document.createElement('br'));
+
+
+
+
+            };
+            reader.readAsArrayBuffer(file);
         });
 
         // チェックボックスのイベントリスナー
