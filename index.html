@@ -120,140 +120,142 @@
                 window.categoryMarkers = {};
                 document.getElementById('menu').innerHTML = '';
 
-                // データに基づいてマーカーを地図に追加
-// 変更するファイル: map_1109-9.html
 
-// 修正箇所の抜粋
-jsonData.forEach(function(item, index) {
-    var category = item['Category 1'] ? item['Category 1'].trim() : ''; // カテゴリーの空チェック
-    if (!category || item['Category 1'] === 'n.a.') {
-        return; // カテゴリーが空、または'n.a.'の場合はスキップ
-    }
+                // 
+                jsonData.forEach(function(item, index) {
+                    var category = item['Category 1'] ? item['Category 1'].trim() : ''; // カテゴリーの空チェック
+                    if (!category || item['Category 1'] === 'n.a.') {
+                        return; // カテゴリーが空、または'n.a.'の場合はスキップ
+                    }
 
-    var name = item['PJ name'] && item['PJ name'] !== 'n.a.' ? item['PJ name'] : '';
-    var location = [item['Latitude'], item['Longitude']];
-    var description = item['Description'] && item['Description'] !== 'n.a.' ? item['Description'] : '';
-    var developer = item['Developer'] && item['Developer'] !== 'n.a.' ? item['Developer'] : '';
-    var category2 = item['Category 2'] && item['Category 2'] !== 'n.a.' ? item['Category 2'] : '';
+                    var name = item['PJ name'] && item['PJ name'] !== 'n.a.' ? item['PJ name'] : '';
+                    var location = [item['Latitude'], item['Longitude']];
+                    var description = item['Description'] && item['Description'] !== 'n.a.' ? item['Description'] : '';
+                    var developer = item['Developer'] && item['Developer'] !== 'n.a.' ? item['Developer'] : '';
+                    var category2 = item['Category 2'] && item['Category 2'] !== 'n.a.' ? item['Category 2'] : '';
 
-    // 新たにPJ ScaleとContractorを追加
-    var pjScale = item['PJ Scale'] && item['PJ Scale'] !== 'n.a.' ? item['PJ Scale'] : '';
-    var contractor = item['Contractor'] && item['Contractor'] !== 'n.a.' ? item['Contractor'] : '';
+                    // 新たにScaleとAddressを追加
+                    var scale = item['Scale'] && item['Scale'] !== 'n.a.' ? item['Scale'] : '';
+                    var contractor = item['Contractor'] && item['Contractor'] !== 'n.a.' ? item['Contractor'] : '';
+                    var address = item['Address'] && item['Address'] !== 'n.a.' ? item['Address'] : '';
 
-    // Unit Priceのフォーマット（$##,### /sqm）
-    var unitPrice = item['Unit Price'] && item['Unit Price'] !== 'n.a.' ? item['Unit Price'] : null;
-    if (unitPrice) {
-        unitPrice = parseFloat(unitPrice).toLocaleString('en-US', {
-            style: 'currency',
-            currency: 'USD',
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0
-        }) + ' /sqm';
-    }
+                    // Unit Priceのフォーマット（$##,### /sqm）
+                    var unitPrice = item['Unit Price'] && item['Unit Price'] !== 'n.a.' ? item['Unit Price'] : null;
+                    if (unitPrice) {
+                        unitPrice = parseFloat(unitPrice).toLocaleString('en-US', {
+                            style: 'currency',
+                            currency: 'USD',
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 0
+                        }) + ' /sqm';
+                    }
 
-    // Launchの日付フォーマット（mmmm, yyyy）
-    var launch = item['Launch'] && item['Launch'] !== 'n.a.' ? item['Launch'] : null;
-    if (launch) {
-        var launchDate = XLSX.SSF.parse_date_code(launch);
-        launch = new Date(launchDate.y, launchDate.m - 1).toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
-    }
-    
-    // ポップアップの内容をフォーマット
-    var popupContent = "<b>" + name + "</b><br>";
-    if (category2) {
-        popupContent += category2 + "<br>";
-    }
-    if (developer) {
-        popupContent += "Developer: " + developer + "<br>";
-    }
-    if (pjScale) {
-        popupContent += "PJ Scale: " + pjScale + "<br>";
-    }
-    if (contractor) {
-        popupContent += "Contractor: " + contractor + "<br>";
-    }
-    if (unitPrice) {
-        popupContent += "Unit Price: " + unitPrice + "<br>";
-    }
-    if (launch) {
-        popupContent += "Launch: " + launch + "<br>";
-    }
-    if (description) {
-        popupContent += "<br>Note:<br>" + description;
-    }
+                    // Launchの日付フォーマット（mmmm, yyyy）
+                    var launch = item['Launch'] && item['Launch'] !== 'n.a.' ? item['Launch'] : null;
+                    if (launch) {
+                        var launchDate = XLSX.SSF.parse_date_code(launch);
+                        launch = new Date(launchDate.y, launchDate.m - 1).toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+                    }
+                    
+                    // ポップアップの内容をフォーマット
+                    var popupContent = "<b>" + name + "</b><br>";
+                    if (category2) {
+                        popupContent += category2 + "<br>";
+                    }
+                    if (developer) {
+                        popupContent += "Developer: " + developer + "<br>";
+                    }
+                    if (scale) {
+                        popupContent += "Scale: " + scale + "<br>";
+                    }
+                    if (contractor) {
+                        popupContent += "Contractor: " + contractor + "<br>";
+                    }
+                    if (address) {
+                        popupContent += "Address: " + address + "<br>";
+                    }
+                    if (unitPrice) {
+                        popupContent += "Unit Price: " + unitPrice + "<br>";
+                    }
+                    if (launch) {
+                        popupContent += "Launch: " + launch + "<br>";
+                    }
+                    if (description) {
+                        popupContent += "<br>Note:<br>" + description;
+                    }
 
-    // カテゴリー1の値に基づいてアイコンURLを設定
-    var iconUrl = categoryIcons[category] || 'https://img.icons8.com/?size=100&id=uRRFz0DH6uYw&format=png&color=000000'; // デフォルトアイコン
+                    // カテゴリー1の値に基づいてアイコンURLを設定
+                    var iconUrl = categoryIcons[category] || 'https://img.icons8.com/?size=100&id=uRRFz0DH6uYw&format=png&color=000000'; // デフォルトアイコン
 
-    // アイコンを作成
-    var icon = L.icon({
-        iconUrl: iconUrl,
-        iconSize: [30, 30], // 必要に応じてサイズ調整
-        iconAnchor: [12, 30],
-        popupAnchor: [0, -30]
-    });
+                    // アイコンを作成
+                    var icon = L.icon({
+                        iconUrl: iconUrl,
+                        iconSize: [30, 30], // 必要に応じてサイズ調整
+                        iconAnchor: [12, 30],
+                        popupAnchor: [0, -30]
+                    });
 
-    var marker = L.marker(location, { icon: icon }).bindPopup(popupContent);
-    
-    // カテゴリーのリストに基づいてマーカーを管理
-    if (!window.categoryMarkers[category]) {
-        window.categoryMarkers[category] = [];
-    }
-    window.categoryMarkers[category].push(marker);
-    marker.addTo(map);
+                    var marker = L.marker(location, { icon: icon }).bindPopup(popupContent);
+                    
+                    // カテゴリーのリストに基づいてマーカーを管理
+                    if (!window.categoryMarkers[category]) {
+                        window.categoryMarkers[category] = [];
+                    }
+                    window.categoryMarkers[category].push(marker);
+                    marker.addTo(map);
 
-    // カテゴリーごとのチェックボックスの生成（階層を保持）
-    var categoryContainer = document.getElementById('categoryContainer' + category);
-    if (!categoryContainer) {
-        categoryContainer = document.createElement('div');
-        categoryContainer.id = 'categoryContainer' + category;
-        categoryContainer.className = 'layer-group';
+                    // カテゴリーごとのチェックボックスの生成（階層を保持）
+                    var categoryContainer = document.getElementById('categoryContainer' + category);
+                    if (!categoryContainer) {
+                        categoryContainer = document.createElement('div');
+                        categoryContainer.id = 'categoryContainer' + category;
+                        categoryContainer.className = 'layer-group';
 
-        var mainCategoryDiv = document.createElement('div');
-        mainCategoryDiv.className = 'main-category';
+                        var mainCategoryDiv = document.createElement('div');
+                        mainCategoryDiv.className = 'main-category';
 
-        var categoryLabel = document.createElement('label');
-        var categoryCheckbox = document.createElement('input');
-        categoryCheckbox.type = 'checkbox';
-        categoryCheckbox.id = 'toggle' + category;
-        categoryCheckbox.checked = true;
-        categoryCheckbox.addEventListener('change', function(e) {
-            if (e.target.checked) {
-                window.categoryMarkers[category].forEach(function(marker) { marker.addTo(map); });
-            } else {
-                window.categoryMarkers[category].forEach(function(marker) { map.removeLayer(marker); });
-            }
-        });
+                        var categoryLabel = document.createElement('label');
+                        var categoryCheckbox = document.createElement('input');
+                        categoryCheckbox.type = 'checkbox';
+                        categoryCheckbox.id = 'toggle' + category;
+                        categoryCheckbox.checked = true;
+                        categoryCheckbox.addEventListener('change', function(e) {
+                            if (e.target.checked) {
+                                window.categoryMarkers[category].forEach(function(marker) { marker.addTo(map); });
+                            } else {
+                                window.categoryMarkers[category].forEach(function(marker) { map.removeLayer(marker); });
+                            }
+                        });
 
-        categoryLabel.appendChild(categoryCheckbox);
-        categoryLabel.appendChild(document.createTextNode(' ' + category));
-        mainCategoryDiv.appendChild(categoryLabel);
-        categoryContainer.appendChild(mainCategoryDiv);
-        document.getElementById('menu').appendChild(categoryContainer);
-    }
+                        categoryLabel.appendChild(categoryCheckbox);
+                        categoryLabel.appendChild(document.createTextNode(' ' + category));
+                        mainCategoryDiv.appendChild(categoryLabel);
+                        categoryContainer.appendChild(mainCategoryDiv);
+                        document.getElementById('menu').appendChild(categoryContainer);
+                    }
 
-    // 各アイテムごとのチェックボックスの生成
-    var checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.id = category + index;
-    checkbox.checked = true;
-    checkbox.className = 'individual-icon';
-    checkbox.addEventListener('change', function() {
-        if (checkbox.checked) {
-            marker.addTo(map);
-        } else {
-            map.removeLayer(marker);
-        }
-    });
+                    // 各アイテムごとのチェックボックスの生成
+                    var checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.id = category + index;
+                    checkbox.checked = true;
+                    checkbox.className = 'individual-icon';
+                    checkbox.addEventListener('change', function() {
+                        if (checkbox.checked) {
+                            marker.addTo(map);
+                        } else {
+                            map.removeLayer(marker);
+                        }
+                    });
 
-    var label = document.createElement('label');
-    label.htmlFor = category + index;
-    label.className = 'individual-icon';
-    label.appendChild(document.createTextNode(' ' + name));
-    categoryContainer.appendChild(checkbox);
-    categoryContainer.appendChild(label);
-    categoryContainer.appendChild(document.createElement('br'));
-});
+                    var label = document.createElement('label');
+                    label.htmlFor = category + index;
+                    label.className = 'individual-icon';
+                    label.appendChild(document.createTextNode(' ' + name));
+                    categoryContainer.appendChild(checkbox);
+                    categoryContainer.appendChild(label);
+                    categoryContainer.appendChild(document.createElement('br'));
+                });
             };
             reader.readAsArrayBuffer(file);
         });
