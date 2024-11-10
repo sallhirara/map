@@ -13,7 +13,6 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-size: 12px;
         }
 
         .menu-container {
@@ -25,13 +24,12 @@
         }
 
         .custom-file-upload {
+            font-size: 20px;
             margin-right: 30px;
             display: inline-block;
             padding: 4px 12px;
             cursor: pointer;
-            border: 1px solid #333;
             border-radius: 8px;
-            background-color: #f0f0f0;
             transition: background-color 0.3s;
         }
 
@@ -53,6 +51,7 @@
             transition: background-color 0.3s;
             display: flex;
             align-items: center;
+            font-size: 12px;
         }
 
         .menu-button i {
@@ -75,6 +74,7 @@
             padding: 20px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
             z-index: 1001;
+            font-size: 12px;
         }
         
         .mega-menu::before {
@@ -141,7 +141,7 @@
 </head>
 <body>
     <div class="menu-container">
-        <label for="fileUpload" class="custom-file-upload">Upload File</label>
+        <label for="fileUpload" class="custom-file-upload"><i class="fa-solid fa-file-arrow-down"></i></label>
         <input type="file" id="fileUpload" accept=".xlsx" />
         <button class="menu-button" onclick="toggleMenu('basicMenu', this)">Menu<i class="fa-solid fa-caret-down"></i></button>
         <button class="menu-button" onclick="toggleMenu('conditionMenu', this)">Conditions<i class="fa-solid fa-caret-down"></i></button>
