@@ -357,6 +357,17 @@
             };
             reader.readAsArrayBuffer(file);
         });
+        function handleOrientationChange() {
+			if (window.matchmedia("(orientation: portait)").matches) {
+				document.body.style.width = "100%";
+			} else if (window.matchmedia("(orientation: landscape)").matches) {
+				document.body.style.width = "100vw";
+			}
+		}
+
+		window.addEventListener("orientationchange", handleOrientationChange);
+		window.addEventListener("resize", handleOrientationChange);
+		handleOrientationChange();
     </script>
 </body>
 </html>
