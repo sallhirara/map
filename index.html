@@ -18,17 +18,37 @@
         .menu-container {
             display: flex;
             justify-content: center;
-            margin: 20px;
+            margin: 10px 20px;
             position: relative;
+        }
+
+        .custom-file-upload {
+            font-size: 12px;
+            margin-right: 30px;
+            display: inline-block;
+            padding: 4px 12px;
+            cursor: pointer;
+            border: 1px solid #333;
+            border-radius: 8px;
+            background-color: #f0f0f0;
+            transition: background-color 0.3s;
+        }
+
+        .custom-file-upload:hover {
+            background-color: #ddd;
+        }
+
+        #fileUpload {
+            display: none;
         }
         
         .menu-button {
             margin: 0 5px;
             padding: 5px 10px;
             cursor: pointer;
-            border: 1px solid #333;
+            border: none;
             border-radius: 8px;
-            background-color: #f0f0f0;
+            background-color: transparent;
             transition: background-color 0.3s;
             display: flex;
             align-items: center;
@@ -120,6 +140,7 @@
 </head>
 <body>
     <div class="menu-container">
+        <label for="fileUpload" class="custom-file-upload">Upload File</label>
         <input type="file" id="fileUpload" accept=".xlsx" />
         <button class="menu-button" onclick="toggleMenu('basicMenu', this)">Menu<i class="fa-solid fa-caret-down"></i></button>
         <button class="menu-button" onclick="toggleMenu('conditionMenu', this)">Conditions<i class="fa-solid fa-caret-down"></i></button>
