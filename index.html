@@ -14,23 +14,56 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
-        #map {
-            position: absolute;
-            height: 100%;
-            width: 100%;
+
+        .menu-container {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px;
+            position: relative;
         }
         
-        .menu {
-            position: absolute;
-            top: calc(env(safe-area-inset-top) + 30px);
-            left: calc(env(safe-area-inset-left) + 10px);
-            background: transparent;
-            padding: 10px;
+        .menu-button {
+            padding: 5px 10px;
+            cursor: pointer;
+            border: 1px solid #333;
             border-radius: 8px;
+            background-color: #f0f0f0;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+        }
+
+        .menu-button i {
+            margin-left: 10px;
+        }
+
+        .menu-button:hover {
+            background-color: #ddd;
+        }
+
+        .mega-menu {
+            display: none;
+            position: absolute;
+            top: 70px;
+            width: 100%;
+            left: 10%;
+            background: transparent;
+            backdrop-filter: blur(7px);
+            border-radius: 8px;
+            padding: 20px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
-            backdrop-filter: blur(5px);
+            z-index: 1001;
+        }
+        
+        .mega-menu::before {
+            content: "";
+            position: absolute;
+            top: -20px;
+            left: var(--arrow-left, 50%);
+            transform: translateX(-50%);
+            border-width: 10px;
+            border-style: solid;
+            border-color: transparent transparent #ffffff transparent;
         }
 
         .layer-group {
@@ -66,18 +99,72 @@
             color: white;
         }
 
+        #map {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+        }
+
         .leaflet-popup-content {
             user-select: text;
         }
     </style>
 </head>
 <body>
-    <input type="file" id="fileUpload" accept=".xlsx" />
+    <div class="menu-container">
+        <input type="file" id="fileUpload" accept=".xlsx" />
+        <button class="menu-button" onclick="toggleMenu('basicMenu', this)">Menu<i class="fa-solid fa-caret-down"></i></button>
+        <button class="menu-button" onclick="toggleMenu('conditionMenu', this)">Conditions<i class="fa-solid fa-caret-down"></i></button>
+        <button class="menu-button" onclick="toggleMenu('listMenu', this)">Project List<i class="fa-solid fa-caret-down"></i></button>
+    </div>
+
+    <div id="basicMenu" class="mega-menu">
+        <ul>
+            <li>基本機能1</li>
+            <li>基本機能2</li>
+            <li>基本機能3</li>
+        </ul>
+    </div>
+
+    <div id="conditionMenu" class="mega-menu">
+        <ul>
+            <li>条件1を入力</li>
+            <li>条件2を入力</li>
+            <li>条件3を入力</li>
+        </ul>
+    </div>
+
+    <div id="listMenu" class="mega-menu">
+        <div class="menu" id="menu"></div> <!-- Project Listをクリックした際に開くメニュー -->
+    </div>
+    
     <div id="map"></div>
-    <div class="menu" id="menu"></div>
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
+        function toggleMenu(menuId, button) {
+            const menu = document.getElementById(menuId);
+            const allMenus = document.querySelectorAll('.mega-menu');
+
+            // 他のメニューを閉じる
+            allMenus.forEach((item) => {
+                if (item.id !== menuId) {
+                    item.style.display = 'none';
+                }
+            });
+
+            // 対象メニューの表示切り替え
+            if (menu.style.display === 'block') {
+                menu.style.display = 'none';
+            } else {
+                menu.style.display = 'block';
+                const buttonRect = button.getBoundingClientRect();
+                const menuRect = menu.getBoundingClientRect();
+                const arrowLeft = buttonRect.left + buttonRect.width / 2 - menuRect.left;
+                menu.style.setProperty('--arrow-left', `${arrowLeft}px`);
+            }
+        }
+
         // 地図の初期化
         var map = L.map('map', { zoomControl: false }).setView([21.03966820428092, 105.86461819490408], 12);
 
@@ -120,8 +207,7 @@
                 window.categoryMarkers = {};
                 document.getElementById('menu').innerHTML = '';
 
-
-                // 
+                // jsonDataを使ってカテゴリー別にチェックボックスとマーカーを作成
                 jsonData.forEach(function(item, index) {
                     var category = item['Category 1'] ? item['Category 1'].trim() : ''; // カテゴリーの空チェック
                     if (!category || item['Category 1'] === 'n.a.') {
@@ -154,7 +240,6 @@
                         var launchDate = XLSX.SSF.parse_date_code(launch);
                         launch = new Date(launchDate.y, launchDate.m - 1).toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
                     }
-
 
                     // ポップアップの内容をフォーマット
                     var popupContent = "<b>" + name + "</b><br>";
