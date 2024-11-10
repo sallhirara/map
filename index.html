@@ -155,12 +155,6 @@
                         launch = new Date(launchDate.y, launchDate.m - 1).toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
                     }
 
-                    // LastUpdateの日付フォーマット（mmmm, yyyy）
-                    var lastUpdate = item['LastUpdate'] && item['LastUpdate'] !== 'n.a.' ? item['LastUpdate'] : null;
-                    if (lastUpdate) {
-                        var lastUpdateDate = XLSX.SSF.parse_date_code(lastUpdate);
-                        lastUpdate = new Date(lastUpdateDate.y, lastUpdateDate.m - 1).toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
-                    }
 
                     // ポップアップの内容をフォーマット
                     var popupContent = "<b>" + name + "</b><br>";
@@ -184,10 +178,7 @@
                     }
                     if (launch) {
                         popupContent += "Launch: " + launch + "<br>";
-                    }
-                    if (lastUpdate) {
-                        popupContent += "Last Update: " + lastUpdate + "<br>";
-                    }
+                    }                   
                     if (description) {
                         popupContent += "<br>Note:<br>" + description;
                     }
