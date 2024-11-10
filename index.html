@@ -133,8 +133,6 @@
                     var description = item['Description'] && item['Description'] !== 'n.a.' ? item['Description'] : '';
                     var developer = item['Developer'] && item['Developer'] !== 'n.a.' ? item['Developer'] : '';
                     var category2 = item['Category 2'] && item['Category 2'] !== 'n.a.' ? item['Category 2'] : '';
-
-                    // 新たにScaleとAddressを追加
                     var scale = item['Scale'] && item['Scale'] !== 'n.a.' ? item['Scale'] : '';
                     var contractor = item['Contractor'] && item['Contractor'] !== 'n.a.' ? item['Contractor'] : '';
                     var address = item['Address'] && item['Address'] !== 'n.a.' ? item['Address'] : '';
@@ -156,11 +154,21 @@
                         var launchDate = XLSX.SSF.parse_date_code(launch);
                         launch = new Date(launchDate.y, launchDate.m - 1).toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
                     }
-                    
+
+                    // LastUpdateの日付フォーマット（mmmm, yyyy）
+                    var lastUpdate = item['LastUpdate'] && item['LastUpdate'] !== 'n.a.' ? item['LastUpdate'] : null;
+                    if (lastUpdate) {
+                        var lastUpdateDate = XLSX.SSF.parse_date_code(lastUpdate);
+                        lastUpdate = new Date(lastUpdateDate.y, lastUpdateDate.m - 1).toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+                    }
+
                     // ポップアップの内容をフォーマット
                     var popupContent = "<b>" + name + "</b><br>";
                     if (category2) {
                         popupContent += category2 + "<br>";
+                    }
+                    if (address) {
+                        popupContent += "Location: " + address + "<br>";
                     }
                     if (developer) {
                         popupContent += "Developer: " + developer + "<br>";
@@ -171,14 +179,14 @@
                     if (contractor) {
                         popupContent += "Contractor: " + contractor + "<br>";
                     }
-                    if (address) {
-                        popupContent += "Address: " + address + "<br>";
-                    }
                     if (unitPrice) {
                         popupContent += "Unit Price: " + unitPrice + "<br>";
                     }
                     if (launch) {
                         popupContent += "Launch: " + launch + "<br>";
+                    }
+                    if (lastUpdate) {
+                        popupContent += "Last Update: " + lastUpdate + "<br>";
                     }
                     if (description) {
                         popupContent += "<br>Note:<br>" + description;
