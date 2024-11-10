@@ -48,7 +48,7 @@
             width: 90%;
             left: 5%;
             background: transparent;
-            backdrop-filter: blur(7px);
+            backdrop-filter: blur(5px);
             border-radius: 8px;
             padding: 20px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
@@ -70,8 +70,14 @@
             margin-top: 10px;
         }
 
+        .individual-icon-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
         .individual-icon {
-            margin-left: 20px;
+            margin-left: 10px;
         }
 
         input[type="checkbox"] {
@@ -82,6 +88,7 @@
             border-radius: 4px;
             background-color: #fff;
             cursor: pointer;
+            display: inline-block;
         }
 
         input[type="checkbox"]:checked {
@@ -297,6 +304,8 @@
 
                         var mainCategoryDiv = document.createElement('div');
                         mainCategoryDiv.className = 'main-category';
+                        mainCategoryDiv.style.display = 'flex';
+                        mainCategoryDiv.style.alignItems = 'center';
 
                         var categoryLabel = document.createElement('label');
                         var categoryCheckbox = document.createElement('input');
@@ -318,7 +327,10 @@
                         document.getElementById('menu').appendChild(categoryContainer);
                     }
 
-                    // 各アイテムごとのチェックボックスの生成
+                    // 各アイテムごとのチェックボックスとラベルの生成
+                    var individualContainer = document.createElement('div');
+                    individualContainer.className = 'individual-icon-container';
+
                     var checkbox = document.createElement('input');
                     checkbox.type = 'checkbox';
                     checkbox.id = category + index;
@@ -336,9 +348,10 @@
                     label.htmlFor = category + index;
                     label.className = 'individual-icon';
                     label.appendChild(document.createTextNode(' ' + name));
-                    categoryContainer.appendChild(checkbox);
-                    categoryContainer.appendChild(label);
-                    categoryContainer.appendChild(document.createElement('br'));
+
+                    individualContainer.appendChild(checkbox);
+                    individualContainer.appendChild(label);
+                    categoryContainer.appendChild(individualContainer);
                 });
             };
             reader.readAsArrayBuffer(file);
