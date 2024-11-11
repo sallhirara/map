@@ -14,6 +14,470 @@
             padding: 0;
             box-sizing: border-box;
         }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Mapping system</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .menu-container {
+            color: #333;
+            display: flex;
+            width: 90%;
+            justify-content: flex-start;
+            margin: 10px 20px;
+            position: relative;
+        }
+
+        .custom-file-upload {
+            color: #333;
+            font-size: 20px;
+            margin-right: 10px;
+            display: inline-block;
+            padding: 4px 12px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+        }
+
+        .custom-file-upload:hover {
+            background-color: #ddd;
+        }
+
+        #fileUpload {
+            display: none;
+        }
+        
+        .menu-button {
+            margin: 0 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            background-color: transparent;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            color: #333;
+        }
+
+        .menu-button i {
+            margin-left: 10px;
+        }
+
+        .menu-button:hover {
+            background-color: #ddd;
+        }
+
+        .mega-menu {
+            display: none;
+            position: absolute;
+            top: 70px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            left: 5%;
+            background: transparent;
+            backdrop-filter: blur(5px);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            font-size: 12px;
+        }
+      
+        .mega-menu::-webkit-scrollbar {
+          display: none; /* Chrome, Safari, Opera のスクロールバーを非表示 */
+        }
+        
+        .mega-menu::before {
+            content: "";
+            position: absolute;
+            top: -20px;
+            left: var(--arrow-left, 50%);
+            transform: translateX(-50%);
+            border-width: 10px;
+            border-style: solid;
+            border-color: transparent transparent #ffffff transparent;
+        }
+      
+        .layer-group {
+            margin-top: 10px;
+        }
+
+        .individual-icon-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .individual-icon {
+            margin-left: 10px;
+        }
+
+        input[type="checkbox"] {
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #fff;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        input[type="checkbox"]:checked {
+            font-size: 8px;
+            background-color: #4caf50;
+            border: 1px solid #4caf50;
+            position: relative;
+        }
+
+        input[type="checkbox"]:checked::before {
+            content: '\2714';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+        }
+
+        #map {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+        }
+
+        .leaflet-popup-content {
+            user-select: text;
+        }
+    </style>
+</head>
+<body>
+    <div class="menu-container">
+        <label for="fileUpload" class="custom-file-upload"><i class="fa-solid fa-file-arrow-down"></i></label>
+        <input type="file" id="fileUpload" accept=".xlsx" />
+        <button class="menu-button" onclick="toggleMenu('basicMenu', this)">Menu<i class="fa-solid fa-caret-down"></i></button>
+        <button class="menu-button" onclick="toggleMenu('conditionMenu', this)">Conditions<i class="fa-solid fa-caret-down"></i></button>
+        <button class="menu-button" onclick="toggleMenu('listMenu', this)">PJ List<i class="fa-solid fa-caret-down"></i></button>
+    </div>
+
+    <div id="basicMenu" class="mega-menu">
+        <ul>
+            <li>基本機能1</li>
+            <li>基本機能2</li>
+            <li>基本機能3</li>
+        </ul>
+    </div>
+
+    <div id="conditionMenu" class="mega-menu">
+        <ul>
+            <li>条件1を入力</li>
+            <li>条件2を入力</li>
+            <li>条件3を入力</li>
+        </ul>
+    </div>
+
+    <div id="listMenu" class="mega-menu">
+        <div class="menu" id="menu"></div> <!-- Project Listをクリックした際に開くメニュー -->
+    </div>
+    
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        function toggleMenu(menuId, button) {
+            const menu = document.getElementById(menuId);
+            const allMenus = document.querySelectorAll('.mega-menu');
+
+            // 他のメニューを閉じる
+            allMenus.forEach((item) => {
+                if (item.id !== menuId) {
+                    item.style.display = 'none';
+                }
+            });
+
+            // 対象メニューの表示切り替え
+            if (menu.style.display === 'block') {
+                menu.style.display = 'none';
+            } else {
+                menu.style.display = 'block';
+                const buttonRect = button.getBoundingClientRect();
+                const menuRect = menu.getBoundingClientRect();
+                const arrowLeft = buttonRect.left + buttonRect.width / 2 - menuRect.left;
+                menu.style.setProperty('--arrow-left', `${arrowLeft}px`);
+            }
+        }
+
+        // 地図の初期化
+        var map = L.map('map', { zoomControl: false }).setView([21.03966820428092, 105.86461819490408], 12);
+
+        // MapTilerタイルレイヤーの設定
+        var mapTilerApiKey = 'Sv80uSRLZxFEwRiW17Cg';
+        L.tileLayer(`https://api.maptiler.com/maps/basic/{z}/{x}/{y}.png?key=${mapTilerApiKey}`, {
+            attribution: '&copy; <a href="https://www.maptiler.com/copyright/">MapTiler</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            maxZoom: 18
+        }).addTo(map);
+
+        // Category 1の値に基づくアイコンURLを定義
+        var categoryIcons = {
+            "Condominium": "https://img.icons8.com/?size=100&id=uRRFz0DH6uYw&format=png&color=000000", // Condominiumのアイコン
+            "ECOBA PJ": "https://img.icons8.com/?size=100&id=42P5zkOQICqY&format=png&color=000000", // ECOBAのアイコン
+            "New PJ": "https://img.icons8.com/?size=100&id=bnfp2fmtrh0g&format=png&color=FF0062" // 新規検討案件のアイコン
+        };
+
+        // ファイルアップロードの処理
+        document.getElementById('fileUpload').addEventListener('change', function(evt) {
+            var file = evt.target.files[0];
+            if (!file) {
+                return;
+            }
+
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var data = new Uint8Array(e.target.result);
+                var workbook = XLSX.read(data, { type: 'array' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+                var jsonData = XLSX.utils.sheet_to_json(worksheet);
+                
+                // 以前のマーカーとチェックボックスをリセット
+                if (window.categoryMarkers) {
+                    Object.keys(window.categoryMarkers).forEach(function(category) {
+                        window.categoryMarkers[category].forEach(function(marker) {
+                            map.removeLayer(marker);
+                        });
+                    });
+                }
+                window.categoryMarkers = {};
+                document.getElementById('menu').innerHTML = '';
+
+                // jsonDataを使ってカテゴリー別にチェックボックスとマーカーを作成
+                jsonData.forEach(function(item, index) {
+                    var category = item['Category 1'] ? item['Category 1'].trim() : ''; // カテゴリーの空チェック
+                    if (!category || item['Category 1'] === 'n.a.') {
+                        return; // カテゴリーが空、または'n.a.'の場合はスキップ
+                    }
+                    
+                  
+                    // Dataの読み込み　▼▼▼▼
+                  
+                    var category2 = item['Category 2'] && item['Category 2'] !== 'n.a.' ? item['Category 2'] : '';
+                    var name = item['PJ name'] && item['PJ name'] !== 'n.a.' ? item['PJ name'] : '';
+                    var city = item['City'] && item['City'] !== 'n.a.' ? item['City'] : '';
+                    var county = item['County'] && item['County'] !== 'n.a.' ? item['County'] : '';
+                    var address = item['Address'] && item['Address'] !== 'n.a.' ? item['Address'] : '';                   
+                    var location = [item['Latitude'], item['Longitude']];
+                    var developer = item['Developer'] && item['Developer'] !== 'n.a.' ? item['Developer'] : '';
+                    var units = item['Units'] && item['Units'] !== 'n.a.' ? item['Units'] : '';
+                    // Unit Priceのフォーマット（$##,### /sqm）
+                    var unitPrice = item['Unit Price'] && item['Unit Price'] !== 'n.a.' ? item['Unit Price'] : null;
+                    if (unitPrice) {
+                        unitPrice = parseFloat(unitPrice).toLocaleString('en-US', {
+                            style: 'currency',
+                            currency: 'USD',
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 0
+                        }) + ' /sqm';
+                    }
+                    var scale = item['Scale'] && item['Scale'] !== 'n.a.' ? item['Scale'] : '';
+                    // Launchの日付フォーマット（mmmm, yyyy）
+                    var launch = item['Launch'] && item['Launch'] !== 'n.a.' ? item['Launch'] : null;
+                    if (launch) {
+                        var launchDate = XLSX.SSF.parse_date_code(launch);
+                        launch = new Date(launchDate.y, launchDate.m - 1).toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+                    } 
+                    var lastUpdate = item['Last Update'] && item['Last Update'] !== 'n.a.' ? item['Last Update'] : null;
+                    if (lastUpdate) {
+                        var lastUpdateDate = XLSX.SSF.parse_date_code(lastUpdate);
+                        lastUpdate = new Date(lastUpdateDate.y, lastUpdateDate.m - 1).toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+                    }
+                    var architect = item['Architect'] && item['Architect'] !== 'n.a.' ? item['Architect'] : '';
+                    var contractor = item['Contractor'] && item['Contractor'] !== 'n.a.' ? item['Contractor'] : '';
+                    var sales = item['Sales Company'] && item['Sales Company'] !== 'n.a.' ? item['Sales Company'] : '';
+                    var lastUpdate = item['Last Update'] && item['Last Update'] !== 'n.a.' ? item['Last Update'] : '';
+                    var description = item['Description'] && item['Description'] !== 'n.a.' ? item['Description'] : '';
+                    var googleMap = item['Google Map'] && item['Google Map'] !== 'n.a.' ? item['Google Map'] : '';
+                    var link1 = item['Link 1'] && item['Link 1'] !== 'n.a.' ? item['Link 1'] : '';
+                    var link2 = item['Link 2'] && item['Link 2'] !== 'n.a.' ? item['Link 2'] : '';
+                    var link3 = item['Link 3'] && item['Link 3'] !== 'n.a.' ? item['Link 3'] : '';
+
+                    
+                    // Dataの読み込み　▲▲▲▲
+                    
+
+                    
+
+                    // ポップアップの内容をフォーマット
+                    var popupContent = "<b>" + name + "</b><br>";
+                    if (category2) {
+                        popupContent += "<br>" + category2 + "<br>";
+                    }
+                    if (address) {
+                        popupContent += "Location: " + address + "<br>";
+                    }
+                    if (scale) {
+                        popupContent += "Scale: " + scale + "<br>";
+                    }
+                    if (developer) {
+                        popupContent += "Developer: " + developer + "<br>";
+                    }
+                    if (architect) {
+                        popupContent += "Architect: " + architect + "<br>";
+                    }
+                    if (contractor) {
+                        popupContent += "Contractor: " + contractor + "<br>";
+                    }
+                    if (sales) {
+                        popupContent += "Sales Company: " + sales + "<br>";
+                    }
+                    if (unitPrice) {
+                        popupContent += "Unit Price: " + unitPrice + "<br>";
+                    }
+                    if (launch) {
+                        popupContent += "Launch: " + launch + "<br>";
+                    }
+                    if (lastUpdate) {
+                        popupContent += "Last Update: " + lastUpdate + "<br>";
+                    }                   
+                    if (description) {
+                        popupContent += "<br>Note:<br>" + description + "<br>";
+                    }
+                    if (googleMap) {
+                    popupContent += `<br><a href="${googleMap}" target="_blank"><img src="https://img.icons8.com/?size=100&id=FZi5imoPwGuZ&format=png&color=000000" alt="Google Map" style="width:20px;height:20px;"></a>`;
+                    }
+                    if (link1) {
+                    popupContent += `　<a href="${link1}" target="_blank"><img src="https://img.icons8.com/?size=100&id=n9d0Hm43JCPK&format=png&color=000000" alt="Link 1" style="width:20px;height:20px;"></a>`;
+                    }
+                    if (link2) {
+                    popupContent += `　<a href="${link2}" target="_blank"><img src="https://img.icons8.com/?size=100&id=n9d0Hm43JCPK&format=png&color=000000" alt="Link 2" style="width:20px;height:20px;"></a>`;
+                    }
+                    if (link3) {
+                    popupContent += `　<a href="${link3}" target="_blank"><img src="https://img.icons8.com/?size=100&id=n9d0Hm43JCPK&format=png&color=000000" alt="Link 3" style="width:20px;height:20px;"></a>`;
+                    }
+
+                    
+
+                    // カテゴリー1の値に基づいてアイコンURLを設定
+                    var iconUrl = categoryIcons[category] || 'https://img.icons8.com/?size=100&id=bnfp2fmtrh0g&format=png&color=0000008F'; // デフォルトアイコン
+                  
+                    // アイコンのサイズ調整
+                    var iconSize;
+                    if (category === "Primary") {
+                        iconSize = [20, 20]; // ECOBAのアイコンサイズを小さく
+                    } else if (category === "ECOBA PJ") {
+                        iconSize = [25, 25]; // Primaryのアイコンサイズを小さく
+                    } else if (category === "New PJ") {
+                        iconSize = [37, 37]; // Primaryのアイコンサイズを小さく
+                    } else {
+                        iconSize = [30, 30]; // それ以外は通常のサイズ
+                    }
+
+                    // アイコンを作成
+                    var icon = L.icon({
+                        iconUrl: iconUrl,
+                        iconSize: iconSize,
+                        iconAnchor: [12, iconSize[1]], // アイコンアンカーをサイズに合わせて調整
+                        popupAnchor: [0, -iconSize[1]]
+                    });
+
+                    var marker = L.marker(location, { icon: icon }).bindPopup(popupContent);
+                    
+                    // カテゴリーのリストに基づいてマーカーを管理
+                    if (!window.categoryMarkers[category]) {
+                        window.categoryMarkers[category] = [];
+                    }
+                    window.categoryMarkers[category].push(marker);
+                    marker.addTo(map);
+
+                    // カテゴリーごとのチェックボックスの生成（階層を保持）
+                    var categoryContainer = document.getElementById('categoryContainer' + category);
+                    if (!categoryContainer) {
+                        categoryContainer = document.createElement('div');
+                        categoryContainer.id = 'categoryContainer' + category;
+                        categoryContainer.className = 'layer-group';
+
+                        var mainCategoryDiv = document.createElement('div');
+                        mainCategoryDiv.className = 'main-category';
+                        mainCategoryDiv.style.display = 'flex';
+                        mainCategoryDiv.style.alignItems = 'center';
+
+                        var categoryLabel = document.createElement('label');
+                        var categoryCheckbox = document.createElement('input');
+                        categoryCheckbox.type = 'checkbox';
+                        categoryCheckbox.id = 'toggle' + category;
+                        categoryCheckbox.checked = true;
+                        categoryCheckbox.addEventListener('change', function(e) {
+                            if (e.target.checked) {
+                                window.categoryMarkers[category].forEach(function(marker) { marker.addTo(map); });
+                            } else {
+                                window.categoryMarkers[category].forEach(function(marker) { map.removeLayer(marker); });
+                            }
+                        });
+
+                        categoryLabel.appendChild(categoryCheckbox);
+                        categoryLabel.appendChild(document.createTextNode(' ' + category));
+                        mainCategoryDiv.appendChild(categoryLabel);
+                        categoryContainer.appendChild(mainCategoryDiv);
+                        document.getElementById('menu').appendChild(categoryContainer);
+                    }
+
+                    // 各アイテムごとのチェックボックスとラベルの生成
+                    var individualContainer = document.createElement('div');
+                    individualContainer.className = 'individual-icon-container';
+
+                    var checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.id = category + index;
+                    checkbox.checked = true;
+                    checkbox.className = 'individual-icon';
+                    checkbox.addEventListener('change', function() {
+                        if (checkbox.checked) {
+                            marker.addTo(map);
+                        } else {
+                            map.removeLayer(marker);
+                        }
+                    });
+
+                    var label = document.createElement('label');
+                    label.htmlFor = category + index;
+                    label.className = 'individual-icon';
+                    label.appendChild(document.createTextNode(' ' + name));
+
+                    individualContainer.appendChild(checkbox);
+                    individualContainer.appendChild(label);
+                    categoryContainer.appendChild(individualContainer);
+                });
+            };
+            reader.readAsArrayBuffer(file);
+        });
+        function handleOrientationChange() {
+			if (window.matchmedia("(orientation: portait)").matches) {
+				document.body.style.width = "100%";
+			} else if (window.matchmedia("(orientation: landscape)").matches) {
+				document.body.style.width = "100vw";
+			}
+		}
+
+		window.addEventListener("orientationchange", handleOrientationChange);
+		window.addEventListener("resize", handleOrientationChange);
+		handleOrientationChange(); 
+    </script>
+</body>
+</html>
 
         .menu-container {
             color: #333;
