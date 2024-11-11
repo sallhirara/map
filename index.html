@@ -294,6 +294,11 @@
                     var sales = item['Sales Company'] && item['Sales Company'] !== 'n.a.' ? item['Sales Company'] : '';
                     var lastUpdate = item['Last Update'] && item['Last Update'] !== 'n.a.' ? item['Last Update'] : '';
                     var description = item['Description'] && item['Description'] !== 'n.a.' ? item['Description'] : '';
+                    var googleMap = item['Google Map'] && item['Google Map'] !== 'n.a.' ? item['Google Map'] : '';
+                    var link1 = item['Link 1'] && item['Link 1'] !== 'n.a.' ? item['Link 1'] : '';
+                    var link2 = item['Link 2'] && item['Link 2'] !== 'n.a.' ? item['Link 2'] : '';
+                    var link3 = item['Link 3'] && item['Link 3'] !== 'n.a.' ? item['Link 3'] : '';
+
                     
                     // Dataの読み込み　▲▲▲▲
                     
@@ -333,8 +338,22 @@
                         popupContent += "Last Update: " + lastUpdate + "<br>";
                     }                   
                     if (description) {
-                        popupContent += "<br>Note:<br>" + description;
+                        popupContent += "<br>Note:<br>" + description + "<br>";
                     }
+                    if (googleMap) {
+                    popupContent += `<br><a href="${googleMap}" target="_blank"><img src="https://img.icons8.com/?size=100&id=YLlkKxgG5qUc&format=png&color=000000" alt="Google Map" style="width:20px;height:20px;"></a>`;
+                    }
+                    if (link1) {
+                    popupContent += `　　<a href="${link1}" target="_blank"><img src="https://img.icons8.com/?size=100&id=n9d0Hm43JCPK&format=png&color=000000" alt="Link 1" style="width:20px;height:20px;"></a>`;
+                    }
+                    if (link2) {
+                    popupContent += `　　<a href="${link2}" target="_blank"><img src="https://img.icons8.com/?size=100&id=n9d0Hm43JCPK&format=png&color=000000" alt="Link 2" style="width:20px;height:20px;"></a>`;
+                    }
+                    if (link3) {
+                    popupContent += `　　<a href="${link3}" target="_blank"><img src="https://img.icons8.com/?size=100&id=n9d0Hm43JCPK&format=png&color=000000" alt="Link 3" style="width:20px;height:20px;"></a>`;
+                    }
+
+                    
 
                     // カテゴリー1の値に基づいてアイコンURLを設定
                     var iconUrl = categoryIcons[category] || 'https://img.icons8.com/?size=100&id=bnfp2fmtrh0g&format=png&color=0000008F'; // デフォルトアイコン
