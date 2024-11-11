@@ -97,14 +97,57 @@
             border-style: solid;
             border-color: transparent transparent #ffffff transparent;
         }
-      
-        .layer-group {
-            margin-top: 10px;
+
+
+        /* -------- Summary from here --------*/
+        #summary {
+            border: none;
+            padding: 20px;
+            font-size: 12px;
+        }
+        /* -------- Summary to here --------*/
+
+
+        /* -------- Conditions from here --------*/
+        #conditions {
+            border: none;
+            font-size: 12px;
+        }
+        /* -------- Conditions to here --------*/
+
+
+        /* -------- PJ List from here --------*/
+        #listMenu {
+            border: none;
         }
 
+        .menu {
+            border: none;
+            max-height: 70vh;
+            overflow-y: auto;
+            margin: 0;
+        }
+      
+        /*Category 1 毎 のコンテナ*/
+        .layer-group {
+            margin-bottom: 15px;
+        }
+
+        /*Category 1 のテキスト部分*/
+        .category-text {
+            margin-left: 10px;
+            font-size: 14px;
+            font-weight: bolder;
+            color: #555;
+        }
+
+        /*Category 1 のヘッダーコンテナ*/
+        .main-category {
+            margin-bottom: 10px;
+        }
+
+        /*PJ Name それぞれのコンテナ*/
         .individual-icon-container {
-            display: flex;
-            align-items: center;
             margin-bottom: 5px;
         }
 
@@ -113,6 +156,7 @@
         }
 
         input[type="checkbox"] {
+            vertical-align: middle;
             appearance: none;
             width: 16px;
             height: 16px;
@@ -139,6 +183,8 @@
             color: white;
         }
 
+        /* -------- PJ List to here --------*/
+
         #map {
             position: absolute;
             height: 100%;
@@ -154,24 +200,35 @@
     <div class="menu-container">
         <label for="fileUpload" class="custom-file-upload"><i class="fa-solid fa-file-arrow-down"></i></label>
         <input type="file" id="fileUpload" accept=".xlsx" />
-        <button class="menu-button" onclick="toggleMenu('basicMenu', this)">Menu<i class="fa-solid fa-caret-down"></i></button>
-        <button class="menu-button" onclick="toggleMenu('conditionMenu', this)">Conditions<i class="fa-solid fa-caret-down"></i></button>
+        <button class="menu-button" onclick="toggleMenu('summary', this)">Summary<i class="fa-solid fa-caret-down"></i></button>
+        <button class="menu-button" onclick="toggleMenu('conditions', this)">Conditions<i class="fa-solid fa-caret-down"></i></button>
         <button class="menu-button" onclick="toggleMenu('listMenu', this)">PJ List<i class="fa-solid fa-caret-down"></i></button>
     </div>
 
-    <div id="basicMenu" class="mega-menu">
+    <div id="summary" class="mega-menu">
         <ul>
-            <li>基本機能1</li>
-            <li>基本機能2</li>
-            <li>基本機能3</li>
+            <li>Number of PJ</li>
+            <li>Number of Units</li>
+            <br>
+            <li>Average Unit Price</li>
+            <li>Highest Price</li>
+            <li>Lowest Price</li>
+            <li>Middle Price</li>
         </ul>
     </div>
 
-    <div id="conditionMenu" class="mega-menu">
+    <div id="conditions" class="mega-menu">
         <ul>
-            <li>条件1を入力</li>
-            <li>条件2を入力</li>
-            <li>条件3を入力</li>
+            <li>Price Dual Slider</li>
+            <li>Launch Year Slider</li>
+            <li>Update Period Slider</li>
+            <br>
+            <li>Area Select (City)</li>
+            <li>Area Select (County)</li>
+            <br>
+            <li>Category Select</li>
+            <li></li>
+            <li></li>
         </ul>
     </div>
 
@@ -183,6 +240,7 @@
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
+        
         function toggleMenu(menuId, button) {
             const menu = document.getElementById(menuId);
             const allMenus = document.querySelectorAll('.mega-menu');
@@ -208,6 +266,39 @@
 
         // 地図の初期化
         var map = L.map('map', { zoomControl: false }).setView([21.03966820428092, 105.86461819490408], 12);
+
+        
+        // ズームレベルによってアイコンを切り替える関数
+        function updateMarkersBasedOnZoom() {
+            if (!window.categoryMarkers) return; // マーカーが定義されていない場合は処理を中断
+
+            var currentZoom = map.getZoom();
+            var largeIconSize = [20, 20]; // サイズ変えるならここで変更
+            var smallIconSize = [20, 20];
+
+            // 各カテゴリーのマーカーをズームレベルに応じて変更
+            Object.keys(window.categoryMarkers).forEach(function(category) {
+                if (window.categoryMarkers[category]) { // 各カテゴリーにマーカーがあるか確認
+                    window.categoryMarkers[category].forEach(function(marker) {
+                        var newIconSize = currentZoom < 10 ? largeIconSize : smallIconSize;
+                        var iconUrl = marker.options.icon.options.iconUrl;
+                        var newIcon = L.icon({
+                            iconUrl: iconUrl,
+                            iconSize: newIconSize,
+                            iconAnchor: [newIconSize[0] / 2, newIconSize[1]], 
+                            popupAnchor: [0, -newIconSize[1]]
+                        });
+                        marker.setIcon(newIcon);
+                    });
+                }
+            });
+        }
+
+        // 地図のズームが変更されたときに実行
+        map.on('zoomend', updateMarkersBasedOnZoom);
+
+        // 初回実行（初期アイコン設定）
+        updateMarkersBasedOnZoom();
 
         // MapTilerタイルレイヤーの設定
         var mapTilerApiKey = 'Sv80uSRLZxFEwRiW17Cg';
@@ -388,6 +479,7 @@
                     marker.addTo(map);
 
                     // カテゴリーごとのチェックボックスの生成（階層を保持）
+                    // CategoryContainerを生成するコード
                     var categoryContainer = document.getElementById('categoryContainer' + category);
                     if (!categoryContainer) {
                         categoryContainer = document.createElement('div');
@@ -404,19 +496,39 @@
                         categoryCheckbox.type = 'checkbox';
                         categoryCheckbox.id = 'toggle' + category;
                         categoryCheckbox.checked = true;
+
+                        // テキスト部分をspan要素で囲む
+                        var categoryText = document.createElement('span');
+                        categoryText.className = 'category-text'; // テキスト部分にクラスを追加
+                        categoryText.textContent = ' ' + category;
+
+                        // チェックボックスとテキストをラベルに追加
+                        categoryLabel.appendChild(categoryCheckbox);
+                        categoryLabel.appendChild(categoryText);
+                        mainCategoryDiv.appendChild(categoryLabel);
+                        categoryContainer.appendChild(mainCategoryDiv);
+                        document.getElementById('menu').appendChild(categoryContainer);
+
+                        // チェックボックスの状態によってマーカーを表示・非表示にするイベントリスナー
                         categoryCheckbox.addEventListener('change', function(e) {
                             if (e.target.checked) {
                                 window.categoryMarkers[category].forEach(function(marker) { marker.addTo(map); });
                             } else {
                                 window.categoryMarkers[category].forEach(function(marker) { map.removeLayer(marker); });
                             }
-                        });
 
-                        categoryLabel.appendChild(categoryCheckbox);
-                        categoryLabel.appendChild(document.createTextNode(' ' + category));
-                        mainCategoryDiv.appendChild(categoryLabel);
-                        categoryContainer.appendChild(mainCategoryDiv);
-                        document.getElementById('menu').appendChild(categoryContainer);
+                            // 下位のチェックボックスにも同じ状態を適用
+                            const subCheckboxes = categoryContainer.querySelectorAll('.individual-icon-container input[type="checkbox"]');
+                            subCheckboxes.forEach(subCheckbox => {
+                                subCheckbox.checked = e.target.checked;
+                                // 下位のチェックボックスの変更に応じてマーカーも更新
+                                if (subCheckbox.checked) {
+                                    window.categoryMarkers[category].forEach(marker => marker.addTo(map));
+                                } else {
+                                    window.categoryMarkers[category].forEach(marker => map.removeLayer(marker));
+                                }
+                            });    
+                        });
                     }
 
                     // 各アイテムごとのチェックボックスとラベルの生成
