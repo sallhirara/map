@@ -211,8 +211,9 @@
 
         // Category 1の値に基づくアイコンURLを定義
         var categoryIcons = {
-            "Basic": "https://img.icons8.com/?size=100&id=qlkBc6S8Eyxc&format=png&color=000000", // Basicのアイコン
-            "ECOBA": "https://img.icons8.com/?size=100&id=42P5zkOQICqY&format=png&color=000000" // ECOBAのアイコン
+            "Condominium": "https://img.icons8.com/?size=100&id=uRRFz0DH6uYw&format=png&color=000000", // Condominiumのアイコン
+            "ECOBA PJ": "https://img.icons8.com/?size=100&id=42P5zkOQICqY&format=png&color=000000", // ECOBAのアイコン
+            "New PJ": "https://img.icons8.com/?size=100&id=bnfp2fmtrh0g&format=png&color=FF0062" // 新規検討案件のアイコン
         };
 
         // ファイルアップロードの処理
@@ -278,7 +279,7 @@
                     // ポップアップの内容をフォーマット
                     var popupContent = "<b>" + name + "</b><br>";
                     if (category2) {
-                        popupContent += category2 + "<br>";
+                        popupContent += "<br>" + category2 + "<br>";
                     }
                     if (address) {
                         popupContent += "Location: " + address + "<br>";
@@ -303,14 +304,26 @@
                     }
 
                     // カテゴリー1の値に基づいてアイコンURLを設定
-                    var iconUrl = categoryIcons[category] || 'https://img.icons8.com/?size=100&id=uRRFz0DH6uYw&format=png&color=000000'; // デフォルトアイコン
+                    var iconUrl = categoryIcons[category] || 'https://img.icons8.com/?size=100&id=bnfp2fmtrh0g&format=png&color=0000008F'; // デフォルトアイコン
+                  
+                    // アイコンのサイズ調整
+                    var iconSize;
+                    if (category === "Primary") {
+                        iconSize = [20, 20]; // ECOBAのアイコンサイズを小さく
+                    } else if (category === "ECOBA PJ") {
+                        iconSize = [25, 25]; // Primaryのアイコンサイズを小さく
+                    } else if (category === "New PJ") {
+                        iconSize = [37, 37]; // Primaryのアイコンサイズを小さく
+                    } else {
+                        iconSize = [30, 30]; // それ以外は通常のサイズ
+                    }
 
                     // アイコンを作成
                     var icon = L.icon({
                         iconUrl: iconUrl,
-                        iconSize: [30, 30], // 必要に応じてサイズ調整
-                        iconAnchor: [12, 30],
-                        popupAnchor: [0, -30]
+                        iconSize: iconSize,
+                        iconAnchor: [12, iconSize[1]], // アイコンアンカーをサイズに合わせて調整
+                        popupAnchor: [0, -iconSize[1]]
                     });
 
                     var marker = L.marker(location, { icon: icon }).bindPopup(popupContent);
