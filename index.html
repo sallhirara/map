@@ -70,23 +70,25 @@
             background-color: #ddd;
         }
 
-        .mega-menu {
-            display: none;
-            position: absolute;
-            top: 70px;
-            width: 90%;
-            max-width: 500px;
-            max-height: 80vh;
-            overflow-y: hidden;
-            left: 5%;
-            background: transparent;
-            backdrop-filter: blur(5px);
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-            z-index: 1001;
-            font-size: 12px;
-        }
+.mega-menu {
+    display: none;
+    position: absolute;
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow-y: hidden;
+    left: 5%;
+    background: transparent;
+    backdrop-filter: blur(5px);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    z-index: 1001;
+    font-size: 12px;
+    transition: transform 0.5s ease; /* スムーズに動くように追加 */
+    transform: translateY(-150%); /* 初期位置をmenu-containerの上に隠す */
+}
+
       
         .mega-menu::-webkit-scrollbar {
           display: none; /* Chrome, Safari, Opera のスクロールバーを非表示 */
@@ -247,28 +249,43 @@
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
         
-        function toggleMenu(menuId, button) {
-            const menu = document.getElementById(menuId);
-            const allMenus = document.querySelectorAll('.mega-menu');
+function toggleMenu(menuId, button) {
+    const menu = document.getElementById(menuId);
+    const allMenus = document.querySelectorAll('.mega-menu');
 
-            // 他のメニューを閉じる
-            allMenus.forEach((item) => {
-                if (item.id !== menuId) {
-                    item.style.display = 'none';
-                }
-            });
+    // 対象のメニューを閉じる処理
+    if (menu.style.display === 'block') {
+        menu.style.transform = 'translateY(-150%)';
+        setTimeout(() => {
+            menu.style.display = 'none';
+            adjustMenuPositions(); // 他のメニューを再配置
+        }, 500);
+    } else {
+        // メニューを開く場合
+        menu.style.display = 'block';
+        setTimeout(() => {
+            adjustMenuPositions(); // 他のメニューも含めて再配置
+            menu.style.transform = 'translateY(0)'; // スライドダウン
+        }, 0);
+    }
+}
 
-            // 対象メニューの表示切り替え
-            if (menu.style.display === 'block') {
-                menu.style.display = 'none';
-            } else {
-                menu.style.display = 'block';
-                const buttonRect = button.getBoundingClientRect();
-                const menuRect = menu.getBoundingClientRect();
-                const arrowLeft = buttonRect.left + buttonRect.width / 2 - menuRect.left;
-                menu.style.setProperty('--arrow-left', `${arrowLeft}px`);
-            }
-        }
+// メニューの位置を再配置する関数
+function adjustMenuPositions() {
+    const visibleMenus = Array.from(document.querySelectorAll('.mega-menu'))
+        .filter(menu => menu.style.display === 'block');
+    
+    let offsetTop = 60; // 初期のmenu-containerの高さ分を加算
+
+    visibleMenus.forEach(menu => {
+        menu.style.top = `${offsetTop}px`;
+        offsetTop += menu.getBoundingClientRect().height + 10; // メニュー間の余白を加算
+    });
+}
+
+
+
+
 
         // 地図の初期化
         var map = L.map('map', { zoomControl: false }).setView([21.03966820428092, 105.86461819490408], 12);
