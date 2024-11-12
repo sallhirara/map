@@ -85,9 +85,11 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     z-index: 1001;
     font-size: 12px;
-    transition: transform 0.5s ease; /* スムーズに動くように追加 */
-    transform: translateY(-150%); /* 初期位置をmenu-containerの上に隠す */
+    transition: transform 0.5s ease, opacity 0.5s ease; /* スムーズに動くように追加 */
+    transform: translateY(-150%);
+    opacity: 0; /* 初期の透明度を設定 */
 }
+
 
       
         .mega-menu::-webkit-scrollbar {
@@ -256,6 +258,7 @@ function toggleMenu(menuId, button) {
     // 対象のメニューを閉じる処理
     if (menu.style.display === 'block') {
         menu.style.transform = 'translateY(-150%)';
+        menu.style.opacity = '0'; // フェードアウト効果を追加
         setTimeout(() => {
             menu.style.display = 'none';
             adjustMenuPositions(); // 他のメニューを再配置
@@ -266,6 +269,7 @@ function toggleMenu(menuId, button) {
         setTimeout(() => {
             adjustMenuPositions(); // 他のメニューも含めて再配置
             menu.style.transform = 'translateY(0)'; // スライドダウン
+            menu.style.opacity = '1'; // フェードイン効果を追加
         }, 0);
     }
 }
@@ -282,6 +286,7 @@ function adjustMenuPositions() {
         offsetTop += menu.getBoundingClientRect().height + 10; // メニュー間の余白を加算
     });
 }
+
 
 
 
