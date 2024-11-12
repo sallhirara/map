@@ -215,6 +215,10 @@
             box-shadow: inset 0 0 0 10px #6743ee !important; /* $primary color */
         }
 
+        .c-checkbox input[type="checkbox"]:checked::before {
+            color: lightgray !important;
+        }        
+
         .c-checkbox span {
             vertical-align: middle;
             display: inline-block;
@@ -277,8 +281,6 @@
         }
 
         input[type="checkbox"] {
-            appearance: none; /* Safariと他のブラウザのデフォルトスタイルを無効化 */
-            -webkit-appearance: none; /* Safari用のスタイルリセット */
             vertical-align: middle;
             appearance: none;
             width: 16px;
@@ -298,14 +300,12 @@
         }
 
         input[type="checkbox"]:checked::before {
-            appearance: none; /* Safariと他のブラウザのデフォルトスタイルを無効化 */
-            -webkit-appearance: none; /* Safari用のスタイルリセット */
             content: '\2714';
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            color: lightgrey;
+            color: white;
         }
 
         /* -------- PJ List to here --------*/
