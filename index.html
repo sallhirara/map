@@ -449,9 +449,9 @@
             reader.readAsArrayBuffer(file);
         });
         function handleOrientationChange() {
-			if (window.matchmedia("(orientation: portait)").matches) {
+			if (window.matchMedia("(orientation: portait)").matches) {
 				document.body.style.width = "100%";
-			} else if (window.matchmedia("(orientation: landscape)").matches) {
+			} else if (window.matchMedia("(orientation: landscape)").matches) {
 				document.body.style.width = "100vw";
 			}
 		}
