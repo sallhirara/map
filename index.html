@@ -298,6 +298,8 @@
         }
 
         input[type="checkbox"]:checked::before {
+            appearance: none; /* Safariと他のブラウザのデフォルトスタイルを無効化 */
+            -webkit-appearance: none; /* Safari用のスタイルリセット */
             content: '\2714';
             position: absolute;
             top: 50%;
