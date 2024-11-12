@@ -26,7 +26,7 @@
             width: 90%;
             justify-content: flex-start;
             margin: 10px 20px;
-            position: relative;
+            position: fixed;
         }
 
         .custom-file-upload {
@@ -587,32 +587,7 @@
                 });
             };
             reader.readAsArrayBuffer(file);
-        });
-        
-        //　menu-container の位置調整用
-        function adjustViewportHeight() {
-            document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
-        }
-
-        window.addEventListener('resize', adjustViewportHeight);
-        window.addEventListener('load', adjustViewportHeight);
-        adjustViewportHeight();
-      
-function adjustMapSize() {
-    const mapElement = document.getElementById('map');
-    if (mapElement) {
-        mapElement.style.height = `${window.innerHeight}px`;
-        mapElement.style.width = `${window.innerWidth}px`;
-    }
-}
-
-window.addEventListener('resize', adjustMapSize);
-window.addEventListener('load', adjustMapSize);
-adjustMapSize();
-        
-      
-        
-        
+        });        
       
         // 画面ローテーションでリロード
         function handleOrientationChange() {
