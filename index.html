@@ -133,8 +133,18 @@
             max-height: 70vh;
             overflow-y: auto;
             margin: 0;
+            overflow: auto;
         }
-      
+        
+        .menu::-webkit-scrollbar {
+          display: none;
+        }
+        
+        .menu {
+            -ms-overflow-style: none;  /* IEとEdgeでスクロールバーを非表示 */
+            scrollbar-width: none;  /* Firefoxでスクロールバーを非表示 */
+        }
+
         /*Category 1 毎 のコンテナ*/
         .layer-group {
             margin-bottom: 15px;
