@@ -251,46 +251,41 @@
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
         
-function toggleMenu(menuId, button) {
-    const menu = document.getElementById(menuId);
-    const allMenus = document.querySelectorAll('.mega-menu');
+        function toggleMenu(menuId, button) {
+            const menu = document.getElementById(menuId);
+            const allMenus = document.querySelectorAll('.mega-menu');
 
-    // 対象のメニューを閉じる処理
-    if (menu.style.display === 'block') {
-        menu.style.transform = 'translateY(-150%)';
-        menu.style.opacity = '0'; // フェードアウト効果を追加
-        setTimeout(() => {
-            menu.style.display = 'none';
-            adjustMenuPositions(); // 他のメニューを再配置
-        }, 500);
-    } else {
-        // メニューを開く場合
-        menu.style.display = 'block';
-        setTimeout(() => {
-            adjustMenuPositions(); // 他のメニューも含めて再配置
-            menu.style.transform = 'translateY(0)'; // スライドダウン
-            menu.style.opacity = '1'; // フェードイン効果を追加
-        }, 0);
-    }
-}
+            // 対象のメニューを閉じる処理
+            if (menu.style.display === 'block') {
+                menu.style.transform = 'translateY(-150%)';
+                menu.style.opacity = '0'; // フェードアウト効果を追加
+                setTimeout(() => {
+                    menu.style.display = 'none';
+                    adjustMenuPositions(); // 他のメニューを再配置
+                }, 500);
+            } else {
+                // メニューを開く場合
+                menu.style.display = 'block';
+                setTimeout(() => {
+                    adjustMenuPositions(); // 他のメニューも含めて再配置
+                    menu.style.transform = 'translateY(0)'; // スライドダウン
+                    menu.style.opacity = '1'; // フェードイン効果を追加
+                }, 0);
+            }
+        }
 
-// メニューの位置を再配置する関数
-function adjustMenuPositions() {
-    const visibleMenus = Array.from(document.querySelectorAll('.mega-menu'))
-        .filter(menu => menu.style.display === 'block');
-    
-    let offsetTop = 60; // 初期のmenu-containerの高さ分を加算
+        // メニューの位置を再配置する関数
+        function adjustMenuPositions() {
+            const visibleMenus = Array.from(document.querySelectorAll('.mega-menu'))
+                .filter(menu => menu.style.display === 'block');
 
-    visibleMenus.forEach(menu => {
-        menu.style.top = `${offsetTop}px`;
-        offsetTop += menu.getBoundingClientRect().height + 10; // メニュー間の余白を加算
-    });
-}
+            let offsetTop = 60; // 初期のmenu-containerの高さ分を加算
 
-
-
-
-
+            visibleMenus.forEach(menu => {
+                menu.style.top = `${offsetTop}px`;
+                offsetTop += menu.getBoundingClientRect().height + 10; // メニュー間の余白を加算
+            });
+        }
 
         // 地図の初期化
         var map = L.map('map', { zoomControl: false }).setView([21.03966820428092, 105.86461819490408], 12);
