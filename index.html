@@ -22,6 +22,7 @@
         .menu-container {
             color: #333;
             display: flex;
+            height: 30px;
             width: 90%;
             justify-content: flex-start;
             margin: 10px 20px;
@@ -191,7 +192,7 @@
 
         #map {
             position: absolute;
-            height: 100%;
+            height: calc(var(--vh, 1vh) * 100 - 30px); /*30px はmenu-containerの高さ*/
             width: 100%;
         }
 
@@ -588,17 +589,28 @@
             reader.readAsArrayBuffer(file);
         });
         
-        function handleOrientationChange() {
-			if (window.matchmedia("(orientation: portait)").matches) {
-				document.body.style.width = "100%";
-			} else if (window.matchmedia("(orientation: landscape)").matches) {
-				document.body.style.width = "100vw";
-			}
-		}
+        //　menu-container の位置調整用
+        function adjustViewportHeight() {
+            document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+        }
 
-		window.addEventListener("orientationchange", handleOrientationChange);
-		window.addEventListener("resize", handleOrientationChange);
-		handleOrientationChange(); 
+        window.addEventListener('resize', adjustViewportHeight);
+        window.addEventListener('load', adjustViewportHeight);
+        adjustViewportHeight();
+        
+      
+        // 画面ローテーションでリロード
+        function handleOrientationChange() {
+          if (window.matchMedia("(orientation: portait)").matches) {
+            document.body.style.width = "100%";
+          } else if (window.matchMedia("(orientation: landscape)").matches) {
+            document.body.style.width = "100vw";
+          }
+        }
+
+        window.addEventListener("orientationchange", handleOrientationChange);
+        window.addEventListener("resize", handleOrientationChange);
+        handleOrientationChange(); 
     </script>
 </body>
 </html>
