@@ -392,78 +392,97 @@
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
-function adjustMenuHeight() {
-    const menu = document.querySelector('.menu');
-    const summary = document.getElementById('summary');
-    const conditions = document.getElementById('conditions');
+        function adjustMenuHeight() {
+            const menu = document.querySelector('.menu');
+            const summary = document.getElementById('summary');
+            const conditions = document.getElementById('conditions');
 
-    // 各要素の高さを取得
-    const vh = window.innerHeight;
-    const menuContainerHeight = 30; // .menu-container の高さ
-    const bottomMargin = 100; // 下の余白 50px
+            // 各要素の高さを取得
+            const vh = window.innerHeight;
+            const menuContainerHeight = 30; // .menu-container の高さ
+            const bottomMargin = 100; // 下の余白 50px
 
-    let summaryHeight = summary.style.display === 'block' ? summary.getBoundingClientRect().height : 0;
-    let conditionsHeight = conditions.style.display === 'block' ? conditions.getBoundingClientRect().height : 0;
+            let summaryHeight = summary.style.display === 'block' ? summary.getBoundingClientRect().height : 0;
+            let conditionsHeight = conditions.style.display === 'block' ? conditions.getBoundingClientRect().height : 0;
 
-    // menuの新しい高さを計算
-    let newHeight = vh - menuContainerHeight - bottomMargin;
+            // menuの新しい高さを計算
+            let newHeight = vh - menuContainerHeight - bottomMargin;
 
-    if (summaryHeight > 0 && conditionsHeight > 0) {
-        newHeight -= summaryHeight + conditionsHeight;
-    } else if (summaryHeight > 0) {
-        newHeight -= summaryHeight;
-    } else if (conditionsHeight > 0) {
-        newHeight -= conditionsHeight;
-    }
+            if (summaryHeight > 0 && conditionsHeight > 0) {
+                newHeight -= summaryHeight + conditionsHeight;
+            } else if (summaryHeight > 0) {
+                newHeight -= summaryHeight;
+            } else if (conditionsHeight > 0) {
+                newHeight -= conditionsHeight;
+            }
 
-    // 計算された高さを.menuに設定
-    menu.style.height = `${newHeight}px`;
+            // 計算された高さを.menuに設定
+            menu.style.height = `${newHeight}px`;
 
-    // メニュー位置の再調整
-    adjustMenuPositions();
-}
+            // メニュー位置の再調整
+            adjustMenuPositions();
+        }
 
-function toggleMenu(menuId, button) {
-    const menu = document.getElementById(menuId);
+        function toggleMenu(menuId, button) {
+            const menu = document.getElementById(menuId);
 
-    if (menu.style.display === 'block') {
-        menu.style.transform = 'translateY(-150%)';
-        menu.style.opacity = '0'; // フェードアウト効果
-        setTimeout(() => {
-            menu.style.display = 'none';
-            adjustMenuHeight(); // メニュー高さを再計算
-        }, 500);
-    } else {
-        // メニューを開く
-        menu.style.display = 'block';
-        setTimeout(() => {
-            menu.style.transform = 'translateY(0)'; // スライドダウン
-            menu.style.opacity = '1'; // フェードイン効果
-            adjustMenuHeight(); // メニュー高さを再計算
-        }, 0);
-    }
-}
+            if (menu.style.display === 'block') {
+                menu.style.transform = 'translateY(-150%)';
+                menu.style.opacity = '0'; // フェードアウト効果
+                setTimeout(() => {
+                    menu.style.display = 'none';
+                    adjustMenuHeight(); // メニュー高さを再計算
+                }, 500);
+            } else {
+                // メニューを開く
+                menu.style.display = 'block';
+                setTimeout(() => {
+                    menu.style.transform = 'translateY(0)'; // スライドダウン
+                    menu.style.opacity = '1'; // フェードイン効果
+                    adjustMenuHeight(); // メニュー高さを再計算
+                }, 0);
+            }
+        }
 
-function adjustMenuPositions() {
-    const visibleMenus = Array.from(document.querySelectorAll('.mega-menu'))
-        .filter(menu => menu.style.display === 'block');
+        function adjustMenuPositions() {
+            const visibleMenus = Array.from(document.querySelectorAll('.mega-menu'))
+                .filter(menu => menu.style.display === 'block');
 
-    let offsetTop = 60; // 初期のmenu-containerの高さ分を加算
+            let offsetTop = 60; // 初期のmenu-containerの高さ分を加算
 
-    visibleMenus.forEach(menu => {
-        // アニメーションを適用して位置を変更
-        menu.style.top = `${offsetTop}px`;
-        offsetTop += menu.getBoundingClientRect().height + 10; // メニュー間の余白を加算
-    });
-}
+            visibleMenus.forEach(menu => {
+                // アニメーションを適用して位置を変更
+                menu.style.top = `${offsetTop}px`;
+                offsetTop += menu.getBoundingClientRect().height + 10; // メニュー間の余白を加算
+            });
+        }
 
-
-// ウィンドウのサイズが変更された時にメニューの高さを調整
-window.addEventListener('resize', adjustMenuHeight);
+        // ウィンドウのサイズが変更された時にメニューの高さを調整
+        window.addEventListener('resize', adjustMenuHeight);
 
 
         // 地図の初期化
         var map = L.map('map', { zoomControl: false }).setView([21.03966820428092, 105.86461819490408], 12);
+      
+        // Hanoi, HCMC, Vietnam の座標
+        const locations = {
+            'hn-area': { coords: [21.03966820428092, 105.86461819490408], zoom: 12 }, // Hanoi
+            'hcm-area': { coords: [10.787176769219485, 106.69384890636728], zoom: 12 }, // HCMC
+            'vn-area': { coords: [16.54678169863402, 106.46234268220803], zoom: 5 } // Vietnam（広域表示）
+        };
+
+        // ラジオボタンにイベントリスナーを追加して地図の中心を変更
+        document.getElementById('area-radio').addEventListener('change', function(event) {
+            if (event.target && event.target.type === 'radio') {
+                const selectedLocation = locations[event.target.id];
+                if (selectedLocation) {
+                    map.setView(selectedLocation.coords, selectedLocation.zoom, {
+                        animate: true,
+                        duration: 1.5 // アニメーションの持続時間（秒）
+                    });
+                }
+            }
+        });
 
         
         // ズームレベルによってアイコンを切り替える関数
