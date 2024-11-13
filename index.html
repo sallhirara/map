@@ -831,7 +831,60 @@
                 });
             };
             reader.readAsArrayBuffer(file);
-        });        
+        }); 
+      
+
+        // #conditions内のチェックボックスを#PJ List内の関連する親チェックボックスと連動させる
+        document.querySelectorAll('#conditions .c-checkbox input[type="checkbox"]').forEach(conditionCheckbox => {
+            conditionCheckbox.addEventListener('change', function() {
+                const isChecked = this.checked;
+
+                // 各条件のチェックボックスIDに応じた親チェックボックスを探して連動させる
+                let parentCheckboxId;
+                switch (this.id) {
+                    case 'primary-category':
+                        parentCheckboxId = 'togglePrimary';
+                        break;
+                    case 'condo-category':
+                        parentCheckboxId = 'toggleCondominium';
+                        break;
+                    case 'ecoba-category':
+                        parentCheckboxId = 'toggleECOBA PJ';
+                        break;
+                    case 'hc-category':
+                        parentCheckboxId = 'toggleHC PJ';
+                        break;
+                    default:
+                        return; // マッチするものがない場合は処理を中断
+                }
+
+                // 親チェックボックスを見つけて、その状態を更新
+                const parentCheckbox = document.getElementById(parentCheckboxId);
+                if (parentCheckbox) {
+                    parentCheckbox.checked = isChecked;
+
+                    // 親チェックボックスの変更に応じて、その下層のチェックボックスも連動させる
+                    const individualCheckboxes = parentCheckbox.closest('.layer-group').querySelectorAll('.individual-icon-container input[type="checkbox"]');
+                    individualCheckboxes.forEach(individualCheckbox => {
+                        individualCheckbox.checked = isChecked;
+
+                        // マーカーの表示・非表示を同期
+                        const category = individualCheckbox.dataset.category || parentCheckboxId.replace('toggle', '').trim();
+                        const name = individualCheckbox.labels[0]?.textContent.trim(); // ラベルからプロジェクト名を取得
+                        const marker = window.categoryMarkers[category]?.find(m => m.getPopup().getContent().includes(name));
+
+                        if (marker) {
+                            if (isChecked) {
+                                marker.addTo(map);
+                            } else {
+                                map.removeLayer(marker);
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
       
         // 画面ローテーションでリロード
         function handleOrientationChange() {
