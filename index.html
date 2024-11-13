@@ -75,7 +75,6 @@
             position: absolute;
             width: 90%;
             max-width: 500px;
-            max-height: 80vh;
             overflow-y: hidden;
             left: 5%;
             background: transparent;
@@ -85,7 +84,8 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
             z-index: 1001;
             font-size: 12px;
-            transition: transform 0.5s ease, opacity 0.5s ease; /* スムーズに動くように追加 */
+                transition: transform 0.7s ease, opacity 0.7s ease, top 0.7s ease; /* アニメーションをゆっくりに変更 */
+
             transform: translateY(-150%);
             opacity: 0; /* 初期の透明度を設定 */
         }
@@ -238,20 +238,16 @@
 
         .menu {
             border: none;
-            max-height: 70vh;
             overflow-y: auto;
             margin: 0;
-            overflow: auto;
+            -ms-overflow-style: none;  /* IEとEdgeでスクロールバーを非表示 */
+            scrollbar-width: none;  /* Firefoxでスクロールバーを非表示 */
         }
         
         .menu::-webkit-scrollbar {
           display: none;
         }
         
-        .menu {
-            -ms-overflow-style: none;  /* IEとEdgeでスクロールバーを非表示 */
-            scrollbar-width: none;  /* Firefoxでスクロールバーを非表示 */
-        }
 
         /*Category 1 毎 のコンテナ*/
         .layer-group {
@@ -396,42 +392,75 @@
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
-        
-        function toggleMenu(menuId, button) {
-            const menu = document.getElementById(menuId);
-            const allMenus = document.querySelectorAll('.mega-menu');
+function adjustMenuHeight() {
+    const menu = document.querySelector('.menu');
+    const summary = document.getElementById('summary');
+    const conditions = document.getElementById('conditions');
 
-            // 対象のメニューを閉じる処理
-            if (menu.style.display === 'block') {
-                menu.style.transform = 'translateY(-150%)';
-                menu.style.opacity = '0'; // フェードアウト効果を追加
-                setTimeout(() => {
-                    menu.style.display = 'none';
-                    adjustMenuPositions(); // 他のメニューを再配置
-                }, 500);
-            } else {
-                // メニューを開く場合
-                menu.style.display = 'block';
-                setTimeout(() => {
-                    adjustMenuPositions(); // 他のメニューも含めて再配置
-                    menu.style.transform = 'translateY(0)'; // スライドダウン
-                    menu.style.opacity = '1'; // フェードイン効果を追加
-                }, 0);
-            }
-        }
+    // 各要素の高さを取得
+    const vh = window.innerHeight;
+    const menuContainerHeight = 30; // .menu-container の高さ
+    const bottomMargin = 100; // 下の余白 50px
 
-        // メニューの位置を再配置する関数
-        function adjustMenuPositions() {
-            const visibleMenus = Array.from(document.querySelectorAll('.mega-menu'))
-                .filter(menu => menu.style.display === 'block');
+    let summaryHeight = summary.style.display === 'block' ? summary.getBoundingClientRect().height : 0;
+    let conditionsHeight = conditions.style.display === 'block' ? conditions.getBoundingClientRect().height : 0;
 
-            let offsetTop = 60; // 初期のmenu-containerの高さ分を加算
+    // menuの新しい高さを計算
+    let newHeight = vh - menuContainerHeight - bottomMargin;
 
-            visibleMenus.forEach(menu => {
-                menu.style.top = `${offsetTop}px`;
-                offsetTop += menu.getBoundingClientRect().height + 10; // メニュー間の余白を加算
-            });
-        }
+    if (summaryHeight > 0 && conditionsHeight > 0) {
+        newHeight -= summaryHeight + conditionsHeight;
+    } else if (summaryHeight > 0) {
+        newHeight -= summaryHeight;
+    } else if (conditionsHeight > 0) {
+        newHeight -= conditionsHeight;
+    }
+
+    // 計算された高さを.menuに設定
+    menu.style.height = `${newHeight}px`;
+
+    // メニュー位置の再調整
+    adjustMenuPositions();
+}
+
+function toggleMenu(menuId, button) {
+    const menu = document.getElementById(menuId);
+
+    if (menu.style.display === 'block') {
+        menu.style.transform = 'translateY(-150%)';
+        menu.style.opacity = '0'; // フェードアウト効果
+        setTimeout(() => {
+            menu.style.display = 'none';
+            adjustMenuHeight(); // メニュー高さを再計算
+        }, 500);
+    } else {
+        // メニューを開く
+        menu.style.display = 'block';
+        setTimeout(() => {
+            menu.style.transform = 'translateY(0)'; // スライドダウン
+            menu.style.opacity = '1'; // フェードイン効果
+            adjustMenuHeight(); // メニュー高さを再計算
+        }, 0);
+    }
+}
+
+function adjustMenuPositions() {
+    const visibleMenus = Array.from(document.querySelectorAll('.mega-menu'))
+        .filter(menu => menu.style.display === 'block');
+
+    let offsetTop = 60; // 初期のmenu-containerの高さ分を加算
+
+    visibleMenus.forEach(menu => {
+        // アニメーションを適用して位置を変更
+        menu.style.top = `${offsetTop}px`;
+        offsetTop += menu.getBoundingClientRect().height + 10; // メニュー間の余白を加算
+    });
+}
+
+
+// ウィンドウのサイズが変更された時にメニューの高さを調整
+window.addEventListener('resize', adjustMenuHeight);
+
 
         // 地図の初期化
         var map = L.map('map', { zoomControl: false }).setView([21.03966820428092, 105.86461819490408], 12);
