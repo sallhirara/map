@@ -126,11 +126,11 @@
             border: none;
             margin-bottom: 5px;
           
-            /*　radio items の割り付け　*/
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
+            /*　radio items の割り付けグリッド４分割　*/
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 横に2分割 */
+            grid-template-rows: repeat(1, 1fr);    /* 縦に2分割 */
+            gap: 0px;                             /* 各アイテム間のスペース */             
         }
 
         .a-radio {
@@ -186,10 +186,11 @@
             margin-bottom: 5px;
             
             /*　checkbox　item の均等割り付け　*/
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 横に2分割 */
+            grid-template-rows: repeat(1, 1fr);    /* 縦に2分割 */
+            gap: 0px;                             /* 各アイテム間のスペース */
+     
         }
 
         .c-checkbox {
@@ -361,17 +362,18 @@
     <div id="conditions" class="mega-menu">
         <!-- radio button -->
         <div id="area-radio" class="area-radio">
-            <label for="vn-area" class="a-radio">
-                <input type="radio" id="vn-area" name="selector" tabindex="1">
-                <span>Vietnam</span>
-            </label>
+
             <label for="hn-area" class="a-radio">
-                <input type="radio" id="hn-area" name="selector" tabindex="2" checked>
+                <input type="radio" id="hn-area" name="selector" tabindex="1" checked>
                 <span>Hanoi</span>
             </label>
             <label for="hcm-area" class="a-radio">
-                <input type="radio" id="hcm-area" name="selector" tabindex="3">
+                <input type="radio" id="hcm-area" name="selector" tabindex="2">
                 <span>HCMC</span>
+            </label>
+            <label for="vn-area" class="a-radio">
+                <input type="radio" id="vn-area" name="selector" tabindex="3">
+                <span>Vietnam</span>
             </label>
         </div>
         <!-- radio button-->
@@ -384,7 +386,7 @@
             </label>
             <label for="condo-category" class="c-checkbox">
                 <input type="checkbox" id="condo-category" name="selector" tabindex="2" checked>
-                <span>Condominium</span>
+                <span>Condo</span>
             </label>
             <label for="ecoba-category" class="c-checkbox">
                 <input type="checkbox" id="ecoba-category" name="selector" tabindex="3" checked>
