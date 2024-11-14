@@ -396,6 +396,10 @@
                 <input type="checkbox" id="primary-category" name="selector" tabindex="1" checked>
                 <span>Primary</span>
             </label>
+            <label for="hc-category" class="c-checkbox">
+                <input type="checkbox" id="hc-category" name="selector" tabindex="4" checked>
+                <span>Haseko</span>
+            </label>
             <label for="condo-category" class="c-checkbox">
                 <input type="checkbox" id="condo-category" name="selector" tabindex="2" checked>
                 <span>Condo</span>
@@ -403,11 +407,6 @@
             <label for="ecoba-category" class="c-checkbox">
                 <input type="checkbox" id="ecoba-category" name="selector" tabindex="3" checked>
                 <span>Ecoba</span>
-            </label>
-            
-            <label for="hc-category" class="c-checkbox">
-                <input type="checkbox" id="hc-category" name="selector" tabindex="4" checked>
-                <span>Haseko</span>
             </label>
         </div>
         <!-- check box -->
@@ -887,14 +886,14 @@ mainCategoryDiv.appendChild(toggleIcon); // categoryTextの右側に追加
                     case 'primary-category':
                         parentCheckboxId = 'togglePrimary';
                         break;
+                    case 'hc-category':
+                        parentCheckboxId = 'toggleHC PJ';
+                        break;
                     case 'condo-category':
                         parentCheckboxId = 'toggleCondominium';
                         break;
                     case 'ecoba-category':
                         parentCheckboxId = 'toggleECOBA PJ';
-                        break;
-                    case 'hc-category':
-                        parentCheckboxId = 'toggleHC PJ';
                         break;
                     default:
                         return; // マッチするものがない場合は処理を中断
