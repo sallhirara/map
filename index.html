@@ -565,7 +565,7 @@
         var categoryIcons = {
             "Condominium": "https://img.icons8.com/?size=100&id=uRRFz0DH6uYw&format=png&color=000000", // Condominiumのアイコン
             "ECOBA PJ": "https://img.icons8.com/?size=100&id=42P5zkOQICqY&format=png&color=000000", // ECOBAのアイコン
-            "HC PJ": "https://img.icons8.com/?size=100&id=bnfp2fmtrh0g&format=png&color=FF0062" // 新規検討案件のアイコン
+            "New PJ": "https://img.icons8.com/?size=100&id=bnfp2fmtrh0g&format=png&color=FF0062" // 新規検討案件のアイコン
         };
 
         // ファイルアップロードの処理
@@ -709,7 +709,7 @@
                         iconSize = [20, 20]; // ECOBAのアイコンサイズを小さく
                     } else if (category === "ECOBA PJ") {
                         iconSize = [25, 25]; // Primaryのアイコンサイズを小さく
-                    } else if (category === "HC PJ") {
+                    } else if (category === "New PJ") {
                         iconSize = [37, 37]; // Primaryのアイコンサイズを小さく
                     } else {
                         iconSize = [30, 30]; // それ以外は通常のサイズ
@@ -886,14 +886,14 @@ mainCategoryDiv.appendChild(toggleIcon); // categoryTextの右側に追加
                     case 'primary-category':
                         parentCheckboxId = 'togglePrimary';
                         break;
-                    case 'hc-category':
-                        parentCheckboxId = 'toggleHC PJ';
-                        break;
                     case 'condo-category':
                         parentCheckboxId = 'toggleCondominium';
                         break;
                     case 'ecoba-category':
                         parentCheckboxId = 'toggleECOBA PJ';
+                        break;
+                    case 'hc-category':
+                        parentCheckboxId = 'toggleHC PJ';
                         break;
                     default:
                         return; // マッチするものがない場合は処理を中断
