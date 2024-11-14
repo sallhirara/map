@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Mapping system</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
     <style>
@@ -252,18 +252,16 @@
 
         /* -------- PJ List from here --------*/
         #listMenu {
-            border: none;
-        }
+            max-height: 500px;
 
-        .menu {
-            border: solid 1px red;
             overflow-y: auto;
             margin: 0;
+            padding: 20px 25px;
             -ms-overflow-style: none;  /* IEとEdgeでスクロールバーを非表示 */
             scrollbar-width: none;  /* Firefoxでスクロールバーを非表示 */
         }
         
-        .menu::-webkit-scrollbar {
+        #listMenu::-webkit-scrollbar {
           display: none;
         }
         
@@ -272,35 +270,32 @@
         .layer-group {
             margin-bottom: 15px;
         }
+        
+        /*Category 1 のヘッダーコンテナ*/
+        .main-category {
+            margin-bottom: 10px;
+        }
 
         /*Category 1 のテキスト部分*/
         .category-text {
-            margin-left: 10px;
+            padding-left: 10px;
             font-size: 14px;
             font-weight: bolder;
             color: #555;
             cursor: pointer;
         }
 
-        /*Category 1 のヘッダーコンテナ*/
-        .main-category {
-            margin-bottom: 10px;
+        /* アイコンの共通スタイル */
+        .toggle-icon {
+            height: 18px;
+            padding: 2px 5px 2px 16px;
+            color: #999; /* 開いた状態で色を変更 */
         }
 
-        /* アイコンの共通スタイル */
-.toggle-icon {
-
-    font-size: 18px;        /* アイコンのサイズ */
-    margin-left: 10px;       /* テキストとの間隔 */
-    color: #999;            /* アイコンの色 */
-    transition: transform 0.3s ease; /* トランジションでスムーズなアニメーション */
-}
-
-/* 開いているときのスタイル */
-.toggle-icon.open {
-    color: #999; /* 開いた状態で色を変更 */
-    transform: rotate(0deg); /* アニメーションで上下反転 */
-}
+        /* 開いているときのスタイル */
+        .toggle-icon.open {
+            color: #999; /* 開いた状態で色を変更 */
+        }
 
         /*PJ Name それぞれのコンテナ*/
         .individual-icon-container {
@@ -435,7 +430,7 @@
 
             if (menu.style.display === 'block') {
                 // メニューを閉じる
-                menu.style.transform = 'translateY(-20%)';
+                menu.style.transform = 'translateY(-20px)';
                 menu.style.opacity = '0'; // フェードアウト効果
                 setTimeout(() => {
                     menu.style.display = 'none';             
@@ -790,13 +785,13 @@
 
 // 開閉アイコンの作成
 var toggleIcon = document.createElement('i');
-toggleIcon.className = 'fa-solid fa-sort-down toggle-icon'; // スタイル用のクラスを追加
-categoryText.appendChild(toggleIcon); // categoryTextの右側にアイコンを追加
+toggleIcon.className = 'fa-solid fa-caret-down toggle-icon'; // クラス名を変更
 
-// category-textのクリックイベントを設定
-categoryText.addEventListener('click', function(event) {
-    event.stopPropagation();
+// mainCategoryDivにcategoryTextの右側にアイコンを追加
+mainCategoryDiv.appendChild(toggleIcon); // categoryTextの右側に追加
 
+                        // 開閉機能の共通関数
+                        function toggleIndividualContainers() {
     const individualContainers = categoryContainer.querySelectorAll('.individual-icon-container');
     let isOpen = false;
 
@@ -810,14 +805,22 @@ categoryText.addEventListener('click', function(event) {
     });
 
     // アイコンの切り替えとスタイルの適用
-    if (isOpen) {
-        toggleIcon.classList.remove('fa-sort-down');
-        toggleIcon.classList.add('fa-sort-up', 'open'); // 開いている時のクラスを追加
-    } else {
-        toggleIcon.classList.remove('fa-sort-up', 'open');
-        toggleIcon.classList.add('fa-sort-down'); // 閉じている時のクラスに戻す
-    }
-});                    }
+    toggleIcon.classList.toggle('fa-caret-down', !isOpen);
+    toggleIcon.classList.toggle('fa-caret-up', isOpen);
+}
+
+                        // category-textとtoggle-iconにクリックイベントを設定
+                        categoryText.addEventListener('click', function(event) {
+                            event.stopPropagation();
+                            toggleIndividualContainers();
+                        });
+
+                        toggleIcon.addEventListener('click', function(event) {
+                            event.stopPropagation();
+                            toggleIndividualContainers();
+                        });
+
+                   }
 
                     // 各アイテムごとのチェックボックスとラベルの生成
                     var individualContainer = document.createElement('div');
