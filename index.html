@@ -346,7 +346,7 @@
         <button class="menu-button" onclick="toggleMenu('conditions', this)">Conditions<i class="fa-solid fa-caret-down"></i></button>
         <button class="menu-button" onclick="toggleMenu('listMenu', this)">PJ List<i class="fa-solid fa-caret-down"></i></button>
     </div>
-
+    <!-- Summary -->
     <div id="summary" class="mega-menu">
         <ul>
             <li>Number of PJ</li>
@@ -402,12 +402,11 @@
         <!-- check box -->
     </div>
 
-
-
-
-    <div id="listMenu" class="mega-menu">
+    <!-- PJ List -->
+    <div id="listMenu" class="mega-menu"></div>
+  
         <div class="menu" id="menu"></div> <!-- Project Listをクリックした際に開くメニュー -->
-    </div>
+    
     
     <div id="map"></div>
 
@@ -422,8 +421,7 @@
                 menu.style.transform = 'translateY(-20%)';
                 menu.style.opacity = '0'; // フェードアウト効果
                 setTimeout(() => {
-                    menu.style.display = 'none';
-                  
+                    menu.style.display = 'none';             
                     menu.style.top = "40px"; // 初期位置にリセット（menu-container の下）
                     adjustMenuHeight(); // メニュー高さを再計算
                     adjustMenuPositions(); // メニュー位置の再調整
@@ -583,7 +581,7 @@
                     });
                 }
                 window.categoryMarkers = {};
-                document.getElementById('menu').innerHTML = '';
+                document.getElementById('listMenu').innerHTML = '';
 
                 // jsonDataを使ってカテゴリー別にチェックボックスとマーカーを作成
                 jsonData.forEach(function(item, index) {
@@ -750,7 +748,7 @@
                         mainCategoryDiv.appendChild(categoryCheckbox);
                         mainCategoryDiv.appendChild(categoryText);
                         categoryContainer.appendChild(mainCategoryDiv);
-                        document.getElementById('menu').appendChild(categoryContainer);
+                        document.getElementById('listMenu').appendChild(categoryContainer);
 
                         // チェックボックスの状態によってマーカーを表示・非表示にするイベントリスナー
                         categoryCheckbox.addEventListener('change', function(e) {
