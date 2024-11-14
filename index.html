@@ -287,6 +287,22 @@
             margin-bottom: 10px;
         }
 
+        /* アイコンの共通スタイル */
+.toggle-icon {
+    border: solid 1px red;
+
+    font-size: 18px;        /* アイコンのサイズ */
+    margin-left: 10px;       /* テキストとの間隔 */
+    color: #999;            /* アイコンの色 */
+    transition: transform 0.3s ease; /* トランジションでスムーズなアニメーション */
+}
+
+/* 開いているときのスタイル */
+.toggle-icon.open {
+    color: #999; /* 開いた状態で色を変更 */
+    transform: rotate(0deg); /* アニメーションで上下反転 */
+}
+
         /*PJ Name それぞれのコンテナ*/
         .individual-icon-container {
             margin-bottom: 5px;
@@ -413,7 +429,8 @@
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
-     
+        
+        
         function toggleMenu(menuId, button) {
             const menu = document.getElementById(menuId);
 
@@ -469,7 +486,7 @@
               // メニュー位置の再調整
               adjustMenuPositions();
           }
-　
+
         function adjustMenuPositions() {
             const visibleMenus = Array.from(document.querySelectorAll('.mega-menu'))
                 .filter(menu => menu.style.display === 'block');
@@ -772,25 +789,41 @@
                             });
                         });
 
-                        // category-textのクリックイベントを下層コンテナの開閉に変更
-                        categoryText.addEventListener('click', function(event) {
-                            event.stopPropagation(); // チェックボックスへのクリックイベントを防ぐ
+// 開閉アイコンの作成
+var toggleIcon = document.createElement('i');
+toggleIcon.className = 'fa-solid fa-sort-down toggle-icon'; // スタイル用のクラスを追加
+categoryText.appendChild(toggleIcon); // categoryTextの右側にアイコンを追加
 
-                            const individualContainers = categoryContainer.querySelectorAll('.individual-icon-container');
-                            individualContainers.forEach(container => {
-                                if (container.style.display === 'none' || container.style.display === '') {
-                                    container.style.display = 'block'; // 開く
-                                } else {
-                                    container.style.display = 'none'; // 閉じる
-                                }
-                            });
-                        });
-                    }
+// category-textのクリックイベントを設定
+categoryText.addEventListener('click', function(event) {
+    event.stopPropagation();
+
+    const individualContainers = categoryContainer.querySelectorAll('.individual-icon-container');
+    let isOpen = false;
+
+    individualContainers.forEach(container => {
+        if (container.style.display === 'none' || container.style.display === '') {
+            container.style.display = 'block'; // 開く
+            isOpen = true;
+        } else {
+            container.style.display = 'none'; // 閉じる
+        }
+    });
+
+    // アイコンの切り替えとスタイルの適用
+    if (isOpen) {
+        toggleIcon.classList.remove('fa-sort-down');
+        toggleIcon.classList.add('fa-sort-up', 'open'); // 開いている時のクラスを追加
+    } else {
+        toggleIcon.classList.remove('fa-sort-up', 'open');
+        toggleIcon.classList.add('fa-sort-down'); // 閉じている時のクラスに戻す
+    }
+});                    }
 
                     // 各アイテムごとのチェックボックスとラベルの生成
                     var individualContainer = document.createElement('div');
                     individualContainer.className = 'individual-icon-container';
-                    individualContainer.style.display = 'block'; // 初期状態は非表示に設定
+                    individualContainer.style.display = 'none'; // 初期状態は非表示に設定
 
                     var checkbox = document.createElement('input');
                     checkbox.type = 'checkbox';
