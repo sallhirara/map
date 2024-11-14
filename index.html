@@ -84,11 +84,12 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
             z-index: 1001;
             font-size: 12px;
-            transition: transform 0.7s ease, opacity 0.7s ease, top 0.7s ease; /* アニメーションをゆっくりに変更 */
-          
+
             top: 60px; /* menu-container (30px) + margin (10px) を考慮 */
             transform: translateY(-20px); /* 初期状態で少し上に隠しておく */
             opacity: 0; /* 初期は非表示 */
+            transition: transform 0.7s ease, opacity 0.7s ease, top 0.7s ease; /* アニメーションをゆっくりに変更 */
+
         }
       
         .mega-menu::-webkit-scrollbar {
@@ -252,7 +253,6 @@
         /* -------- PJ List from here --------*/
         #listMenu {
             border: none;
-            max-height: 600px;
         }
 
         .menu {
@@ -423,7 +423,7 @@
                 menu.style.opacity = '0'; // フェードアウト効果
                 setTimeout(() => {
                     menu.style.display = 'none';             
-                    menu.style.top = "40px"; // 初期位置にリセット（menu-container の下）
+                    menu.style.top = "60px"; // 初期位置にリセット（menu-container の下）
                     adjustMenuHeight(); // メニュー高さを再計算
                     adjustMenuPositions(); // メニュー位置の再調整
                 }, 500);
