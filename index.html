@@ -84,10 +84,11 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
             z-index: 1001;
             font-size: 12px;
-                transition: transform 0.7s ease, opacity 0.7s ease, top 0.7s ease; /* アニメーションをゆっくりに変更 */
-
-            transform: translateY(-150%);
-            opacity: 0; /* 初期の透明度を設定 */
+            transition: transform 0.7s ease, opacity 0.7s ease, top 0.7s ease; /* アニメーションをゆっくりに変更 */
+          
+            top: 60px; /* menu-container (30px) + margin (10px) を考慮 */
+            transform: translateY(-20px); /* 初期状態で少し上に隠しておく */
+            opacity: 0; /* 初期は非表示 */
         }
       
         .mega-menu::-webkit-scrollbar {
@@ -412,46 +413,20 @@
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
-        function adjustMenuHeight() {
-            const menu = document.querySelector('.menu');
-            const summary = document.getElementById('summary');
-            const conditions = document.getElementById('conditions');
-
-            // 各要素の高さを取得
-            const vh = window.innerHeight;
-            const menuContainerHeight = 30; // .menu-container の高さ
-            const bottomMargin = 100; // 下の余白 50px
-
-            let summaryHeight = summary.style.display === 'block' ? summary.getBoundingClientRect().height : 0;
-            let conditionsHeight = conditions.style.display === 'block' ? conditions.getBoundingClientRect().height : 0;
-
-            // menuの新しい高さを計算
-            let newHeight = vh - menuContainerHeight - bottomMargin;
-
-            if (summaryHeight > 0 && conditionsHeight > 0) {
-                newHeight -= summaryHeight + conditionsHeight;
-            } else if (summaryHeight > 0) {
-                newHeight -= summaryHeight;
-            } else if (conditionsHeight > 0) {
-                newHeight -= conditionsHeight;
-            }
-
-            // 計算された高さを.menuに設定
-            menu.style.height = `${newHeight}px`;
-
-            // メニュー位置の再調整
-            adjustMenuPositions();
-        }
-
+     
         function toggleMenu(menuId, button) {
             const menu = document.getElementById(menuId);
 
             if (menu.style.display === 'block') {
-                menu.style.transform = 'translateY(-150%)';
+                // メニューを閉じる
+                menu.style.transform = 'translateY(-20%)';
                 menu.style.opacity = '0'; // フェードアウト効果
                 setTimeout(() => {
                     menu.style.display = 'none';
+                  
+                    menu.style.top = "40px"; // 初期位置にリセット（menu-container の下）
                     adjustMenuHeight(); // メニュー高さを再計算
+                    adjustMenuPositions(); // メニュー位置の再調整
                 }, 500);
             } else {
                 // メニューを開く
@@ -460,10 +435,42 @@
                     menu.style.transform = 'translateY(0)'; // スライドダウン
                     menu.style.opacity = '1'; // フェードイン効果
                     adjustMenuHeight(); // メニュー高さを再計算
+                    adjustMenuPositions(); // メニュー位置の再調整
                 }, 0);
             }
         }
+      
+        function adjustMenuHeight() {
+              const menu = document.querySelector('.menu');
+              const summary = document.getElementById('summary');
+              const conditions = document.getElementById('conditions');
 
+              // 各要素の高さを取得
+              const vh = window.innerHeight;
+              const menuContainerHeight = 30; // .menu-container の高さ
+              const bottomMargin = 100; // 下の余白 50px
+
+              let summaryHeight = summary.style.display === 'block' ? summary.getBoundingClientRect().height : 0;
+              let conditionsHeight = conditions.style.display === 'block' ? conditions.getBoundingClientRect().height : 0;
+
+              // menuの新しい高さを計算
+              let newHeight = vh - menuContainerHeight - bottomMargin;
+
+              if (summaryHeight > 0 && conditionsHeight > 0) {
+                  newHeight -= summaryHeight + conditionsHeight;
+              } else if (summaryHeight > 0) {
+                  newHeight -= summaryHeight;
+              } else if (conditionsHeight > 0) {
+                  newHeight -= conditionsHeight;
+              }
+
+              // 計算された高さを.menuに設定
+              menu.style.height = `${newHeight}px`;
+
+              // メニュー位置の再調整
+              adjustMenuPositions();
+          }
+　
         function adjustMenuPositions() {
             const visibleMenus = Array.from(document.querySelectorAll('.mega-menu'))
                 .filter(menu => menu.style.display === 'block');
@@ -476,6 +483,7 @@
                 offsetTop += menu.getBoundingClientRect().height + 10; // メニュー間の余白を加算
             });
         }
+
 
         // ウィンドウのサイズが変更された時にメニューの高さを調整
         window.addEventListener('resize', adjustMenuHeight);
