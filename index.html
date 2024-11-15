@@ -563,9 +563,11 @@
 
         // Category 1の値に基づくアイコンURLを定義
         var categoryIcons = {
-            "Condominium": "https://img.icons8.com/?size=100&id=uRRFz0DH6uYw&format=png&color=000000", // Condominiumのアイコン
+            "HC PJ": "https://img.icons8.com/?size=100&id=bnfp2fmtrh0g&format=png&color=FF0062", // 新規検討案件のアイコン
+            "Urban PJ": "https://img.icons8.com/?size=100&id=bnfp2fmtrh0g&format=png&color=05227AA8", // 麺開発案件のアイコン
             "ECOBA PJ": "https://img.icons8.com/?size=100&id=42P5zkOQICqY&format=png&color=000000", // ECOBAのアイコン
-            "HC PJ": "https://img.icons8.com/?size=100&id=bnfp2fmtrh0g&format=png&color=FF0062" // 新規検討案件のアイコン
+            "Condominium": "https://img.icons8.com/?size=100&id=uRRFz0DH6uYw&format=png&color=000000", // Condominiumのアイコン
+            "Other PJ": "https://img.icons8.com/?size=100&id=bnfp2fmtrh0g&format=png&color=8A8A02A8" // 新規検討案件のアイコン
         };
 
         // ファイルアップロードの処理
@@ -707,10 +709,14 @@
                     var iconSize;
                     if (category === "Primary") {
                         iconSize = [20, 20]; // ECOBAのアイコンサイズを小さく
-                    } else if (category === "ECOBA PJ") {
-                        iconSize = [25, 25]; // Primaryのアイコンサイズを小さく
                     } else if (category === "HC PJ") {
                         iconSize = [37, 37]; // Primaryのアイコンサイズを小さく
+                    } else if (category === "Urban PJ") {
+                        iconSize = [30, 30]; // Primaryのアイコンサイズを小さく
+                    } else if (category === "ECOBA PJ") {
+                        iconSize = [25, 25]; // Primaryのアイコンサイズを小さく
+                    } else if (category === "Other PJ") {
+                        iconSize = [25, 25]; // Primaryのアイコンサイズを小さく
                     } else {
                         iconSize = [30, 30]; // それ以外は通常のサイズ
                     }
