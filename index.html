@@ -49,11 +49,25 @@
         }
         
         .menu-button {
-            margin: 0px;
+            margin: 0 2px;
             padding: 5px 10px;
             cursor: pointer;
             border: none;
             border-radius: 8px;
+            background-color: transparent;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            color: #333;
+        }
+
+        .btn {
+            margin-left: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 50%;
             background-color: transparent;
             transition: background-color 0.3s;
             display: flex;
@@ -74,6 +88,10 @@
         }
 
         .menu-button:hover {
+            background-color: #ddd;
+        }
+
+        .btn:hover {
             background-color: #ddd;
         }
 
@@ -363,8 +381,8 @@
         <button class="menu-button" onclick="toggleMenu('summary', this)">Summary<i class="fa-solid fa-caret-down"></i></button>
         <button class="menu-button" onclick="toggleMenu('conditions', this)">COND.<i class="fa-solid fa-caret-down"></i></button>
         <button class="menu-button" onclick="toggleMenu('listMenu', this)">LIST<i class="fa-solid fa-caret-down"></i></button>
-        <button class="menu-button" type="button" date-action=""><i class="fa fa-save"></i></button>
-        <button class="menu-button" onclick="resetEvents()"><i class="fa fa-undo"></i></button>
+        <button class="btn" type="button" date-action=""><i class="fa fa-save"></i></button>
+        <button class="btn" onclick="resetEvents()"><i class="fa fa-undo"></i></button>
     </div>
     <!-- Summary -->
     <div id="summary" class="mega-menu">
