@@ -601,9 +601,11 @@ if (name && coordinates) {
         var parsedCoordinates = typeof coordinates === "string" ? JSON.parse(coordinates) : coordinates;
 
         var polygon = L.polygon(parsedCoordinates, {
-            color: 'blue', // ポリゴンの色
-            weight: 2,    // 線の太さ
-            fillOpacity: 0.4 // 塗りつぶしの透明度
+            color: 'none',         // 枠線の色
+            weight: 0,             // 枠線の太さ
+            opacity: 0.8,          // 枠線の透明度
+            fillColor: 'gold',   // 塗りつぶしの色
+            fillOpacity: 0.3       // 塗りつぶしの透明度
         }).bindPopup(`<b>${name}</b>`);
 
         polygon.addTo(map);
