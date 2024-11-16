@@ -594,25 +594,26 @@
                     var address = item['Address'] && item['Address'] !== 'n.a.' ? item['Address'] : '';                   
                     var location = [item['Latitude'], item['Longitude']];
 
-var coordinates = item['Site Area'] && item['Site Area'] !== 'n.a.' ? item['Site Area'] : null;
-if (name && coordinates) {
-    try {
-        // JSON.parseでエラーが出た場合のフォールバック
-        var parsedCoordinates = typeof coordinates === "string" ? JSON.parse(coordinates) : coordinates;
+                    var coordinates = item['Site Area'] && item['Site Area'] !== 'n.a.' ? item['Site Area'] : null;
+                    if (name && coordinates) {
+                        try {
+                            // JSON.parseでエラーが出た場合のフォールバック
+                            var parsedCoordinates = typeof coordinates === "string" ? JSON.parse(coordinates) : coordinates;
 
-        var polygon = L.polygon(parsedCoordinates, {
-            color: 'none',         // 枠線の色
-            weight: 0,             // 枠線の太さ
-            opacity: 0.8,          // 枠線の透明度
-            fillColor: 'gold',   // 塗りつぶしの色
-            fillOpacity: 0.3       // 塗りつぶしの透明度
-        }).bindPopup(`<b>${name}</b>`);
+                            var polygon = L.polygon(parsedCoordinates, {
+                                color: 'none',         // 枠線の色
+                                weight: 0,             // 枠線の太さ
+                                opacity: 0.8,          // 枠線の透明度
+                                fillColor: 'gold',   // 塗りつぶしの色
+                                fillOpacity: 0.3       // 塗りつぶしの透明度
+                            }).bindPopup(`<b>${name}</b>`);
 
-        polygon.addTo(map);
-    } catch (error) {
-        console.error(`Error parsing coordinates for ${name}:`, error);
-    }
-}
+                            polygon.addTo(map);
+                        } catch (error) {
+                            console.error(`Error parsing coordinates for ${name}:`, error);
+                        }
+                    }
+                    
                     var developer = item['Developer'] && item['Developer'] !== 'n.a.' ? item['Developer'] : '';
                     var units = item['Units'] && item['Units'] !== 'n.a.' ? item['Units'] : '';
                     // Unit Priceのフォーマット（$##,### /sqm）
