@@ -687,18 +687,42 @@
 
                 };
 
-                // ポリゴンのデータの処理
-                jsonData.forEach(item => {
-                    if (item['Site Name'] === 'smartCity') {
-                        console.log('smartCityのポリゴンを表示します');
-                        drawPolygon(polygons.smartCity, map); // デフォルトスタイルで描画
-                    } else if (item['Site Name'] === 'coLoa') {
-                        console.log('coLoaのポリゴンを表示します');
-                        drawPolygon(polygons.coLoa, map, { color: 'none', fillColor: 'gold' }); // カスタムスタイルで描画
-                    }
-                });     
+// ポリゴンのデータの処理
+jsonData.forEach(item => {
+    const siteName = item['Site Name']?.trim(); // サイト名を取得
+    const markerCoords = [item['Latitude'], item['Longitude']]; // マーカーの座標
+    const popupContent = `<b>${item['PJ name']}</b><br>${item['Description'] || ''}`; // ポップアップの内容
 
+    // マーカーを作成
+    const marker = L.marker(markerCoords).addTo(map);
+    marker.bindPopup(popupContent);
 
+    // デバッグログ：マーカー情報を確認
+    console.log(`Marker created: ${markerCoords}, Popup: ${popupContent}`);
+
+    // ポリゴンを描画し、クリック時にマーカーのポップアップを表示
+    if (siteName === 'smartCity') {
+        const polygon = drawPolygon(polygons.smartCity, map); // デフォルトスタイルで描画
+        addPolygonClickListener(polygon, marker);
+        console.log('smartCityポリゴンが描画されました');
+    } else if (siteName === 'coLoa') {
+        const polygon = drawPolygon(polygons.coLoa, map, { color: 'none', fillColor: 'gold' }); // カスタムスタイルで描画
+        addPolygonClickListener(polygon, marker);
+        console.log('coLoaポリゴンが描画されました');
+    }
+});
+
+// ポリゴンにクリックイベントを追加する関数
+function addPolygonClickListener(polygon, marker) {
+    polygon.on('click', function () {
+        console.log('ポリゴンがクリックされました');
+        marker.openPopup(); // マーカーのポップアップを開く
+        map.flyTo(marker.getLatLng(), map.getZoom(), {
+            animate: true,
+            duration: 1.3
+        });
+    });
+}
                 
                 // 以前のマーカーとチェックボックスをリセット
                 if (window.categoryMarkers) {
