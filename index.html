@@ -91,6 +91,13 @@
             opacity: 0; /* 初期は非表示 */
             transition: transform 0.7s ease, opacity 0.7s ease, top 0.7s ease; /* アニメーションをゆっくりに変更 */
         }
+
+        /* Safari用フォールバック（背景のデザインを変更） */
+        @supports not (-webkit-backdrop-filter: none) {
+            .mega-menu {
+                background: rgba(200, 200, 200, 0.5); /* フォールバック用の色 */
+            }
+        }
       
         .mega-menu::-webkit-scrollbar {
           display: none; /* Chrome, Safari, Opera のスクロールバーを非表示 */
