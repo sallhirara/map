@@ -551,6 +551,49 @@
             "Other PJ": "https://img.icons8.com/?size=100&id=bnfp2fmtrh0g&format=png&color=8A8A02A8" // 新規検討案件のアイコン
         };
 
+        
+// 円を追加
+var centerCircle = L.circle(map.getCenter(), {
+    color: 'blue',         // 枠線の色
+    weight: 0.5,             // 枠線の太さ
+    opacity: 0.5,          // 枠線の透明度
+    fillColor: 'none',     // 塗りつぶしの色
+    fillOpacity: 0.1,      // 塗りつぶしの透明度
+    radius: 5000           // 半径 5000m（5km）
+}).addTo(map);
+
+// 中心をスムーズに移動させる関数
+function smoothlyMoveCircle(circle, newLatLng, duration = 777) {
+    var startLatLng = circle.getLatLng();
+    var startTime = performance.now();
+
+    function animateMove() {
+        var currentTime = performance.now();
+        var progress = Math.min((currentTime - startTime) / duration, 1);
+
+        // 線形補間で位置を計算
+        var interpolatedLat = startLatLng.lat + progress * (newLatLng.lat - startLatLng.lat);
+        var interpolatedLng = startLatLng.lng + progress * (newLatLng.lng - startLatLng.lng);
+
+        circle.setLatLng([interpolatedLat, interpolatedLng]);
+
+        if (progress < 1) {
+            requestAnimationFrame(animateMove);
+        }
+    }
+
+    requestAnimationFrame(animateMove);
+}
+
+// 地図の移動にアニメーション付きで円を追従させる
+map.on('moveend', function () {
+    smoothlyMoveCircle(centerCircle, map.getCenter());
+});
+
+// ズーム時にも対応（必要に応じて）
+map.on('zoomend', function () {
+    smoothlyMoveCircle(centerCircle, map.getCenter());
+});
 
 
 
