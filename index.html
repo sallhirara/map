@@ -48,7 +48,10 @@
             display: none;
         }
         
-        .menu-button {
+        .menu-button,
+        .save-button,
+
+        .reset-button {
             margin: 0 5px;
             padding: 5px 10px;
             cursor: pointer;
@@ -66,7 +69,14 @@
             margin-left: 10px;
         }
 
-        .menu-button:hover {
+        .save-button {
+            margin-left: 30px;
+        }
+
+        .menu-button:hover,
+        .save-button:hover,
+
+        .reset-button:hover {
             background-color: #ddd;
         }
 
@@ -353,9 +363,12 @@
     <div class="menu-container">
         <label for="fileUpload" class="custom-file-upload"><i class="fa-solid fa-file-arrow-down"></i></label>
         <input type="file" id="fileUpload" accept=".xlsx,.xlsm" />
-        <button class="menu-button" onclick="toggleMenu('summary', this)">Summary<i class="fa-solid fa-caret-down"></i></button>
-        <button class="menu-button" onclick="toggleMenu('conditions', this)">Conditions<i class="fa-solid fa-caret-down"></i></button>
-        <button class="menu-button" onclick="toggleMenu('listMenu', this)">PJ List<i class="fa-solid fa-caret-down"></i></button>
+        <button class="menu-button" onclick="toggleMenu('summary', this)">SUM.<i class="fa-solid fa-caret-down"></i></button>
+        <button class="menu-button" onclick="toggleMenu('conditions', this)">COND.<i class="fa-solid fa-caret-down"></i></button>
+        <button class="menu-button" onclick="toggleMenu('listMenu', this)">LIST<i class="fa-solid fa-caret-down"></i></button>
+
+        <button class="save-button" type="button" date-action=""><i class="fa fa-save"></i></button>
+        <button class="reset-button" type="button" date-action=""><i class="fa-solid fa-arrows-rotate"></i></button>
     </div>
     <!-- Summary -->
     <div id="summary" class="mega-menu">
