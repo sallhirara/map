@@ -354,9 +354,12 @@
             top: 40px; /* menu-container の高さ分だけ下にずらす */
         }
 
+
         .leaflet-popup-content {
             user-select: text;
         }
+        
+
     </style>
 </head>
 <body>
@@ -653,7 +656,6 @@
                     var location = [item['Latitude'], item['Longitude']];
 
                     var coordinates = item['Site Area'] && item['Site Area'] !== 'n.a.' ? item['Site Area'] : null;
-
                     
                     var developer = item['Developer'] && item['Developer'] !== 'n.a.' ? item['Developer'] : '';
                     var units = item['Units'] && item['Units'] !== 'n.a.' ? item['Units'] : '';
@@ -754,15 +756,15 @@
                     if (category === "Primary") {
                         iconSize = [20, 20]; // ECOBAのアイコンサイズを小さく
                     } else if (category === "HC PJ") {
-                        iconSize = [37, 37]; // Primaryのアイコンサイズを小さく
+                        iconSize = [37, 37]; // HC PJのアイコンサイズを小さく
                     } else if (category === "Urban PJ") {
-                        iconSize = [20, 20]; // Primaryのアイコンサイズを小さく
+                        iconSize = [0, 0]; // Urban PJのアイコン
                     } else if (category === "ECOBA PJ") {
-                        iconSize = [20, 20]; // Primaryのアイコンサイズを小さく
+                        iconSize = [20, 20]; // ECIOBA PJのアイコンサイズを小さく
                     } else if (category === "Condominium") {
-                        iconSize = [20, 20]; // Primaryのアイコンサイズを小さく
+                        iconSize = [20, 20]; // Condominiumのアイコンサイズを小さく
                     } else if (category === "Other PJ") {
-                        iconSize = [20, 20]; // Primaryのアイコンサイズを小さく
+                        iconSize = [20, 20]; // Other PJのアイコンサイズを小さく
                     } else {
                         iconSize = [30, 30]; // それ以外は通常のサイズ
                     }
@@ -789,7 +791,9 @@
                                 opacity: 0.8,          // 枠線の透明度
                                 fillColor: 'gold',   // 塗りつぶしの色
                                 fillOpacity: 0.3       // 塗りつぶしの透明度
-                            }).bindPopup(popupContent);
+                            }).bindPopup(popupContent, {
+                                className: 'polygon-popup' // カスタムクラスを割り当てる
+                            });
 
                             polygon.addTo(map);
                         } catch (error) {
