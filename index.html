@@ -562,18 +562,27 @@ var centerCircle = L.circle(map.getCenter(), {
     radius: 5000           // 半径 5000m（5km）
 }).addTo(map);
 
-// 中心をスムーズに移動させる関数
-function smoothlyMoveCircle(circle, newLatLng, duration = 777) {
+// イージング関数 (easeInOutQuad)
+function easeInOutQuad(t) {
+    return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+}
+
+// 円の中心を滑らかに移動させる関数
+function smoothlyMoveCircle(circle, newLatLng, duration = 1000) {
     var startLatLng = circle.getLatLng();
     var startTime = performance.now();
 
     function animateMove() {
         var currentTime = performance.now();
-        var progress = Math.min((currentTime - startTime) / duration, 1);
+        var elapsed = currentTime - startTime;
+        var progress = Math.min(elapsed / duration, 1);
 
-        // 線形補間で位置を計算
-        var interpolatedLat = startLatLng.lat + progress * (newLatLng.lat - startLatLng.lat);
-        var interpolatedLng = startLatLng.lng + progress * (newLatLng.lng - startLatLng.lng);
+        // イージングを適用
+        var easedProgress = easeInOutQuad(progress);
+
+        // 線形補間にイージングを適用して位置を計算
+        var interpolatedLat = startLatLng.lat + easedProgress * (newLatLng.lat - startLatLng.lat);
+        var interpolatedLng = startLatLng.lng + easedProgress * (newLatLng.lng - startLatLng.lng);
 
         circle.setLatLng([interpolatedLat, interpolatedLng]);
 
