@@ -552,57 +552,57 @@
         };
 
         
-// 円を追加
-var centerCircle = L.circle(map.getCenter(), {
-    color: 'blue',         // 枠線の色
-    weight: 0.5,             // 枠線の太さ
-    opacity: 0.5,          // 枠線の透明度
-    fillColor: 'none',     // 塗りつぶしの色
-    fillOpacity: 0.1,      // 塗りつぶしの透明度
-    radius: 5000           // 半径 5000m（5km）
-}).addTo(map);
+        // 円を追加
+        var centerCircle = L.circle(map.getCenter(), {
+            color: 'blue',         // 枠線の色
+            weight: 0.5,             // 枠線の太さ
+            opacity: 0.5,          // 枠線の透明度
+            fillColor: 'none',     // 塗りつぶしの色
+            fillOpacity: 0.1,      // 塗りつぶしの透明度
+            radius: 5000           // 半径 5000m（5km）
+        }).addTo(map);
 
-// イージング関数 (easeInOutQuad)
-function easeInOutQuad(t) {
-    return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-}
+        // イージング関数 (easeInOutQuad)
+        function easeInOutQuad(t) {
+            return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+        }
 
-// 円の中心を滑らかに移動させる関数
-function smoothlyMoveCircle(circle, newLatLng, duration = 1000) {
-    var startLatLng = circle.getLatLng();
-    var startTime = performance.now();
+        // 円の中心を滑らかに移動させる関数
+        function smoothlyMoveCircle(circle, newLatLng, duration = 1000) {
+            var startLatLng = circle.getLatLng();
+            var startTime = performance.now();
 
-    function animateMove() {
-        var currentTime = performance.now();
-        var elapsed = currentTime - startTime;
-        var progress = Math.min(elapsed / duration, 1);
+            function animateMove() {
+                var currentTime = performance.now();
+                var elapsed = currentTime - startTime;
+                var progress = Math.min(elapsed / duration, 1);
 
-        // イージングを適用
-        var easedProgress = easeInOutQuad(progress);
+                // イージングを適用
+                var easedProgress = easeInOutQuad(progress);
 
-        // 線形補間にイージングを適用して位置を計算
-        var interpolatedLat = startLatLng.lat + easedProgress * (newLatLng.lat - startLatLng.lat);
-        var interpolatedLng = startLatLng.lng + easedProgress * (newLatLng.lng - startLatLng.lng);
+                // 線形補間にイージングを適用して位置を計算
+                var interpolatedLat = startLatLng.lat + easedProgress * (newLatLng.lat - startLatLng.lat);
+                var interpolatedLng = startLatLng.lng + easedProgress * (newLatLng.lng - startLatLng.lng);
 
-        circle.setLatLng([interpolatedLat, interpolatedLng]);
+                circle.setLatLng([interpolatedLat, interpolatedLng]);
 
-        if (progress < 1) {
+                if (progress < 1) {
+                    requestAnimationFrame(animateMove);
+                }
+            }
+
             requestAnimationFrame(animateMove);
         }
-    }
 
-    requestAnimationFrame(animateMove);
-}
+        // 地図の移動にアニメーション付きで円を追従させる
+        map.on('moveend', function () {
+            smoothlyMoveCircle(centerCircle, map.getCenter());
+        });
 
-// 地図の移動にアニメーション付きで円を追従させる
-map.on('moveend', function () {
-    smoothlyMoveCircle(centerCircle, map.getCenter());
-});
-
-// ズーム時にも対応（必要に応じて）
-map.on('zoomend', function () {
-    smoothlyMoveCircle(centerCircle, map.getCenter());
-});
+        // ズーム時にも対応（必要に応じて）
+        map.on('zoomend', function () {
+            smoothlyMoveCircle(centerCircle, map.getCenter());
+        });
 
 
 
@@ -622,13 +622,6 @@ map.on('zoomend', function () {
                 var worksheet = workbook.Sheets[firstSheetName];
                 var jsonData = XLSX.utils.sheet_to_json(worksheet);         
               
-
-                // Add Urban Area　★★★★★★★★★★★ 
-
-
-                // Add Urban Area　★★★★★★★★★★★    
-
-
                 
                 // 以前のマーカーとチェックボックスをリセット
                 if (window.categoryMarkers) {
@@ -660,24 +653,7 @@ map.on('zoomend', function () {
                     var location = [item['Latitude'], item['Longitude']];
 
                     var coordinates = item['Site Area'] && item['Site Area'] !== 'n.a.' ? item['Site Area'] : null;
-                    if (name && coordinates) {
-                        try {
-                            // JSON.parseでエラーが出た場合のフォールバック
-                            var parsedCoordinates = typeof coordinates === "string" ? JSON.parse(coordinates) : coordinates;
 
-                            var polygon = L.polygon(parsedCoordinates, {
-                                color: 'none',         // 枠線の色
-                                weight: 0,             // 枠線の太さ
-                                opacity: 0.8,          // 枠線の透明度
-                                fillColor: 'gold',   // 塗りつぶしの色
-                                fillOpacity: 0.3       // 塗りつぶしの透明度
-                            }).bindPopup(`<b>${name}</b>`);
-
-                            polygon.addTo(map);
-                        } catch (error) {
-                            console.error(`Error parsing coordinates for ${name}:`, error);
-                        }
-                    }
                     
                     var developer = item['Developer'] && item['Developer'] !== 'n.a.' ? item['Developer'] : '';
                     var units = item['Units'] && item['Units'] !== 'n.a.' ? item['Units'] : '';
@@ -800,7 +776,27 @@ map.on('zoomend', function () {
                     });
 
                     var marker = L.marker(location, { icon: icon }).bindPopup(popupContent);
-                    
+
+                    //　ポップアップ生成
+                    if (name && coordinates) {
+                        try {
+                            // JSON.parseでエラーが出た場合のフォールバック
+                            var parsedCoordinates = typeof coordinates === "string" ? JSON.parse(coordinates) : coordinates;
+
+                            var polygon = L.polygon(parsedCoordinates, {
+                                color: 'none',         // 枠線の色
+                                weight: 0,             // 枠線の太さ
+                                opacity: 0.8,          // 枠線の透明度
+                                fillColor: 'gold',   // 塗りつぶしの色
+                                fillOpacity: 0.3       // 塗りつぶしの透明度
+                            }).bindPopup(popupContent);
+
+                            polygon.addTo(map);
+                        } catch (error) {
+                            console.error(`Error parsing coordinates for ${name}:`, error);
+                        }
+                    }
+
                     // カテゴリーのリストに基づいてマーカーを管理
                     if (!window.categoryMarkers[category]) {
                         window.categoryMarkers[category] = [];
