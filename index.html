@@ -440,9 +440,9 @@
         <!-- radio button for scale -->
         <div id="scale-radio" class="scale-radio">
 
-            <label for="sc-20000" class="sc-radio">
+            <label for="sc-0000" class="sc-radio">
                 <input type="radio" id="sc-20000" name="selector2" tabindex="1">
-                <span>1/20,000</span>
+                <span>1/50,000</span>
             </label>   
             <label for="sc-10000" class="sc-radio">
                 <input type="radio" id="sc-10000" name="selector2" tabindex="2">
@@ -604,16 +604,16 @@
                     let zoomLevel;
                     switch (event.target.id) {
                         case 'sc-1000':
-                            zoomLevel = 18; // ズームレベル18が約1/1,000に対応
+                            zoomLevel = 18;
                             break;
                         case 'sc-2000':
-                            zoomLevel = 17; // ズームレベル17が約1/2,000に対応
+                            zoomLevel = 17;
                             break;
                         case 'sc-10000':
-                            zoomLevel = 15; // ズームレベル15が約1/10,000に対応
+                            zoomLevel = 15;
                             break;
-                        case 'sc-20000':
-                            zoomLevel = 13; // ズームレベル19が約1/500に対応
+                        case 'sc-50000':
+                            zoomLevel = 12;
                             break;                
                         default:
                             zoomLevel = 12; // デフォルトのズームレベル
