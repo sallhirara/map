@@ -482,6 +482,10 @@
                 <input type="checkbox" id="ecoba-category" name="selector" tabindex="4" checked>
                 <span>Ecoba</span>
             </label>
+            <label for="site-category" class="c-checkbox">
+                <input type="checkbox" id="site-category" name="selector" tabindex="" checked>
+                <span>PJ Site</span>
+            </label>
         </div>
         <!-- check box -->
     </div>
@@ -637,6 +641,7 @@
         // Category 1の値に基づくアイコンURLを定義
         var categoryIcons = {
             "HC PJ": "https://img.icons8.com/?size=100&id=bnfp2fmtrh0g&format=png&color=FF0062", // 新規検討案件のアイコン
+            "PJ Site": "https://img.icons8.com/?size=100&id=ipgAkdE46kxu&format=png&color=000000", // サイトのアイコン          
             "Urban PJ": "https://img.icons8.com/?size=100&id=bnfp2fmtrh0g&format=png&color=05227AA8", // 麺開発案件のアイコン
             "ECOBA PJ": "https://img.icons8.com/?size=100&id=42P5zkOQICqY&format=png&color=000000", // ECOBAのアイコン
             "Condominium": "https://img.icons8.com/?size=100&id=uRRFz0DH6uYw&format=png&color=000000", // Condominiumのアイコン
@@ -739,8 +744,10 @@
                     var category2 = item['Category 2'] && item['Category 2'] !== 'n.a.' ? item['Category 2'] : '';
                     var name = item['PJ name'] && item['PJ name'] !== 'n.a.' ? item['PJ name'] : '';
                     var siteName = item['Site name'] && item['Site name'] !== 'n.a.' ? item['Site name'] : '';
-                    var city = item['City'] && item['City'] !== 'n.a.' ? item['City'] : '';
                     var county = item['County'] && item['County'] !== 'n.a.' ? item['County'] : '';
+                    var region = item['Region'] && item['Region'] !== 'n.a.' ? item['Region'] : '';
+                    var administrativeDivision = item['Administrative Division'] && item['Administrative Division'] !== 'n.a.' ? item['Administrative Division'] : '';
+                    var localDivision = item['Local Division'] && item['Local Division'] !== 'n.a.' ? item['Local Division'] : '';
                     var address = item['Address'] && item['Address'] !== 'n.a.' ? item['Address'] : '';                   
                     var location = [item['Latitude'], item['Longitude']];
 
@@ -844,6 +851,8 @@
                     var iconSize;
                     if (category === "Primary") {
                         iconSize = [20, 20]; // ECOBAのアイコンサイズを小さく
+                    } else if (category === "PJ Site") {
+                        iconSize = [0, 0]; // Other PJのアイコンサイズを小さく
                     } else if (category === "HC PJ") {
                         iconSize = [37, 37]; // HC PJのアイコンサイズを小さく
                     } else if (category === "Urban PJ") {
@@ -874,15 +883,33 @@
                             // JSON.parseでエラーが出た場合のフォールバック
                             var parsedCoordinates = typeof coordinates === "string" ? JSON.parse(coordinates) : coordinates;
 
+                            // カテゴリー1の値に基づいて色を決定
+                            var fillColor;
+                            switch (category) {
+                                case 'PJ Site':
+                                    fillColor = '#FF0062A8'; // カテゴリーがPrimaryの場合の色
+                                    break;
+                                case 'HC PJ':
+                                    fillColor = 'red'; // カテゴリーがHC PJの場合の色
+                                    break;
+                                case 'Urban PJ':
+                                    fillColor = 'gold'; // カテゴリーがUrban PJの場合の色
+                                    break;
+                                default:
+                                    fillColor = 'grey'; // その他の場合の色
+                            }
+
+                            // ポリゴンを追加
                             var polygon = L.polygon(parsedCoordinates, {
-                                color: 'none',         // 枠線の色
-                                weight: 0,             // 枠線の太さ
-                                opacity: 0.8,          // 枠線の透明度
-                                fillColor: 'gold',   // 塗りつぶしの色
-                                fillOpacity: 0.3       // 塗りつぶしの透明度
+                                color: 'none',
+                                weight: 0,
+                                opacity: 0.8,
+                                fillColor: fillColor,  // カテゴリーに応じた塗りつぶしの色
+                                fillOpacity: 0.3
                             }).bindPopup(popupContent, {
                                 className: 'polygon-popup' // カスタムクラスを割り当てる
                             });
+
 
                             polygon.addTo(map);
                         } catch (error) {
