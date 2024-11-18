@@ -134,7 +134,8 @@
         }
 
         /* radio */
-        .area-radio {
+        .area-radio,
+        .scale-radio {
             border: none;
             margin-bottom: 5px;
           
@@ -145,7 +146,8 @@
             gap: 0px;                             /* 各アイテム間のスペース */             
         }
 
-        .a-radio {
+        .a-radio,
+        .sc-radio {
           border: none;
             padding: 6px;
             border-radius: 50px;
@@ -157,11 +159,14 @@
         }
 
         .a-radio:hover,
-        .a-radio:focus-within {
+        .sc-radio:hover,
+        .a-radio:focus-within,
+        .sc-radio:focus-within {
             background: rgba(159, 159, 159, 0.3); /* $secondary color in RGBA */
         }
 
-        .a-radio input {
+        .a-radio input,
+        .sc-radio input {
             vertical-align: middle;
             width: 16px;
             height: 16px;
@@ -176,15 +181,18 @@
             pointer-events: none;
         }
 
-        .a-radio input:focus {
+        .a-radio input:focus,
+        .sc-radio input:focus {
             outline: none;
         }
 
-        .a-radio input:checked {
+        .a-radio input:checked,
+        .sc-radio input:checked {
             box-shadow: inset 0 0 0 5px #00258F85; /* $primary color */
         }
 
-        .a-radio span {
+        .a-radio span,
+        .sc-radio span {
             vertical-align: middle;
             display: inline-block;
             line-height: 16px;
@@ -415,39 +423,42 @@
         <div id="area-radio" class="area-radio">
 
             <label for="hn-area" class="a-radio">
-                <input type="radio" id="hn-area" name="selector" tabindex="1" checked>
+                <input type="radio" id="hn-area" name="selector1" tabindex="1" checked>
                 <span>Hanoi</span>
             </label>
             <label for="hcm-area" class="a-radio">
-                <input type="radio" id="hcm-area" name="selector" tabindex="2">
+                <input type="radio" id="hcm-area" name="selector1" tabindex="2">
                 <span>HCMC</span>
             </label>
             <label for="vn-area" class="a-radio">
-                <input type="radio" id="vn-area" name="selector" tabindex="3">
+                <input type="radio" id="vn-area" name="selector1" tabindex="3">
                 <span>Vietnam</span>
             </label>
         </div>
         <!-- radio butto- for center->
 
         <!-- radio button for scale -->
-        <div id="area-radio" class="area-radio">
+        <div id="scale-radio" class="scale-radio">
 
-            <label for="sc-1000" class="a-radio">
-                <input type="radio" id="sc-1000" name="selector" tabindex="1" checked>
+            <label for="sc-20000" class="sc-radio">
+                <input type="radio" id="sc-20000" name="selector2" tabindex="1">
+                <span>1/20,000</span>
+            </label>   
+            <label for="sc-10000" class="sc-radio">
+                <input type="radio" id="sc-10000" name="selector2" tabindex="2">
+                <span>1/10,000</span>
+            </label> 
+            <label for="sc-2000" class="sc-radio">
+                <input type="radio" id="sc-2000" name="selector2" tabindex="3">
+                <span>1/2,000</span>
+            </label>          
+            <label for="sc-1000" class="sc-radio">
+                <input type="radio" id="sc-1000" name="selector2" tabindex="4">
                 <span>1/1000</span>
             </label>
-            <label for="sc-2000" class="a-radio">
-                <input type="radio" id="sc-2000" name="selector" tabindex="2">
-                <span>1/2,000</span>
-            </label>
-            <label for="sc-10000" class="a-radio">
-                <input type="radio" id="sc-10000" name="selector" tabindex="3">
-                <span>1/10,000</span>
-            </label>
-            <label for="sc-20000" class="a-radio">
-                <input type="radio" id="sc-20000" name="selector" tabindex="4">
-                <span>1/20,000</span>
-            </label>          
+
+
+       
         </div>
         <!-- radio button for scale-->
         
@@ -587,7 +598,7 @@
         
         // 各縮尺に対応するズームレベルの定義
         // これは概算であり、地図の中心位置やデバイスによって異なる場合があります
-        document.querySelectorAll('#conditions .a-radio input[type="radio"]').forEach(function(radio) {
+        document.querySelectorAll('#conditions .sc-radio input[type="radio"]').forEach(function(radio) {
             radio.addEventListener('change', function(event) {
                 if (event.target && event.target.id.startsWith('sc-')) {
                     let zoomLevel;
