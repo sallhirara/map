@@ -269,7 +269,7 @@
         #area-list-container {
             max-height: 300px;
             overflow-y: auto;
-            padding: 20px 25px;
+            padding: 20px 6px;
             -ms-overflow-style: none;  /* IEとEdgeでスクロールバーを非表示 */
             scrollbar-width: none;  /* Firefoxでスクロールバーを非表示 */          
         }
@@ -279,13 +279,13 @@
         margin-left: 0; /* Countryレイヤーのインデント */
     }
     .region-layer {
-        margin-left: 20px; /* Regionレイヤーのインデント */
+        margin-left: 10px; /* Regionレイヤーのインデント */
     }
     .admin-layer {
-        margin-left: 40px; /* Administrative Divisionレイヤーのインデント */
+        margin-left: 20px; /* Administrative Divisionレイヤーのインデント */
     }
     .local-layer {
-        margin-left: 60px; /* Local Divisionレイヤーのインデント */
+        margin-left: 30px; /* Local Divisionレイヤーのインデント */
     }
 
       
@@ -332,7 +332,7 @@
         /* アイコンの共通スタイル */
         .toggle-icon {
             height: 18px;
-            padding: 2px 5px 2px 16px;
+            padding: 2px 5px 2px 17px;
             color: #999; /* 開いた状態で色を変更 */
         }
 
@@ -560,36 +560,46 @@
         }
       
         function adjustMenuHeight() {
-              const menu = document.querySelector('.menu');
-              const summary = document.getElementById('summary');
-              const conditions = document.getElementById('conditions');
+            const menu = document.querySelector('.menu');
+            const summary = document.getElementById('summary');
+            const conditions = document.getElementById('conditions');
+            const areaListContainer = document.getElementById('area-list-container');
 
-              // 各要素の高さを取得
-              const vh = window.innerHeight;
-              const menuContainerHeight = 30; // .menu-container の高さ
-              const bottomMargin = 100; // 下の余白 50px
+            // 各要素の高さを取得
+            const vh = window.innerHeight;
+            const menuContainerHeight = 30; // .menu-container の高さ
+            const bottomMargin = 100; // 下の余白 50px
 
-              let summaryHeight = summary.style.display === 'block' ? summary.getBoundingClientRect().height : 0;
-              let conditionsHeight = conditions.style.display === 'block' ? conditions.getBoundingClientRect().height : 0;
+            let summaryHeight = summary.style.display === 'block' ? summary.getBoundingClientRect().height : 0;
+            let conditionsHeight = conditions.style.display === 'block' ? conditions.getBoundingClientRect().height : 0;
 
-              // menuの新しい高さを計算
-              let newHeight = vh - menuContainerHeight - bottomMargin;
+            // メニューの新しい高さを計算
+            let newHeight = vh - menuContainerHeight - bottomMargin;
 
-              if (summaryHeight > 0 && conditionsHeight > 0) {
-                  newHeight -= summaryHeight + conditionsHeight;
-              } else if (summaryHeight > 0) {
-                  newHeight -= summaryHeight;
-              } else if (conditionsHeight > 0) {
-                  newHeight -= conditionsHeight;
-              }
+            if (summaryHeight > 0) {
+                newHeight -= summaryHeight;
+            }
+            if (conditionsHeight > 0) {
+                newHeight -= conditionsHeight;
+            }
 
-              // 計算された高さを.menuに設定
-              menu.style.height = `${newHeight}px`;
+            // 計算された高さを.menuに設定
+            menu.style.height = `${newHeight}px`;
 
-              // メニュー位置の再調整
-              adjustMenuPositions();
-          }
+            // メニュー位置の再調整
+            adjustMenuPositions();
+        }
 
+        // ResizeObserverを使用してarea-list-containerの高さの変化を監視
+        const areaListObserver = new ResizeObserver(() => {
+            adjustMenuHeight(); // 高さの変化に応じてメニューの高さを再計算
+        });
+
+        const areaListContainer = document.getElementById('area-list-container');
+        areaListObserver.observe(areaListContainer);
+
+
+        
         function adjustMenuPositions() {
             const visibleMenus = Array.from(document.querySelectorAll('.mega-menu'))
                 .filter(menu => menu.style.display === 'block');
