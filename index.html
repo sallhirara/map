@@ -303,8 +303,6 @@
 
         /* -------- PJ List from here --------*/
         #listMenu {
-            max-height: 185px;
-
             overflow-y: auto;
             margin: 0;
             padding: 20px 25px;
@@ -568,32 +566,35 @@
       
         function adjustMenuHeight() {
             const menu = document.querySelector('.menu');
+            const listMenu = document.getElementById('listMenu');
             const summary = document.getElementById('summary');
             const conditions = document.getElementById('conditions');
             const areaListContainer = document.getElementById('area-list-container');
 
-            // 各要素の高さを取得
-            const vh = window.innerHeight;
-            const menuContainerHeight = 30; // .menu-container の高さ
-            const bottomMargin = 100; // 下の余白 50px
+            const vh = window.innerHeight; // ビューポート全体の高さ
+            const menuContainerHeight = 30; // メニューコンテナの高さ
+            const bottomMargin = 100; // 余白として 100px を引く
 
-            let summaryHeight = summary.style.display === 'block' ? summary.getBoundingClientRect().height : 0;
-            let conditionsHeight = conditions.style.display === 'block' ? conditions.getBoundingClientRect().height : 0;
+            // summary と conditions の高さを取得
+            const summaryHeight = summary.style.display === 'block' ? summary.getBoundingClientRect().height : 0;
+            const conditionsHeight = conditions.style.display === 'block' ? conditions.getBoundingClientRect().height : 0;
 
-            // メニューの新しい高さを計算
+            // max-height の計算
+            let newMaxHeight = vh - summaryHeight - conditionsHeight - bottomMargin;
+
+            // 設定
+            listMenu.style.maxHeight = `${newMaxHeight}px`;
+
+            // menu の通常の高さを設定（省略せずに記述）
             let newHeight = vh - menuContainerHeight - bottomMargin;
-
             if (summaryHeight > 0) {
                 newHeight -= summaryHeight;
             }
             if (conditionsHeight > 0) {
                 newHeight -= conditionsHeight;
             }
-
-            // 計算された高さを.menuに設定
             menu.style.height = `${newHeight}px`;
 
-            // メニュー位置の再調整
             adjustMenuPositions();
         }
 
