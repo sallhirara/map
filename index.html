@@ -274,18 +274,24 @@
             scrollbar-width: none;  /* Firefoxでスクロールバーを非表示 */          
         }
       
-
+    .region-layer span,
+    .admin-layer span,
+    .local-layer span {
+        padding-left: 10px;
+    }
+      
+      
     .layer-group {
-        margin-left: 0; /* Countryレイヤーのインデント */
+        margin: 0; /* Countryレイヤーのインデント */
     }
     .region-layer {
-        margin-left: 10px; /* Regionレイヤーのインデント */
+        margin: 0 0 10px 10px; /* Regionレイヤーのインデント */
     }
     .admin-layer {
-        margin-left: 20px; /* Administrative Divisionレイヤーのインデント */
+        margin: 5px 0 10px 15px; /* Administrative Divisionレイヤーのインデント */
     }
     .local-layer {
-        margin-left: 30px; /* Local Divisionレイヤーのインデント */
+        margin: 5px 0 10px 20px; /* Local Divisionレイヤーのインデント */
     }
 
       
