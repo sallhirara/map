@@ -1069,8 +1069,6 @@
                                 cb.dispatchEvent(new Event('change')); // 子の状態を反映させるためにイベント発火
                             });
 
-                            console.log(childCheckboxes);
-
                             // 親チェックボックスがポリゴンを制御
                             const category = this.id.replace('toggle', '').trim();
                             if (window.categoryMarkers[category]) {
@@ -1213,43 +1211,11 @@ Object.keys(hierarchy).forEach(country => {
     countryContainer.appendChild(regionContainer);
 });
 
-
-
-
-
-// 警告カウント用変数
-let missingCoordinatesCount = 0;
-
 // マーカー生成とチェックボックス連動
 jsonData.forEach(item => {
-    const { 
-        'Country': country, 
-        'Region': region, 
-        'Administrative Division': adminDivision, 
-        'Local Division': localDivision, 
-        Latitude: latitude, 
-        Longitude: longitude, 
-        'PJ name': name = '' 
-    } = item;
-
+    const { 'Local Division': localDivision, Latitude: latitude, Longitude: longitude, 'PJ name': name = '' } = item;
     const location = [latitude, longitude];
-
-    // 座標がない場合をスキップ
-    if (!latitude || !longitude) {
-        console.warn(`Skipping marker for ${name} due to missing coordinates.`);
-        return;
-    }
-
-    // 必須フィールドが空欄または未定義の場合をスキップ
-    if (
-        !country || country.trim() === '' ||
-        !region || region.trim() === '' ||
-        !adminDivision || adminDivision.trim() === '' ||
-        !localDivision || localDivision.trim() === ''
-    ) {
-        console.warn(`Skipping marker for ${name} due to missing hierarchy fields (Country, Region, Admin Division, Local Division).`);
-        return;
-    }
+    if (!latitude || !longitude) return; // 座標がない場合はスキップ
 
     // マーカーの生成
     const marker = L.marker(location).bindPopup(`<b>${name}</b>`);
@@ -1266,6 +1232,7 @@ jsonData.forEach(item => {
 
     if (checkbox) {
         checkbox.addEventListener('change', function () {
+            console.log(`Checkbox ${checkboxId} changed to: ${checkbox.checked}`);
             if (checkbox.checked) {
                 marker.addTo(map);
             } else {
@@ -1282,10 +1249,6 @@ jsonData.forEach(item => {
     }
 });
 
-// 座標が欠落しているデータの合計をログに出力
-if (missingCoordinatesCount > 0) {
-    console.warn(`Skipping ${missingCoordinatesCount} markers due to missing coordinates.`);
-}
                   
                   
                   
@@ -1393,17 +1356,13 @@ if (missingCoordinatesCount > 0) {
                     checkbox.className = 'individual-icon';
                     checkbox.addEventListener('change', function() {
                         if (checkbox.checked) {
-                            console.log("Adding marker and polygon to map:", marker, polygon);
                             marker.addTo(map);
                             polygon.addTo(map);
                         } else {
-                            console.log("Removing marker and polygon from map:", marker, polygon);
                             map.removeLayer(marker);
                             map.removeLayer(polygon);
                         }
                     });
-
-                    console.log(checkbox.id, marker, polygon);
 
                     var label = document.createElement('label');
                     label.htmlFor = category + index;
