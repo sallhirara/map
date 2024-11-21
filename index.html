@@ -1411,6 +1411,23 @@ console.log('window.categoryMarkers:', window.categoryMarkers);
                     categoryContainer.appendChild(individualContainer);
 
                 });
+              
+              
+// カテゴリごとのマーカーを格納するオブジェクト
+if (!window.categoryMarkers) {
+    window.categoryMarkers = {};
+}
+
+function addMarkerToCategory(category, marker) {
+    if (!window.categoryMarkers[category]) {
+        window.categoryMarkers[category] = [];
+    }
+    window.categoryMarkers[category].push(marker);
+    console.log('window.categoryMarkers:', window.categoryMarkers);
+}
+              
+              
+              
             };
             reader.readAsArrayBuffer(file);
         }); 
