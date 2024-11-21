@@ -1217,7 +1217,18 @@ Object.keys(hierarchy).forEach(country => {
 jsonData.forEach(item => {
     const { 'Local Division': localDivision, Latitude: latitude, Longitude: longitude, 'PJ name': name = '' } = item;
     const location = [latitude, longitude];
-    if (!latitude || !longitude) return; // 座標がない場合はスキップ
+
+    // 座標がない場合はスキップ
+    if (!latitude || !longitude) {
+        console.warn(`Skipping marker for ${name} due to missing coordinates.`);
+        return;
+    }
+
+    // localDivisionが未定義の場合をスキップ
+    if (!localDivision) {
+        console.warn(`Skipping marker for ${name} due to undefined Local Division.`);
+        return;
+    }
 
     // マーカーの生成
     const marker = L.marker(location).bindPopup(`<b>${name}</b>`);
@@ -1357,16 +1368,16 @@ jsonData.forEach(item => {
                     checkbox.checked = true;
                     checkbox.className = 'individual-icon';
                     checkbox.addEventListener('change', function() {
-    if (checkbox.checked) {
-        console.log("Adding marker and polygon to map:", marker, polygon);
-        marker.addTo(map);
-        polygon.addTo(map);
-    } else {
-        console.log("Removing marker and polygon from map:", marker, polygon);
-        map.removeLayer(marker);
-        map.removeLayer(polygon);
-    }
-});
+                        if (checkbox.checked) {
+                            console.log("Adding marker and polygon to map:", marker, polygon);
+                            marker.addTo(map);
+                            polygon.addTo(map);
+                        } else {
+                            console.log("Removing marker and polygon from map:", marker, polygon);
+                            map.removeLayer(marker);
+                            map.removeLayer(polygon);
+                        }
+                    });
 
                     console.log(checkbox.id, marker, polygon);
 
