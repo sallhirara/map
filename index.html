@@ -1222,18 +1222,32 @@ let missingCoordinatesCount = 0;
 
 // マーカー生成とチェックボックス連動
 jsonData.forEach(item => {
-    const { 'Local Division': localDivision, Latitude: latitude, Longitude: longitude, 'PJ name': name = '' } = item;
+    const { 
+        'Country': country, 
+        'Region': region, 
+        'Administrative Division': adminDivision, 
+        'Local Division': localDivision, 
+        Latitude: latitude, 
+        Longitude: longitude, 
+        'PJ name': name = '' 
+    } = item;
+
     const location = [latitude, longitude];
 
-    // 座標がない場合をカウント
+    // 座標がない場合をスキップ
     if (!latitude || !longitude) {
-        missingCoordinatesCount++;
+        console.warn(`Skipping marker for ${name} due to missing coordinates.`);
         return;
     }
 
-    // localDivisionが未定義の場合をスキップ
-    if (!localDivision) {
-        console.warn(`Skipping marker for ${name} due to undefined Local Division.`);
+    // 必須フィールドが空欄または未定義の場合をスキップ
+    if (
+        !country || country.trim() === '' ||
+        !region || region.trim() === '' ||
+        !adminDivision || adminDivision.trim() === '' ||
+        !localDivision || localDivision.trim() === ''
+    ) {
+        console.warn(`Skipping marker for ${name} due to missing hierarchy fields (Country, Region, Admin Division, Local Division).`);
         return;
     }
 
