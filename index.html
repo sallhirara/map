@@ -1069,6 +1069,8 @@
                                 cb.dispatchEvent(new Event('change')); // 子の状態を反映させるためにイベント発火
                             });
 
+                            console.log(childCheckboxes);
+
                             // 親チェックボックスがポリゴンを制御
                             const category = this.id.replace('toggle', '').trim();
                             if (window.categoryMarkers[category]) {
@@ -1355,14 +1357,18 @@ jsonData.forEach(item => {
                     checkbox.checked = true;
                     checkbox.className = 'individual-icon';
                     checkbox.addEventListener('change', function() {
-                        if (checkbox.checked) {
-                            marker.addTo(map);
-                            polygon.addTo(map);
-                        } else {
-                            map.removeLayer(marker);
-                            map.removeLayer(polygon);
-                        }
-                    });
+    if (checkbox.checked) {
+        console.log("Adding marker and polygon to map:", marker, polygon);
+        marker.addTo(map);
+        polygon.addTo(map);
+    } else {
+        console.log("Removing marker and polygon from map:", marker, polygon);
+        map.removeLayer(marker);
+        map.removeLayer(polygon);
+    }
+});
+
+                    console.log(checkbox.id, marker, polygon);
 
                     var label = document.createElement('label');
                     label.htmlFor = category + index;
