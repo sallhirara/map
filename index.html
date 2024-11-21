@@ -1055,7 +1055,38 @@
                     window.categoryMarkers[category].push(marker);
                     marker.addTo(map);
 
+                    // 親チェックボックスの状態を子チェックボックスとポリゴンに反映する
+                    document.querySelectorAll('.main-category input[type="checkbox"]').forEach(parentCheckbox => {
+                        parentCheckbox.addEventListener('change', function() {
+                            // 子チェックボックスを取得
+                            const childCheckboxes = this.closest('.layer-group')
+                                .querySelectorAll('.individual-icon-container input[type="checkbox"]');
+
+                            // 親チェックボックスの状態に基づいて子チェックボックスを更新
+                            const isChecked = this.checked;
+                            childCheckboxes.forEach(cb => {
+                                cb.checked = isChecked;
+                                cb.dispatchEvent(new Event('change')); // 子の状態を反映させるためにイベント発火
+                            });
+
+                            // 親チェックボックスがポリゴンを制御
+                            const category = this.id.replace('toggle', '').trim();
+                            if (window.categoryMarkers[category]) {
+                                window.categoryMarkers[category].forEach(marker => {
+                                    if (isChecked) {
+                                        marker.addTo(map); // ポリゴンを表示
+                                    } else {
+                                        map.removeLayer(marker); // ポリゴンを非表示
+                                    }
+                                });
+                            }
+                        });
+                    });
+      
+                  
        
+                  
+                  
                   
                   
                   
@@ -1085,6 +1116,14 @@ jsonData.forEach(item => {
     }
 });
 
+// 親チェックボックスの状態を子に反映する
+function updateChildCheckboxes(parentCheckbox, childCheckboxes) {
+    childCheckboxes.forEach(cb => {
+        cb.checked = parentCheckbox.checked;
+        cb.dispatchEvent(new Event('change')); // マーカー連動のためにイベントを発火
+    });
+}
+
 // 子チェックボックスの状態を親に反映する
 function updateParentCheckbox(parentCheckbox, childCheckboxes) {
     const allChecked = Array.from(childCheckboxes).every(cb => cb.checked);
@@ -1093,13 +1132,11 @@ function updateParentCheckbox(parentCheckbox, childCheckboxes) {
     parentCheckbox.checked = allChecked;
     parentCheckbox.indeterminate = !allChecked && !noneChecked; // 子の状態が混在している場合
 }
-
-// 親チェックボックスの状態を子に反映する
-function updateChildCheckboxes(parentCheckbox, childCheckboxes) {
-    childCheckboxes.forEach(cb => {
-        cb.checked = parentCheckbox.checked;
-        cb.dispatchEvent(new Event('change')); // マーカー連動のためにイベントを発火
-    });
+                  
+ 
+// マーカー格納用のオブジェクトを初期化
+if (!window.categoryMarkers) {
+    window.categoryMarkers = {};
 }
 
 // 階層データを使ってチェックボックスリストを生成
@@ -1156,7 +1193,7 @@ Object.keys(hierarchy).forEach(country => {
             localContainer.className = 'local-layer';
             const adminCheckbox = adminHeader.querySelector('input');
 
-            hierarchy[country][region][adminDivision].forEach(({ localDivision, marker }) => {
+            hierarchy[country][region][adminDivision].forEach(localDivision => {
                 const localItem = document.createElement('div');
                 localItem.className = 'individual-icon-container';
 
@@ -1173,30 +1210,60 @@ Object.keys(hierarchy).forEach(country => {
                 localItem.appendChild(localLabel);
                 localContainer.appendChild(localItem);
 
-                // マーカー連動（既存のマーカーを利用）
-                localCheckbox.addEventListener('change', () => {
-                    if (localCheckbox.checked) {
-                        marker.addTo(map); // 地図に追加
-                    } else {
-                        map.removeLayer(marker); // 地図から削除
-                    }
-                    updateParentCheckbox(adminCheckbox, localContainer.querySelectorAll('input[type="checkbox"]'));
-                    updateParentCheckbox(regionCheckbox, adminContainer.querySelectorAll('input[type="checkbox"]'));
-                    updateParentCheckbox(countryCheckbox, regionContainer.querySelectorAll('input[type="checkbox"]'));
-                });
+                // マーカー生成
+                const marker = L.marker([latitude, longitude], {
+                    icon: L.icon({
+                        iconUrl: "https://example.com/icon.png", // アイコンのURLを指定
+                        iconSize: [25, 41], // サイズを調整
+                    }),
+                }).bindPopup(`Marker for ${localDivision}`);
 
-                // 初期状態で表示する場合
-                marker.addTo(map);
+                // マーカーを`window.categoryMarkers`に登録
+                if (!window.categoryMarkers[localDivision]) {
+                    window.categoryMarkers[localDivision] = [];
+                }
+                window.categoryMarkers[localDivision].push(marker);
+              
+                console.log('window.categoryMarkers:', window.categoryMarkers);
+
+                // 初期表示（チェックされている場合のみ）
+                if (localCheckbox.checked) {
+                    marker.addTo(map);
+                }
+
+                // チェックボックスの状態変更に応じてマーカーの表示・非表示を制御
+                localCheckbox.addEventListener('change', function () {
+                    console.log(`Checkbox for ${localDivision} changed to: ${localCheckbox.checked}`);
+                    const marker = window.categoryMarkers[localDivision];
+                    if (marker) {
+                        try {
+                            if (localCheckbox.checked) {
+                                marker.forEach(m => m.addTo(map));
+                                console.log(`Markers for ${localDivision} added to map.`);
+                            } else {
+                                marker.forEach(m => map.removeLayer(m));
+                                console.log(`Markers for ${localDivision} removed from map.`);
+                            }
+                        } catch (error) {
+                            console.error(`Error controlling markers for ${localDivision}:`, error);
+                        }
+                    } else {
+                        console.warn(`No markers found for ${localDivision}`);
+                    }
+                });
+                console.log(`Checkbox for ${localDivision} changed to: ${localCheckbox.checked}`);
+                console.log(`Markers for ${localDivision}:`, marker);
+                if (marker) {
+                    console.log(`Attempting to ${localCheckbox.checked ? 'add' : 'remove'} markers for ${localDivision}`);
+                }
             });
 
             adminItem.appendChild(localContainer);
 
-            // Admin Divisionのトグルイベント
             adminHeader.querySelector('.toggle-icon').addEventListener('click', () => {
                 localContainer.style.display = localContainer.style.display === 'none' ? 'block' : 'none';
             });
 
-            // 親チェックボックス連動
             adminCheckbox.addEventListener('change', () => {
                 updateChildCheckboxes(adminCheckbox, localContainer.querySelectorAll('input[type="checkbox"]'));
             });
@@ -1206,12 +1273,10 @@ Object.keys(hierarchy).forEach(country => {
 
         regionItem.appendChild(adminContainer);
 
-        // Regionのトグルイベント
         regionHeader.querySelector('.toggle-icon').addEventListener('click', () => {
             adminContainer.style.display = adminContainer.style.display === 'none' ? 'block' : 'none';
         });
 
-        // 親チェックボックス連動
         regionCheckbox.addEventListener('change', () => {
             updateChildCheckboxes(regionCheckbox, adminContainer.querySelectorAll('input[type="checkbox"]'));
         });
@@ -1221,18 +1286,16 @@ Object.keys(hierarchy).forEach(country => {
 
     countryContainer.appendChild(regionContainer);
 
-    // Countryのトグルイベント
     countryHeader.querySelector('.toggle-icon').addEventListener('click', () => {
         regionContainer.style.display = regionContainer.style.display === 'none' ? 'block' : 'none';
     });
 
-    // 親チェックボックス連動
     countryCheckbox.addEventListener('change', () => {
         updateChildCheckboxes(countryCheckbox, regionContainer.querySelectorAll('input[type="checkbox"]'));
     });
 });
 
-                  
+console.log('window.categoryMarkers:', window.categoryMarkers);
                   
                   
                   
@@ -1379,6 +1442,23 @@ Object.keys(hierarchy).forEach(country => {
                     categoryContainer.appendChild(individualContainer);
 
                 });
+              
+              
+// カテゴリごとのマーカーを格納するオブジェクト
+if (!window.categoryMarkers) {
+    window.categoryMarkers = {};
+}
+
+function addMarkerToCategory(category, marker) {
+    if (!window.categoryMarkers[category]) {
+        window.categoryMarkers[category] = [];
+    }
+    window.categoryMarkers[category].push(marker);
+    console.log('window.categoryMarkers:', window.categoryMarkers);
+}
+              
+              
+              
             };
             reader.readAsArrayBuffer(file);
         }); 
