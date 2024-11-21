@@ -1192,6 +1192,8 @@ Object.keys(hierarchy).forEach(country => {
                     window.categoryMarkers[localDivision] = [];
                 }
                 window.categoryMarkers[localDivision].push(marker);
+              
+                console.log('window.categoryMarkers:', window.categoryMarkers);
 
                 // 初期表示（チェックされている場合のみ）
                 if (localCheckbox.checked) {
@@ -1203,13 +1205,26 @@ Object.keys(hierarchy).forEach(country => {
                     console.log(`Checkbox for ${localDivision} changed to: ${localCheckbox.checked}`);
                     const marker = window.categoryMarkers[localDivision];
                     if (marker) {
-                        if (localCheckbox.checked) {
-                            marker.forEach(m => m.addTo(map));
-                        } else {
-                            marker.forEach(m => map.removeLayer(m));
+                        try {
+                            if (localCheckbox.checked) {
+                                marker.forEach(m => m.addTo(map));
+                                console.log(`Markers for ${localDivision} added to map.`);
+                            } else {
+                                marker.forEach(m => map.removeLayer(m));
+                                console.log(`Markers for ${localDivision} removed from map.`);
+                            }
+                        } catch (error) {
+                            console.error(`Error controlling markers for ${localDivision}:`, error);
                         }
+                    } else {
+                        console.warn(`No markers found for ${localDivision}`);
                     }
                 });
+                console.log(`Checkbox for ${localDivision} changed to: ${localCheckbox.checked}`);
+                console.log(`Markers for ${localDivision}:`, marker);
+                if (marker) {
+                    console.log(`Attempting to ${localCheckbox.checked ? 'add' : 'remove'} markers for ${localDivision}`);
+                }
             });
 
             adminItem.appendChild(localContainer);
@@ -1249,6 +1264,7 @@ Object.keys(hierarchy).forEach(country => {
     });
 });
 
+console.log('window.categoryMarkers:', window.categoryMarkers);
                   
                   
                   
