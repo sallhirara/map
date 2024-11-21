@@ -135,9 +135,10 @@
 
         /* radio */
         .area-radio,
-        .scale-radio {
+        .scale-radio,
+        .circle-radio {
             border: none;
-            margin-bottom: 5px;
+            margin-bottom: 0px;
           
             /*　radio items の割り付けグリッド４分割　*/
             display: grid;
@@ -147,7 +148,8 @@
         }
 
         .a-radio,
-        .sc-radio {
+        .sc-radio,
+        .cc-radio {
           border: none;
             padding: 6px;
             border-radius: 50px;
@@ -160,13 +162,16 @@
 
         .a-radio:hover,
         .sc-radio:hover,
+        .cc-radio:hover,
         .a-radio:focus-within,
-        .sc-radio:focus-within {
+        .sc-radio:focus-within,
+        .cc-radio:focus-within {
             background: rgba(159, 159, 159, 0.3); /* $secondary color in RGBA */
         }
 
         .a-radio input,
-        .sc-radio input {
+        .sc-radio input,
+        .cc-radio input {
             vertical-align: middle;
             width: 16px;
             height: 16px;
@@ -182,17 +187,20 @@
         }
 
         .a-radio input:focus,
-        .sc-radio input:focus {
+        .sc-radio input:focus,
+        .cc-radio input:focus {
             outline: none;
         }
 
         .a-radio input:checked,
-        .sc-radio input:checked {
+        .sc-radio input:checked,
+        .cc-radio input:checked {
             box-shadow: inset 0 0 0 5px #00258F85; /* $primary color */
         }
 
         .a-radio span,
-        .sc-radio span {
+        .sc-radio span,
+        .cc-radio span {
             vertical-align: middle;
             display: inline-block;
             line-height: 16px;
@@ -302,13 +310,27 @@
 
 
         /* -------- PJ List from here --------*/
-        #listMenu {
-            overflow-y: auto;
-            margin: 0;
-            padding: 20px 25px;
-            -ms-overflow-style: none;  /* IEとEdgeでスクロールバーを非表示 */
-            scrollbar-width: none;  /* Firefoxでスクロールバーを非表示 */
-        }
+#listMenu {
+    display: none;
+    position: absolute;
+    width: 90%;
+    max-width: 500px;
+    overflow-y: auto;
+    left: 5%;
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(5px);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    z-index: 1001;
+    font-size: 12px;
+
+    top: 60px; /* menu-container (30px) + margin (10px) */
+    transform: translateY(-20px);
+    opacity: 0;
+    transition: transform 0.5s ease, opacity 0.5s ease; /* 開閉アニメーションの速度を指定 */
+}
+
         
         #listMenu::-webkit-scrollbar {
           display: none;
@@ -472,7 +494,7 @@
         <div id="scale-radio" class="scale-radio">
 
             <label for="sc-50000" class="sc-radio">
-                <input type="radio" id="sc-50000" name="selector2" tabindex="1">
+                <input type="radio" id="sc-50000" name="selector2" tabindex="1" checked>
                 <span>1/50,000</span>
             </label>   
             <label for="sc-10000" class="sc-radio">
@@ -486,13 +508,32 @@
             <label for="sc-1000" class="sc-radio">
                 <input type="radio" id="sc-1000" name="selector2" tabindex="4">
                 <span>1/1000</span>
-            </label>
-
-
-       
+            </label>      
         </div>
         <!-- radio button for scale-->
-        
+ 
+       <!-- radio button for circle -->
+        <div id="circle-radio" class="circle-radio">
+
+            <label for="cc-5" class="cc-radio">
+                <input type="radio" id="cc-5" name="selector3" tabindex="1" checked>
+                <span>5km</span>
+            </label>   
+            <label for="cc-10" class="cc-radio">
+                <input type="radio" id="cc-10" name="selector3" tabindex="2">
+                <span>10km</span>
+            </label> 
+            <label for="cc-100" class="cc-radio">
+                <input type="radio" id="cc-100" name="selector3" tabindex="3">
+                <span>100km</span>
+            </label>          
+            <label for="cc-none" class="cc-radio">
+                <input type="radio" id="cc-none" name="selector3" tabindex="4">
+                <span>None</span>
+            </label>      
+        </div>
+        <!-- radio button for circle-->      
+      
         <br>
       
         <!-- check box -->
@@ -702,34 +743,79 @@
         // 円を追加
         var centerCircle = L.circle(map.getCenter(), {
             color: 'blue',         // 枠線の色
-            weight: 0.5,             // 枠線の太さ
+            weight: 0.8,             // 枠線の太さ
             opacity: 0.5,          // 枠線の透明度
             fillColor: 'none',     // 塗りつぶしの色
             fillOpacity: 0.1,      // 塗りつぶしの透明度
             radius: 5000           // 半径 5000m（5km）
         }).addTo(map);
+      
+        // 現在の円を保持する変数
+        let currentCircle = centerCircle;
 
-        // イージング関数 (easeInOutQuad)
-        function easeInOutQuad(t) {
-            return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-        }
+        // ラジオボタンの変更イベントを追加
+        document.querySelectorAll('#circle-radio input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', function () {
+                const selectedId = this.id;
 
-        // 円の中心を滑らかに移動させる関数
+                // 半径を設定する変数
+                let newRadius;
+
+                // 半径を選択に応じて設定
+                switch (selectedId) {
+                    case 'cc-5':
+                        newRadius = 5000; // 5 km
+                        break;
+                    case 'cc-10':
+                        newRadius = 10000; // 10 km
+                        break;
+                    case 'cc-100':
+                        newRadius = 100000; // 100 km
+                        break;
+                    case 'cc-none':
+                        newRadius = 0; // 非表示
+                        break;
+                    default:
+                        newRadius = 5000; // デフォルトで5 km
+                }
+
+                if (newRadius > 0) {
+                    // 半径を変更し、円を表示
+                    currentCircle.setRadius(newRadius);
+                    currentCircle.setStyle({ opacity: 0.5, fillOpacity: 0.1 });
+                } else {
+                    // 非表示の場合は透明に設定
+                    currentCircle.setStyle({ opacity: 0, fillOpacity: 0 });
+                }
+            });
+        });
+
+        // 地図の移動にアニメーション付きで円を追従させる
+        map.on('moveend', function () {
+            smoothlyMoveCircle(currentCircle, map.getCenter());
+        });
+
+        // ズーム時にも対応
+        map.on('zoomend', function () {
+            smoothlyMoveCircle(currentCircle, map.getCenter());
+        });
+
+        // 滑らかに円を移動させる関数（既存）
         function smoothlyMoveCircle(circle, newLatLng, duration = 1000) {
-            var startLatLng = circle.getLatLng();
-            var startTime = performance.now();
+            const startLatLng = circle.getLatLng();
+            const startTime = performance.now();
 
             function animateMove() {
-                var currentTime = performance.now();
-                var elapsed = currentTime - startTime;
-                var progress = Math.min(elapsed / duration, 1);
+                const currentTime = performance.now();
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
 
                 // イージングを適用
-                var easedProgress = easeInOutQuad(progress);
+                const easedProgress = easeInOutQuad(progress);
 
                 // 線形補間にイージングを適用して位置を計算
-                var interpolatedLat = startLatLng.lat + easedProgress * (newLatLng.lat - startLatLng.lat);
-                var interpolatedLng = startLatLng.lng + easedProgress * (newLatLng.lng - startLatLng.lng);
+                const interpolatedLat = startLatLng.lat + easedProgress * (newLatLng.lat - startLatLng.lat);
+                const interpolatedLng = startLatLng.lng + easedProgress * (newLatLng.lng - startLatLng.lng);
 
                 circle.setLatLng([interpolatedLat, interpolatedLng]);
 
@@ -741,15 +827,10 @@
             requestAnimationFrame(animateMove);
         }
 
-        // 地図の移動にアニメーション付きで円を追従させる
-        map.on('moveend', function () {
-            smoothlyMoveCircle(centerCircle, map.getCenter());
-        });
-
-        // ズーム時にも対応（必要に応じて）
-        map.on('zoomend', function () {
-            smoothlyMoveCircle(centerCircle, map.getCenter());
-        });
+        // イージング関数（既存）
+        function easeInOutQuad(t) {
+            return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+        }
 
 
 
