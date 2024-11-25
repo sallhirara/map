@@ -311,14 +311,23 @@
     .layer-group {
         margin: 0; /* Countryレイヤーのインデント */
     }
+     
+.country-layer {
+    margin: 0 0 10px 0px; /* Countryレイヤーのインデント */  
+    font-size: 14px;
+    font-weight: bolder;
+    color: #555;
+    cursor: pointer;    
+}
+     
     .region-layer {
-        margin: 0 0 10px 10px; /* Regionレイヤーのインデント */
+        margin: 5px 0 0px 10px; /* Regionレイヤーのインデント */
     }
     .admin-layer {
-        margin: 5px 0 10px 15px; /* Administrative Divisionレイヤーのインデント */
+        margin: 5px 0 0px 15px; /* Administrative Divisionレイヤーのインデント */
     }
     .local-layer {
-        margin: 5px 0 10px 20px; /* Local Divisionレイヤーのインデント */
+        margin: 5px 0 0px 20px; /* Local Divisionレイヤーのインデント */
     }
 
       
@@ -1176,7 +1185,7 @@ function createLayer(className, name, items, parentElement) {
     checkboxContainer.style.display = 'flex';
     checkboxContainer.style.alignItems = 'center'; // アイテムを縦中央に配置
     checkboxContainer.style.justifyContent = 'flex-start'; // アイテムを左寄せ
-    checkboxContainer.style.marginBottom = '10px'; // 各項目の間に少しスペースを追加
+    checkboxContainer.style.marginBottom = '5px'; // 各項目の間に少しスペースを追加
 
     // チェックボックス
     const checkbox = document.createElement('input');
