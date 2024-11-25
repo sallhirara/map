@@ -283,6 +283,24 @@
             scrollbar-width: none;  /* Firefoxでスクロールバーを非表示 */          
         }
       
+
+
+/* アニメーション付きのトグルコンテンツ */
+.child-container {
+    overflow: hidden; /* 内容がはみ出さないように隠す */
+    max-height: 0; /* 初期状態では高さを0に */
+    opacity: 0; /* 初期状態で透明 */
+    transition: max-height 0.7s ease-out, opacity 0.7s ease-out; /* max-heightとopacityにトランジションを設定 */
+}
+
+.child-container.open {
+    max-height: 300px; /* 任意の高さに設定（十分大きな値にする） */
+    opacity: 1; /* 表示させる */
+}
+      
+      
+      
+      
     .region-layer span,
     .admin-layer span,
     .local-layer span {
@@ -335,7 +353,22 @@
         #listMenu::-webkit-scrollbar {
           display: none;
         }
-        
+
+      
+/* スムーズな開閉を実現するためのスタイル */
+.list-menu-container {
+    overflow: hidden; /* 内容がはみ出さないように隠す */
+    max-height: 0; /* 初期状態で高さを0に */
+    opacity: 0; /* 初期状態で透明 */
+    transition: max-height 0.3s ease-out, opacity 0.3s ease-out; /* max-heightとopacityにトランジションを追加 */
+}
+
+.list-menu-container.open {
+    max-height: 1000px; /* 任意の十分大きな値 */
+    opacity: 1; /* 要素が表示される */
+}
+      
+      
 
         /*Category 1 毎 のコンテナ*/
         .layer-group {
@@ -1086,7 +1119,7 @@
                   
        
                   
-                  
+// For area-list-container                   
 // エリアリストコンテナをクリア
 const areaListContainer = document.getElementById('area-list-container');
 areaListContainer.innerHTML = ''; // 既存のコンテンツをクリア
@@ -1162,13 +1195,17 @@ function createLayer(className, name, items, parentElement) {
 
     // 子要素コンテナ（子階層のアイテムを追加）
     const childContainer = document.createElement('div');
-    childContainer.style.display = 'none';
-    childContainer.style.marginLeft = '5px';
+    childContainer.classList.add('child-container'); // CSSで指定したクラスを追加
 
     // 開閉機能のイベントリスナー（トグルアイコンをクリックで開閉）
     toggleIcon.addEventListener('click', () => {
-        const isOpen = childContainer.style.display === 'block';
-        childContainer.style.display = isOpen ? 'none' : 'block';
+        const isOpen = childContainer.classList.contains('open');
+        // 開閉の状態に応じてクラスを切り替え
+        if (isOpen) {
+            childContainer.classList.remove('open');
+        } else {
+            childContainer.classList.add('open');
+        }
 
         // アイコンの切り替え（上向き/下向き）
         toggleIcon.classList.toggle('fa-caret-up', !isOpen);
@@ -1212,9 +1249,8 @@ function createLayer(className, name, items, parentElement) {
     parentElement.appendChild(layerDiv);
 
     return childContainer; // 子要素を追加するためのコンテナを返す
-}
-                
-      
+}         
+// For area-list-container        
                   
                   
                     // カテゴリーごとのチェックボックスの生成（階層を保持）
