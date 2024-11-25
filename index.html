@@ -275,7 +275,7 @@
         /* area list */
       
         #area-list-container {
-            max-height: 121px;
+            max-height: 300px;
             overflow-y: auto;
             margin-top: 10px;
             padding: 0 6px;
@@ -1087,216 +1087,134 @@
        
                   
                   
-                  
-                  
-                  
 // エリアリストコンテナをクリア
 const areaListContainer = document.getElementById('area-list-container');
 areaListContainer.innerHTML = ''; // 既存のコンテンツをクリア
 
-// 階層構造を構築
-const hierarchy = {};
-jsonData.forEach(item => {
-    const country = item['Country'];
-    const region = item['Region'];
-    const adminDivision = item['Administrative Division'];
-    const localDivision = item['Local Division'];
+// 階層構造データを生成
+createNestedList(jsonData, areaListContainer);
 
-    if (!country) return;
-
-    if (!hierarchy[country]) hierarchy[country] = {};
-    if (region) {
-        if (!hierarchy[country][region]) hierarchy[country][region] = {};
-        if (adminDivision) {
-            if (!hierarchy[country][region][adminDivision]) hierarchy[country][region][adminDivision] = [];
-            if (localDivision) {
-                hierarchy[country][region][adminDivision].push(localDivision);
+// 階層構造を生成する関数
+function createNestedList(data, container) {
+    // データをキーでグループ化するヘルパー関数
+    function groupBy(array, key) {
+        return array.reduce((result, current) => {
+            const groupKey = current[key];
+            if (!result[groupKey]) {
+                result[groupKey] = [];
             }
-        }
+            result[groupKey].push(current);
+            return result;
+        }, {});
     }
-});
 
-// 親チェックボックスの状態を子に反映する
-function updateChildCheckboxes(parentCheckbox, childCheckboxes) {
-    childCheckboxes.forEach(cb => {
-        cb.checked = parentCheckbox.checked;
-        cb.dispatchEvent(new Event('change')); // マーカー連動のためにイベントを発火
-    });
-}
+    // Countryレベルのグループ化
+    const countries = groupBy(data, 'Country');
+    Object.keys(countries).forEach(country => {
+        const countryDiv = createLayer('country-layer', country, countries[country], container);
 
-// 子チェックボックスの状態を親に反映する
-function updateParentCheckbox(parentCheckbox, childCheckboxes) {
-    const allChecked = Array.from(childCheckboxes).every(cb => cb.checked);
-    const noneChecked = Array.from(childCheckboxes).every(cb => !cb.checked);
+        // Regionレベルのグループ化
+        const regions = groupBy(countries[country], 'Region');
+        Object.keys(regions).forEach(region => {
+            const regionDiv = createLayer('region-layer', region, regions[region], countryDiv);
 
-    parentCheckbox.checked = allChecked;
-    parentCheckbox.indeterminate = !allChecked && !noneChecked; // 子の状態が混在している場合
-}
-                  
- 
-// マーカー格納用のオブジェクトを初期化
-if (!window.categoryMarkers) {
-    window.categoryMarkers = {};
-}
+            // Administrative Divisionレベルのグループ化
+            const admins = groupBy(regions[region], 'Administrative Division');
+            Object.keys(admins).forEach(admin => {
+                const adminDiv = createLayer('admin-layer', admin, admins[admin], regionDiv);
 
-// 階層データを使ってチェックボックスリストを生成
-Object.keys(hierarchy).forEach(country => {
-    const countryContainer = document.createElement('div');
-    countryContainer.className = 'layer-group';
-
-    const countryHeader = document.createElement('div');
-    countryHeader.className = 'main-category';
-    countryHeader.innerHTML = `
-        <input type="checkbox" id="country-${country}" checked>
-        <span class="category-text">${country}</span>
-        <i class="fa-solid fa-caret-down toggle-icon"></i>
-    `;
-    countryContainer.appendChild(countryHeader);
-    areaListContainer.appendChild(countryContainer);
-
-    const regionContainer = document.createElement('div');
-    regionContainer.style.display = 'none';
-    regionContainer.className = 'region-layer';
-    const countryCheckbox = countryHeader.querySelector('input');
-
-    Object.keys(hierarchy[country]).forEach(region => {
-        const regionItem = document.createElement('div');
-        regionItem.className = 'individual-icon-container';
-
-        const regionHeader = document.createElement('div');
-        regionHeader.innerHTML = `
-            <input type="checkbox" id="region-${region}" checked>
-            <span>${region}</span>
-            <i class="fa-solid fa-caret-down toggle-icon"></i>
-        `;
-        regionItem.appendChild(regionHeader);
-
-        const adminContainer = document.createElement('div');
-        adminContainer.style.display = 'none';
-        adminContainer.className = 'admin-layer';
-        const regionCheckbox = regionHeader.querySelector('input');
-
-        Object.keys(hierarchy[country][region]).forEach(adminDivision => {
-            const adminItem = document.createElement('div');
-            adminItem.className = 'individual-icon-container';
-
-            const adminHeader = document.createElement('div');
-            adminHeader.innerHTML = `
-                <input type="checkbox" id="admin-${adminDivision}" checked>
-                <span>${adminDivision}</span>
-                <i class="fa-solid fa-caret-down toggle-icon"></i>
-            `;
-            adminItem.appendChild(adminHeader);
-
-            const localContainer = document.createElement('div');
-            localContainer.style.display = 'none';
-            localContainer.className = 'local-layer';
-            const adminCheckbox = adminHeader.querySelector('input');
-
-            hierarchy[country][region][adminDivision].forEach(localDivision => {
-                const localItem = document.createElement('div');
-                localItem.className = 'individual-icon-container';
-
-                const localCheckbox = document.createElement('input');
-                localCheckbox.type = 'checkbox';
-                localCheckbox.id = `local-${localDivision}`;
-                localCheckbox.checked = true;
-
-                const localLabel = document.createElement('label');
-                localLabel.htmlFor = localCheckbox.id;
-                localLabel.textContent = localDivision;
-
-                localItem.appendChild(localCheckbox);
-                localItem.appendChild(localLabel);
-                localContainer.appendChild(localItem);
-
-                // マーカー生成
-                const marker = L.marker([latitude, longitude], {
-                    icon: L.icon({
-                        iconUrl: "https://example.com/icon.png", // アイコンのURLを指定
-                        iconSize: [25, 41], // サイズを調整
-                    }),
-                }).bindPopup(`Marker for ${localDivision}`);
-
-                // マーカーを`window.categoryMarkers`に登録
-                if (!window.categoryMarkers[localDivision]) {
-                    window.categoryMarkers[localDivision] = [];
-                }
-                window.categoryMarkers[localDivision].push(marker);
-              
-                console.log('window.categoryMarkers:', window.categoryMarkers);
-
-                // 初期表示（チェックされている場合のみ）
-                if (localCheckbox.checked) {
-                    marker.addTo(map);
-                }
-
-                // チェックボックスの状態変更に応じてマーカーの表示・非表示を制御
-                localCheckbox.addEventListener('change', function () {
-                    console.log(`Checkbox for ${localDivision} changed to: ${localCheckbox.checked}`);
-                    const marker = window.categoryMarkers[localDivision];
-                    if (marker) {
-                        try {
-                            if (localCheckbox.checked) {
-                                marker.forEach(m => m.addTo(map));
-                                console.log(`Markers for ${localDivision} added to map.`);
-                            } else {
-                                marker.forEach(m => map.removeLayer(m));
-                                console.log(`Markers for ${localDivision} removed from map.`);
-                            }
-                        } catch (error) {
-                            console.error(`Error controlling markers for ${localDivision}:`, error);
-                        }
-                    } else {
-                        console.warn(`No markers found for ${localDivision}`);
-                    }
+                // Local Divisionレベルのグループ化
+                const locals = groupBy(admins[admin], 'Local Division');
+                Object.keys(locals).forEach(local => {
+                    createLayer('local-layer', local, locals[local], adminDiv);
                 });
-                console.log(`Checkbox for ${localDivision} changed to: ${localCheckbox.checked}`);
-                console.log(`Markers for ${localDivision}:`, marker);
-                if (marker) {
-                    console.log(`Attempting to ${localCheckbox.checked ? 'add' : 'remove'} markers for ${localDivision}`);
+            });
+        });
+    });
+}
+
+// 各レイヤー（階層）を生成する関数
+function createLayer(className, name, items, parentElement) {
+    const layerDiv = document.createElement('div');
+    layerDiv.className = className;
+
+    // チェックボックスとテキストを横並びにするためのコンテナ（左寄せ）
+    const checkboxContainer = document.createElement('div');
+    checkboxContainer.style.display = 'flex';
+    checkboxContainer.style.alignItems = 'center'; // アイテムを縦中央に配置
+    checkboxContainer.style.justifyContent = 'flex-start'; // アイテムを左寄せ
+    checkboxContainer.style.marginBottom = '10px'; // 各項目の間に少しスペースを追加
+
+    // チェックボックス
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = true;
+
+    // テキスト部分
+    const label = document.createElement('label');
+    label.textContent = ` ${name}`;
+    label.style.marginLeft = '5px';
+
+    // トグルアイコン（初期状態で下向きアイコン）
+    const toggleIcon = document.createElement('i');
+    toggleIcon.classList.add('toggle-icon', 'fa', 'fa-caret-down'); // 'toggle-icon'クラスを追加し、初期状態で下向き矢印
+    toggleIcon.style.marginLeft = '10px'; // アイコンの位置調整（テキストと少し間を開ける）
+
+    // 子要素コンテナ（子階層のアイテムを追加）
+    const childContainer = document.createElement('div');
+    childContainer.style.display = 'none';
+    childContainer.style.marginLeft = '5px';
+
+    // 開閉機能のイベントリスナー（トグルアイコンをクリックで開閉）
+    toggleIcon.addEventListener('click', () => {
+        const isOpen = childContainer.style.display === 'block';
+        childContainer.style.display = isOpen ? 'none' : 'block';
+
+        // アイコンの切り替え（上向き/下向き）
+        toggleIcon.classList.toggle('fa-caret-up', !isOpen);
+        toggleIcon.classList.toggle('fa-caret-down', isOpen);
+    });
+
+    // チェックボックスのイベントリスナー（マーカーの表示/非表示を制御）
+    checkbox.addEventListener('change', function () {
+        const isChecked = checkbox.checked;
+
+        // 子要素のチェックボックスを同期
+        const childCheckboxes = childContainer.querySelectorAll('input[type="checkbox"]');
+        childCheckboxes.forEach(cb => {
+            cb.checked = isChecked;
+            cb.dispatchEvent(new Event('change')); // 子要素にも変更を伝える
+        });
+
+        // 現在のレイヤー内のアイテムのマーカーを制御
+        items.forEach(item => {
+            const marker = window.categoryMarkers?.[item['Category 1']]?.find(m =>
+                m.getPopup().getContent().includes(item['PJ name'])
+            );
+            if (marker) {
+                if (isChecked) {
+                    marker.addTo(map);
+                } else {
+                    map.removeLayer(marker);
                 }
-            });
-
-            adminItem.appendChild(localContainer);
-
-            adminHeader.querySelector('.toggle-icon').addEventListener('click', () => {
-                localContainer.style.display = localContainer.style.display === 'none' ? 'block' : 'none';
-            });
-
-            adminCheckbox.addEventListener('change', () => {
-                updateChildCheckboxes(adminCheckbox, localContainer.querySelectorAll('input[type="checkbox"]'));
-            });
-
-            adminContainer.appendChild(adminItem);
+            }
         });
-
-        regionItem.appendChild(adminContainer);
-
-        regionHeader.querySelector('.toggle-icon').addEventListener('click', () => {
-            adminContainer.style.display = adminContainer.style.display === 'none' ? 'block' : 'none';
-        });
-
-        regionCheckbox.addEventListener('change', () => {
-            updateChildCheckboxes(regionCheckbox, adminContainer.querySelectorAll('input[type="checkbox"]'));
-        });
-
-        regionContainer.appendChild(regionItem);
     });
 
-    countryContainer.appendChild(regionContainer);
+    // チェックボックス、テキスト、トグルアイコンを横並びに追加
+    checkboxContainer.appendChild(checkbox);
+    checkboxContainer.appendChild(label);
+    checkboxContainer.appendChild(toggleIcon);
 
-    countryHeader.querySelector('.toggle-icon').addEventListener('click', () => {
-        regionContainer.style.display = regionContainer.style.display === 'none' ? 'block' : 'none';
-    });
+    // レイヤーを親要素に追加
+    layerDiv.appendChild(checkboxContainer);
+    layerDiv.appendChild(childContainer);
+    parentElement.appendChild(layerDiv);
 
-    countryCheckbox.addEventListener('change', () => {
-        updateChildCheckboxes(countryCheckbox, regionContainer.querySelectorAll('input[type="checkbox"]'));
-    });
-});
-
-console.log('window.categoryMarkers:', window.categoryMarkers);
-                  
+    return childContainer; // 子要素を追加するためのコンテナを返す
+}
+                
+      
                   
                   
                     // カテゴリーごとのチェックボックスの生成（階層を保持）
