@@ -361,32 +361,12 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
             z-index: 1001;
             font-size: 12px;
-
-            top: 60px; /* menu-container (30px) + margin (10px) */
-            transform: translateY(0);
-            opacity: 1;
-            transition: transform 0.7s ease, opacity 0.7s ease; /* 開閉アニメーションの速度を指定 */
         }
 
         
         #listMenu::-webkit-scrollbar {
         display: none;
         }
-
-            
-        /* スムーズな開閉を実現するためのスタイル */
-        .list-menu-container {
-            overflow: hidden; /* 内容がはみ出さないように隠す */
-            max-height: 0; /* 初期状態で高さを0に */
-            opacity: 0; /* 初期状態で透明 */
-            transition: max-height 0.3s ease-out, opacity 0.3s ease-out; /* max-heightとopacityにトランジションを追加 */
-        }
-
-        .list-menu-container.open {
-            max-height: 1000px; /* 任意の十分大きな値 */
-            opacity: 1; /* 要素が表示される */
-        }
-      
       
 
         /*Category 1 毎 のコンテナ*/
