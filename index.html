@@ -720,12 +720,19 @@
 
 
         // 地図の初期化
-        var map = L.map('map', { zoomControl: false }).setView([21.03966820428092, 105.86461819490408], 12);
-      
+        // ユーザーがモバイルデバイスを使用しているかを判定
+        const isMobile = /Mobi|Android|iPhone|iPad|iPod/.test(navigator.userAgent);
+
+        // デバイスに応じた初期ズームレベルを設定
+        const initialZoom = isMobile ? 11 : 12;
+
+        // デバイスに適したズームレベルで地図を初期化
+        var map = L.map('map', { zoomControl: false }).setView([21.03966820428092, 105.86461819490408], initialZoom);
+
         // Hanoi, HCMC, Vietnam の座標
         const locations = {
-            'hn-area': { coords: [21.03966820428092, 105.86461819490408], zoom: 12 }, // Hanoi
-            'hcm-area': { coords: [10.787176769219485, 106.69384890636728], zoom: 12 }, // HCMC
+            'hn-area': { coords: [21.03966820428092, 105.86461819490408], zoom: initialZoom }, // Hanoi
+            'hcm-area': { coords: [10.787176769219485, 106.69384890636728], zoom: initialZoom }, // HCMC
             'vn-area': { coords: [15.9265619930092, 105.9142312190458], zoom: 6 } // Vietnam（広域表示）
         };
 
@@ -741,6 +748,7 @@
                 }
             }
         });
+
       
         
         // 各縮尺に対応するズームレベルの定義
