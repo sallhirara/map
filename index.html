@@ -319,12 +319,6 @@
             color: #555;
         }
 
-        /* 各レイヤーの最初の子要素に余白を追加 */
-        .country-layer .child-container.open .region-layer:first-child,
-        .region-layer .child-container.open .admin-layer:first-child,
-        .admin-layer .child-container.open .local-layer:first-child {
-            margin-top: 5px; /* 必要な余白を指定 */
-        }
 
         .region-layer {
             margin: 0 0 0px 10px; /* Regionレイヤーのインデント */
@@ -1405,21 +1399,18 @@ function createLayer(className, name, items, parentElement) {
                 });
               
               
-// カテゴリごとのマーカーを格納するオブジェクト
-if (!window.categoryMarkers) {
-    window.categoryMarkers = {};
-}
+                // カテゴリごとのマーカーを格納するオブジェクト
+                if (!window.categoryMarkers) {
+                    window.categoryMarkers = {};
+                }
 
-function addMarkerToCategory(category, marker) {
-    if (!window.categoryMarkers[category]) {
-        window.categoryMarkers[category] = [];
-    }
-    window.categoryMarkers[category].push(marker);
-    console.log('window.categoryMarkers:', window.categoryMarkers);
-}
-              
-              
-              
+                function addMarkerToCategory(category, marker) {
+                    if (!window.categoryMarkers[category]) {
+                        window.categoryMarkers[category] = [];
+                    }
+                    window.categoryMarkers[category].push(marker);
+                    console.log('window.categoryMarkers:', window.categoryMarkers);
+                }          
             };
             reader.readAsArrayBuffer(file);
         }); 
