@@ -151,7 +151,7 @@
         .sc-radio,
         .cc-radio {
           border: none;
-            padding: 6px;
+            padding: 3px 6px;
             border-radius: 50px;
             display: inline-flex;
             cursor: pointer;
@@ -223,7 +223,7 @@
 
         .c-checkbox {
           border: none!important;
-            padding: 6px;
+            padding: 4px 6px;
             border-radius: 10px;
             cursor: pointer;
             transition: background 0.2 ease;
@@ -281,9 +281,7 @@
             padding: 0 6px;
             -ms-overflow-style: none;  /* IEとEdgeでスクロールバーを非表示 */
             scrollbar-width: none;  /* Firefoxでスクロールバーを非表示 */          
-        }
-      
-
+        }      
 
         /* アニメーション付きのトグルコンテンツ */
         .child-container {
@@ -293,37 +291,32 @@
             transition: max-height 0.7s ease-out, opacity 0.7s ease-out; /* max-heightとopacityにトランジションを設定 */
         }
 
+
+        .country-layer label,
+        .region-layer label,
+        .admin-layer label,
+        .local-layer label {
+            padding-left: 5px;
+        }
+
         .child-container.open {
             max-height: 200px; /* 任意の高さに設定（十分大きな値にする） */
             opacity: 1; /* 表示させる */
         }
             
-      
-      
-      
-        .region-layer span,
-        .admin-layer span,
-        .local-layer span {
-            padding-left: 10px;
-        }
-        
-        
-        .layer-group {
-            margin: 0; /* Countryレイヤーのインデント */
-        }
         
         .country-layer {
-            margin: 0 0 10px 0; /* Countryレイヤーのインデント */  
+            margin: 0 0 4px 0; /* Countryレイヤーのインデント */  
             font-size: 14px;
             font-weight: bolder;
             color: #555;
         }
 
-
         .region-layer {
             margin: 0 0 0px 10px; /* Regionレイヤーのインデント */
             font-size: 12px;
             font-weight: normal;
+            color: #333;
         }
 
         .admin-layer {
@@ -365,7 +358,7 @@
 
         /*Category 1 毎 のコンテナ*/
         .layer-group {
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
         
         /*Category 1 のヘッダーコンテナ*/
@@ -418,7 +411,7 @@
 
         input[type="checkbox"]:checked {
             font-size: 9px;
-            background-color: #9F220585;
+            background-color: #D93E1A85;
             border: none;
             position: relative;
         }
