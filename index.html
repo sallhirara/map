@@ -561,22 +561,31 @@
                 <input type="checkbox" id="primary-category" name="selector" tabindex="1" checked>
                 <span>Primary</span>
             </label>
-            <label for="hc-category" class="c-checkbox">
-                <input type="checkbox" id="hc-category" name="selector" tabindex="2" checked>
-                <span>Haseko</span>
             </label>
-            <label for="condo-category" class="c-checkbox">
-                <input type="checkbox" id="condo-category" name="selector" tabindex="3" checked>
-                <span>Condo</span>
+            <label for="urban-category" class="c-checkbox">
+                <input type="checkbox" id="urban-category" name="selector" tabindex="2" checked>
+                <span>Urban PJ</span>
+            </label>            
+            <label for="hc-category" class="c-checkbox">
+                <input type="checkbox" id="hc-category" name="selector" tabindex="3" checked>
+                <span>Haseko</span>
             </label>
             <label for="ecoba-category" class="c-checkbox">
                 <input type="checkbox" id="ecoba-category" name="selector" tabindex="4" checked>
                 <span>Ecoba</span>
+            </label>            
+            <label for="condo-category" class="c-checkbox">
+                <input type="checkbox" id="condo-category" name="selector" tabindex="5" checked>
+                <span>Condo</span>
             </label>
             <label for="site-category" class="c-checkbox">
-                <input type="checkbox" id="site-category" name="selector" tabindex="" checked>
+                <input type="checkbox" id="site-category" name="selector" tabindex="6" checked>
                 <span>PJ Site</span>
             </label>
+            <label for="Other-category" class="c-checkbox">
+                <input type="checkbox" id="other-category" name="selector" tabindex="7" checked>
+                <span>Other PJ</span>
+            </label>            
         </div>
         <!-- check box -->
       
@@ -1120,154 +1129,162 @@
                         });
                     });
       
+
+
+
+
+
+
+
+
                   
        
                   
-// For area-list-container                   
-// エリアリストコンテナをクリア
-const areaListContainer = document.getElementById('area-list-container');
-areaListContainer.innerHTML = ''; // 既存のコンテンツをクリア
+                    // For area-list-container                   
+                    // エリアリストコンテナをクリア
+                    const areaListContainer = document.getElementById('area-list-container');
+                    areaListContainer.innerHTML = ''; // 既存のコンテンツをクリア
 
-// 階層構造データを生成
-createNestedList(jsonData, areaListContainer);
+                    // 階層構造データを生成
+                    createNestedList(jsonData, areaListContainer);
 
-// 階層構造を生成する関数
-function createNestedList(data, container) {
-    // データをキーでグループ化するヘルパー関数
-    function groupBy(array, key) {
-        return array.reduce((result, current) => {
-            const groupKey = current[key];
-            if (!result[groupKey]) {
-                result[groupKey] = [];
-            }
-            result[groupKey].push(current);
-            return result;
-        }, {});
-    }
+                    // 階層構造を生成する関数
+                    function createNestedList(data, container) {
+                        // データをキーでグループ化するヘルパー関数
+                        function groupBy(array, key) {
+                            return array.reduce((result, current) => {
+                                const groupKey = current[key];
+                                if (!result[groupKey]) {
+                                    result[groupKey] = [];
+                                }
+                                result[groupKey].push(current);
+                                return result;
+                            }, {});
+                        }
 
-    // Countryレベルのグループ化
-    const countries = groupBy(data, 'Country');
-    Object.keys(countries).forEach(country => {
-        const countryDiv = createLayer('country-layer', country, countries[country], container);
+                        // Countryレベルのグループ化
+                        const countries = groupBy(data, 'Country');
+                        Object.keys(countries).forEach(country => {
+                            const countryDiv = createLayer('country-layer', country, countries[country], container);
 
-        // Regionレベルのグループ化
-        const regions = groupBy(countries[country], 'Region');
-        Object.keys(regions).forEach(region => {
-            const regionDiv = createLayer('region-layer', region, regions[region], countryDiv);
+                            // Regionレベルのグループ化
+                            const regions = groupBy(countries[country], 'Region');
+                            Object.keys(regions).forEach(region => {
+                                const regionDiv = createLayer('region-layer', region, regions[region], countryDiv);
 
-            // Administrative Divisionレベルのグループ化
-            const admins = groupBy(regions[region], 'Administrative Division');
-            Object.keys(admins).forEach(admin => {
-                const adminDiv = createLayer('admin-layer', admin, admins[admin], regionDiv);
+                                // Administrative Divisionレベルのグループ化
+                                const admins = groupBy(regions[region], 'Administrative Division');
+                                Object.keys(admins).forEach(admin => {
+                                    const adminDiv = createLayer('admin-layer', admin, admins[admin], regionDiv);
 
-                // Local Divisionレベルのグループ化
-                const locals = groupBy(admins[admin], 'Local Division');
-                Object.keys(locals).forEach(local => {
-                    createLayer('local-layer', local, locals[local], adminDiv);
-                });
-            });
-        });
-    });
-}
+                                    // Local Divisionレベルのグループ化
+                                    const locals = groupBy(admins[admin], 'Local Division');
+                                    Object.keys(locals).forEach(local => {
+                                        createLayer('local-layer', local, locals[local], adminDiv);
+                                    });
+                                });
+                            });
+                        });
+                    }
 
-// 各レイヤー（階層）を生成する関数
-function createLayer(className, name, items, parentElement) {
-    const layerDiv = document.createElement('div');
-    layerDiv.className = className;
+                    // 各レイヤー（階層）を生成する関数
+                    function createLayer(className, name, items, parentElement) {
+                        const layerDiv = document.createElement('div');
+                        layerDiv.className = className;
 
-    // チェックボックスとテキストを横並びにするためのコンテナ（左寄せ）
-    const checkboxContainer = document.createElement('div');
-    checkboxContainer.style.display = 'flex';
-    checkboxContainer.style.alignItems = 'center'; // アイテムを縦中央に配置
-    checkboxContainer.style.justifyContent = 'flex-start'; // アイテムを左寄せ
-    checkboxContainer.style.marginBottom = '5px'; // 各項目の間に少しスペースを追加
+                        // チェックボックスとテキストを横並びにするためのコンテナ（左寄せ）
+                        const checkboxContainer = document.createElement('div');
+                        checkboxContainer.style.display = 'flex';
+                        checkboxContainer.style.alignItems = 'center'; // アイテムを縦中央に配置
+                        checkboxContainer.style.justifyContent = 'flex-start'; // アイテムを左寄せ
+                        checkboxContainer.style.marginBottom = '5px'; // 各項目の間に少しスペースを追加
 
-    // チェックボックス
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.checked = true;
+                        // チェックボックス
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.checked = true;
 
-    // テキスト部分
-    const label = document.createElement('label');
-    label.textContent = ` ${name}`;
-    label.style.marginLeft = '5px';
+                        // テキスト部分
+                        const label = document.createElement('label');
+                        label.textContent = ` ${name}`;
+                        label.style.marginLeft = '5px';
 
-    // トグルアイコン（初期状態で下向きアイコン）
-    const toggleIcon = document.createElement('i');
-    toggleIcon.classList.add('toggle-icon', 'fa', 'fa-caret-down'); // 'toggle-icon'クラスを追加し、初期状態で下向き矢印
-    toggleIcon.style.marginLeft = '10px'; // アイコンの位置調整（テキストと少し間を開ける）
+                        // トグルアイコン（初期状態で下向きアイコン）
+                        const toggleIcon = document.createElement('i');
+                        toggleIcon.classList.add('toggle-icon', 'fa', 'fa-caret-down'); // 'toggle-icon'クラスを追加し、初期状態で下向き矢印
+                        toggleIcon.style.marginLeft = '10px'; // アイコンの位置調整（テキストと少し間を開ける）
 
-    // 子要素コンテナ（子階層のアイテムを追加）
-    const childContainer = document.createElement('div');
-    childContainer.classList.add('child-container'); // CSSで指定したクラスを追加
+                        // 子要素コンテナ（子階層のアイテムを追加）
+                        const childContainer = document.createElement('div');
+                        childContainer.classList.add('child-container'); // CSSで指定したクラスを追加
 
-    // 開閉機能のイベントリスナー（トグルアイコンをクリックで開閉）
-    toggleIcon.addEventListener('click', () => {
-        const isOpen = childContainer.classList.contains('open');
-        // 開閉の状態に応じてクラスを切り替え
-        if (isOpen) {
-            childContainer.classList.remove('open');
-        } else {
-            childContainer.classList.add('open');
-        }
+                        // 開閉機能のイベントリスナー（トグルアイコンをクリックで開閉）
+                        toggleIcon.addEventListener('click', () => {
+                            const isOpen = childContainer.classList.contains('open');
+                            // 開閉の状態に応じてクラスを切り替え
+                            if (isOpen) {
+                                childContainer.classList.remove('open');
+                            } else {
+                                childContainer.classList.add('open');
+                            }
 
-        // アイコンの切り替え（上向き/下向き）
-        toggleIcon.classList.toggle('fa-caret-up', !isOpen);
-        toggleIcon.classList.toggle('fa-caret-down', isOpen);
-    });
+                            // アイコンの切り替え（上向き/下向き）
+                            toggleIcon.classList.toggle('fa-caret-up', !isOpen);
+                            toggleIcon.classList.toggle('fa-caret-down', isOpen);
+                        });
 
-    // チェックボックスのイベントリスナー（マーカーの表示/非表示を制御）
-    checkbox.addEventListener('change', function () {
-        const isChecked = checkbox.checked;
+                        // チェックボックスのイベントリスナー（マーカーの表示/非表示を制御）
+                        checkbox.addEventListener('change', function () {
+                            const isChecked = checkbox.checked;
 
-        // 子要素のチェックボックスを同期
-        const childCheckboxes = childContainer.querySelectorAll('input[type="checkbox"]');
-        childCheckboxes.forEach(cb => {
-            cb.checked = isChecked;
-            cb.dispatchEvent(new Event('change')); // 子要素にも変更を伝える
-        });
+                            // 子要素のチェックボックスを同期
+                            const childCheckboxes = childContainer.querySelectorAll('input[type="checkbox"]');
+                            childCheckboxes.forEach(cb => {
+                                cb.checked = isChecked;
+                                cb.dispatchEvent(new Event('change')); // 子要素にも変更を伝える
+                            });
 
-        // 現在のレイヤー内のアイテムのマーカーとポリゴンを制御
-        items.forEach(item => {
-            // マーカーの検索と表示・非表示の制御
-            const marker = window.categoryMarkers?.[item['Category 1']]?.find(m =>
-                m.getPopup().getContent().includes(item['PJ name'])
-            );
-            if (marker) {
-                if (isChecked) {
-                    marker.addTo(map);
-                } else {
-                    map.removeLayer(marker);
-                }
-            }
+                            // 現在のレイヤー内のアイテムのマーカーとポリゴンを制御
+                            items.forEach(item => {
+                                // マーカーの検索と表示・非表示の制御
+                                const marker = window.categoryMarkers?.[item['Category 1']]?.find(m =>
+                                    m.getPopup().getContent().includes(item['PJ name'])
+                                );
+                                if (marker) {
+                                    if (isChecked) {
+                                        marker.addTo(map);
+                                    } else {
+                                        map.removeLayer(marker);
+                                    }
+                                }
 
-            // ポリゴンの検索と表示・非表示の制御
-            const polygon = window.categoryPolygons?.[item['Category 1']]?.find(p =>
-                p.getPopup().getContent().includes(item['PJ name'])
-            );
-            if (polygon) {
-                if (isChecked) {
-                    polygon.addTo(map);
-                } else {
-                    map.removeLayer(polygon);
-                }
-            }
-        });
-    });
+                                // ポリゴンの検索と表示・非表示の制御
+                                const polygon = window.categoryPolygons?.[item['Category 1']]?.find(p =>
+                                    p.getPopup().getContent().includes(item['PJ name'])
+                                );
+                                if (polygon) {
+                                    if (isChecked) {
+                                        polygon.addTo(map);
+                                    } else {
+                                        map.removeLayer(polygon);
+                                    }
+                                }
+                            });
+                        });
 
-    // チェックボックス、テキスト、トグルアイコンを横並びに追加
-    checkboxContainer.appendChild(checkbox);
-    checkboxContainer.appendChild(label);
-    checkboxContainer.appendChild(toggleIcon);
+                        // チェックボックス、テキスト、トグルアイコンを横並びに追加
+                        checkboxContainer.appendChild(checkbox);
+                        checkboxContainer.appendChild(label);
+                        checkboxContainer.appendChild(toggleIcon);
 
-    // レイヤーを親要素に追加
-    layerDiv.appendChild(checkboxContainer);
-    layerDiv.appendChild(childContainer);
-    parentElement.appendChild(layerDiv);
+                        // レイヤーを親要素に追加
+                        layerDiv.appendChild(checkboxContainer);
+                        layerDiv.appendChild(childContainer);
+                        parentElement.appendChild(layerDiv);
 
-    return childContainer; // 子要素を追加するためのコンテナを返す
-}         
-// For area-list-container        
+                        return childContainer; // 子要素を追加するためのコンテナを返す
+                    }         
+                    // For area-list-container        
                   
                   
                     // カテゴリーごとのチェックボックスの生成（階層を保持）
@@ -1356,9 +1373,17 @@ function createLayer(className, name, items, parentElement) {
                             event.stopPropagation();
                             toggleIndividualContainers();
                         });
-
                    }
                   
+
+
+
+
+
+
+
+
+
           
                   
 
@@ -1431,97 +1456,94 @@ function createLayer(className, name, items, parentElement) {
 
 
 
-    // トグル管理のコードをここに追加
-    function setupToggle(containerId) {
-        const container = document.getElementById(containerId);
+            // トグル管理のコードをここに追加
+            function setupToggle(containerId) {
+                const container = document.getElementById(containerId);
 
-        // トグルアイコンのクリックイベントを設定
-        container.addEventListener('click', (event) => {
-            if (event.target.classList.contains('toggle-icon')) {
-                const toggleIcon = event.target;
-                const childContainer = toggleIcon.closest('div').querySelector('.list-child-container');
+                // トグルアイコンのクリックイベントを設定
+                container.addEventListener('click', (event) => {
+                    if (event.target.classList.contains('toggle-icon')) {
+                        const toggleIcon = event.target;
+                        const childContainer = toggleIcon.closest('div').querySelector('.list-child-container');
 
-                // 開閉状態を切り替え
-                if (childContainer.classList.contains('open')) {
-                    childContainer.classList.remove('open');
+                        // 開閉状態を切り替え
+                        if (childContainer.classList.contains('open')) {
+                            childContainer.classList.remove('open');
+                        } else {
+                            childContainer.classList.add('open');
+                        }
+
+                        // アイコンの向きを切り替え
+                        toggleIcon.classList.toggle('fa-caret-up', !childContainer.classList.contains('open'));
+                        toggleIcon.classList.toggle('fa-caret-down', childContainer.classList.contains('open'));
+                    }
+                });
+
+                // チェックボックスの設定
+                container.addEventListener('change', (event) => {
+                    if (event.target.type === 'checkbox') {
+                        const checkbox = event.target;
+                        const isChecked = checkbox.checked;
+
+                        // 子要素のチェックボックスに状態を同期
+                        const childCheckboxes = checkbox.closest('div').querySelectorAll('.child-container input[type="checkbox"]');
+                        childCheckboxes.forEach(cb => {
+                            cb.checked = isChecked;
+                            cb.dispatchEvent(new Event('change')); // 子要素にも変更を伝える
+                        });
+                    }
+                });
+            }              
+        };
+        reader.readAsArrayBuffer(file);
+        
+          
+        function createLayer(className, name, items, parentElement) {
+            const layerDiv = document.createElement('div');
+            layerDiv.className = className;
+
+            // トグルアイコンの作成
+            const toggleIcon = document.createElement('i');
+            toggleIcon.classList.add('toggle-icon', 'fa', 'fa-caret-down');
+
+            // 子要素コンテナ（.list-child-container）
+            const childContainer = document.createElement('div');
+            childContainer.classList.add('list-child-container');
+
+            // トグルアイコンのクリックイベントで開閉
+            toggleIcon.addEventListener('click', () => {
+                const isOpen = childContainer.classList.contains('open');
+
+                if (isOpen) {
+                    // 閉じるアニメーション
+                    childContainer.style.maxHeight = `${childContainer.scrollHeight}px`; // 現在の高さを固定
+                    requestAnimationFrame(() => {
+                        childContainer.style.maxHeight = '0'; // 高さを0に設定
+                    });
                 } else {
-                    childContainer.classList.add('open');
+                    // 開くアニメーション
+                    childContainer.style.maxHeight = '0'; // 初期状態
+                    requestAnimationFrame(() => {
+                        childContainer.style.maxHeight = `${childContainer.scrollHeight}px`; // コンテンツの高さまで拡張
+                    });
                 }
 
-                // アイコンの向きを切り替え
-                toggleIcon.classList.toggle('fa-caret-up', !childContainer.classList.contains('open'));
-                toggleIcon.classList.toggle('fa-caret-down', childContainer.classList.contains('open'));
-            }
-        });
+                // 開閉状態を切り替え
+                childContainer.classList.toggle('open', !isOpen);
 
-        // チェックボックスの設定
-        container.addEventListener('change', (event) => {
-            if (event.target.type === 'checkbox') {
-                const checkbox = event.target;
-                const isChecked = checkbox.checked;
-
-                // 子要素のチェックボックスに状態を同期
-                const childCheckboxes = checkbox.closest('div').querySelectorAll('.child-container input[type="checkbox"]');
-                childCheckboxes.forEach(cb => {
-                    cb.checked = isChecked;
-                    cb.dispatchEvent(new Event('change')); // 子要素にも変更を伝える
-                });
-            }
-        });
-    }              
-            };
-            reader.readAsArrayBuffer(file);
-          
-function createLayer(className, name, items, parentElement) {
-    const layerDiv = document.createElement('div');
-    layerDiv.className = className;
-
-    // トグルアイコンの作成
-    const toggleIcon = document.createElement('i');
-    toggleIcon.classList.add('toggle-icon', 'fa', 'fa-caret-down');
-
-    // 子要素コンテナ（.list-child-container）
-    const childContainer = document.createElement('div');
-    childContainer.classList.add('list-child-container');
-
-    // トグルアイコンのクリックイベントで開閉
-    toggleIcon.addEventListener('click', () => {
-        const isOpen = childContainer.classList.contains('open');
-
-        if (isOpen) {
-            // 閉じるアニメーション
-            childContainer.style.maxHeight = `${childContainer.scrollHeight}px`; // 現在の高さを固定
-            requestAnimationFrame(() => {
-                childContainer.style.maxHeight = '0'; // 高さを0に設定
+                // アイコンの切り替え
+                toggleIcon.classList.toggle('fa-caret-up', !isOpen);
+                toggleIcon.classList.toggle('fa-caret-down', isOpen);
             });
-        } else {
-            // 開くアニメーション
-            childContainer.style.maxHeight = '0'; // 初期状態
-            requestAnimationFrame(() => {
-                childContainer.style.maxHeight = `${childContainer.scrollHeight}px`; // コンテンツの高さまで拡張
-            });
+
+            // レイヤーを親要素に追加
+            layerDiv.appendChild(toggleIcon);
+            layerDiv.appendChild(childContainer);
+            parentElement.appendChild(layerDiv);
+
+            return childContainer;
         }
 
-        // 開閉状態を切り替え
-        childContainer.classList.toggle('open', !isOpen);
-
-        // アイコンの切り替え
-        toggleIcon.classList.toggle('fa-caret-up', !isOpen);
-        toggleIcon.classList.toggle('fa-caret-down', isOpen);
-    });
-
-    // レイヤーを親要素に追加
-    layerDiv.appendChild(toggleIcon);
-    layerDiv.appendChild(childContainer);
-    parentElement.appendChild(layerDiv);
-
-    return childContainer;
-}
-
-     
-          
-
-                // 既存の動的要素生成コードがここにあると仮定
                 generateListMenuData(); // 仮: `#listMenu` のデータ生成関数
                 generateAreaListData(); // 仮: `#area-list-container` のデータ生成関数              
                 // `#listMenu` と `#area-list-container` のトグル管理を設定
@@ -1552,6 +1574,15 @@ function createLayer(className, name, items, parentElement) {
                     case 'hc-category':
                         parentCheckboxId = 'toggleHC PJ';
                         break;
+                    case 'urban-category':
+                        parentCheckboxId = 'toggleUrban PJ';
+                        break; 
+                    case 'site-category':
+                        parentCheckboxId = 'toggleSite PJ';
+                        break;
+                    case 'other-category':
+                        parentCheckboxId = 'toggleOther PJ';
+                        break;                                                                       
                     default:
                         return; // マッチするものがない場合は処理を中断
                 }
@@ -1582,8 +1613,44 @@ function createLayer(className, name, items, parentElement) {
                 }
             });
         });
-      
 
+        // urban-category チェックボックスの変更イベントを設定
+        document.getElementById('urban-category').addEventListener('change', function () {
+            const isChecked = this.checked;
+
+            // Urban PJ カテゴリのポリゴンを取得
+            const urbanPolygons = window.categoryPolygons?.['Urban PJ'];
+
+            // チェック状態に応じてポリゴンを表示・非表示に切り替え
+            if (urbanPolygons) {
+                urbanPolygons.forEach(polygon => {
+                    if (isChecked) {
+                        polygon.addTo(map); // 表示
+                    } else {
+                        map.removeLayer(polygon); // 非表示
+                    }
+                });
+            }
+        });        
+            
+        // site-category チェックボックスの変更イベントを設定
+        document.getElementById('site-category').addEventListener('change', function () {
+            const isChecked = this.checked;
+
+            // PJ Site カテゴリのポリゴンを取得
+            const sitePolygons = window.categoryPolygons?.['PJ Site'];
+
+            // チェック状態に応じてポリゴンを表示・非表示に切り替え
+            if (sitePolygons) {
+                sitePolygons.forEach(polygon => {
+                    if (isChecked) {
+                        polygon.addTo(map); // 表示
+                    } else {
+                        map.removeLayer(polygon); // 非表示
+                    }
+                });
+            }
+        });
       
       
         // 画面ローテーションでリロード
