@@ -547,9 +547,9 @@
                 <span>Primary</span>
             </label>
             </label>
-            <label for="urban-category" class="c-checkbox">
-                <input type="checkbox" id="urban-category" name="selector" tabindex="2" checked>
-                <span>Urban PJ</span>
+            <label for="areaDev-category" class="c-checkbox">
+                <input type="checkbox" id="areaDev-category" name="selector" tabindex="2" checked>
+                <span>Area Dev</span>
             </label>            
             <label for="hc-category" class="c-checkbox">
                 <input type="checkbox" id="hc-category" name="selector" tabindex="3" checked>
@@ -754,7 +754,7 @@
         var categoryIcons = {
             "HC PJ": "https://img.icons8.com/?size=100&id=bnfp2fmtrh0g&format=png&color=FF0062", // 新規検討案件のアイコン
             "PJ Site": "https://img.icons8.com/?size=100&id=ipgAkdE46kxu&format=png&color=000000", // サイトのアイコン          
-            "Urban PJ": "https://img.icons8.com/?size=100&id=bnfp2fmtrh0g&format=png&color=05227AA8", // 麺開発案件のアイコン
+            "Area Dev": "https://img.icons8.com/?size=100&id=bnfp2fmtrh0g&format=png&color=05227AA8", // 面開発案件のアイコン
             "ECOBA PJ": "https://img.icons8.com/?size=100&id=42P5zkOQICqY&format=png&color=000000", // ECOBAのアイコン
             "Condominium": "https://img.icons8.com/?size=100&id=uRRFz0DH6uYw&format=png&color=000000", // Condominiumのアイコン
             "Other PJ": "https://img.icons8.com/?size=100&id=bnfp2fmtrh0g&format=png&color=8A8A02A8" // 新規検討案件のアイコン
@@ -764,7 +764,7 @@
         // 円を追加
         var centerCircle = L.circle(map.getCenter(), {
             color: 'blue',         // 枠線の色
-            weight: 0.8,             // 枠線の太さ
+            weight: 0.8,           // 枠線の太さ
             opacity: 0.5,          // 枠線の透明度
             fillColor: 'none',     // 塗りつぶしの色
             fillOpacity: 0.1,      // 塗りつぶしの透明度
@@ -844,7 +844,6 @@
                     requestAnimationFrame(animateMove);
                 }
             }
-
             requestAnimationFrame(animateMove);
         }
 
@@ -902,9 +901,7 @@
                     var localDivision = item['Local Division'] && item['Local Division'] !== 'n.a.' ? item['Local Division'] : '';
                     var address = item['Address'] && item['Address'] !== 'n.a.' ? item['Address'] : '';                 
                     var location = [item['Latitude'], item['Longitude']];
-
-                    var coordinates = item['Site Area'] && item['Site Area'] !== 'n.a.' ? item['Site Area'] : null;
-                    
+                    var coordinates = item['Site Area'] && item['Site Area'] !== 'n.a.' ? item['Site Area'] : null;                    
                     var developer = item['Developer'] && item['Developer'] !== 'n.a.' ? item['Developer'] : '';
                     var units = item['Units'] && item['Units'] !== 'n.a.' ? item['Units'] : '';
                     // Unit Priceのフォーマット（$##,### /sqm）
@@ -1007,7 +1004,7 @@
                         iconSize = [0, 0]; // Other PJのアイコンサイズを小さく
                     } else if (category === "HC PJ") {
                         iconSize = [37, 37]; // HC PJのアイコンサイズを小さく
-                    } else if (category === "Urban PJ") {
+                    } else if (category === "Area Dev") {
                         iconSize = [0, 0]; // Urban PJのアイコン
                     } else if (category === "ECOBA PJ") {
                         iconSize = [20, 20]; // ECIOBA PJのアイコンサイズを小さく
@@ -1044,7 +1041,7 @@
                                 case 'HC PJ':
                                     fillColor = 'red'; // カテゴリーがHC PJの場合の色
                                     break;
-                                case 'Urban PJ':
+                                case 'Area Dev':
                                     fillColor = 'gold'; // カテゴリーがUrban PJの場合の色
                                     break;
                                 default:
@@ -1564,7 +1561,7 @@
                     case 'hc-category':
                         parentCheckboxId = 'toggleHC PJ';
                         break;
-                    case 'urban-category':
+                    case 'areaDev-category':
                         parentCheckboxId = 'toggleUrban PJ';
                         break; 
                     case 'site-category':
