@@ -550,7 +550,7 @@
             </label>
             <label for="areaDev-category" class="c-checkbox">
                 <input type="checkbox" id="areaDev-category" name="selector" tabindex="2" checked>
-                <span>AreaDev</span>
+                <span>Area</span>
             </label>            
             <label for="hc-category" class="c-checkbox">
                 <input type="checkbox" id="hc-category" name="selector" tabindex="3" checked>
@@ -755,7 +755,7 @@
         var categoryIcons = {
             "HC PJ": "https://img.icons8.com/?size=100&id=bnfp2fmtrh0g&format=png&color=FF0062", // 新規検討案件のアイコン
             "PJ Site": "https://img.icons8.com/?size=100&id=ipgAkdE46kxu&format=png&color=000000", // サイトのアイコン          
-            "AreaDev": "https://img.icons8.com/?size=100&id=bnfp2fmtrh0g&format=png&color=05227AA8", // 面開発案件のアイコン
+            "Area": "https://img.icons8.com/?size=100&id=bnfp2fmtrh0g&format=png&color=05227AA8", // 面開発案件のアイコン
             "ECOBA PJ": "https://img.icons8.com/?size=100&id=42P5zkOQICqY&format=png&color=000000", // ECOBAのアイコン
             "Condominium": "https://img.icons8.com/?size=100&id=uRRFz0DH6uYw&format=png&color=000000", // Condominiumのアイコン
             "Others": "https://img.icons8.com/?size=100&id=bnfp2fmtrh0g&format=png&color=8A8A02A8" // 新規検討案件のアイコン
@@ -1005,7 +1005,7 @@
                         iconSize = [0, 0]; // Other PJのアイコンサイズを小さく
                     } else if (category === "HC PJ") {
                         iconSize = [37, 37]; // HC PJのアイコンサイズを小さく
-                    } else if (category === "AreaDev") {
+                    } else if (category === "Area") {
                         iconSize = [0, 0]; // Urban PJのアイコン
                     } else if (category === "ECOBA PJ") {
                         iconSize = [20, 20]; // ECIOBA PJのアイコンサイズを小さく
@@ -1042,7 +1042,7 @@
                                 case 'HC PJ':
                                     fillColor = 'red'; // カテゴリーがHC PJの場合の色
                                     break;
-                                case 'AreaDev':
+                                case 'Area':
                                     fillColor = 'gold'; // カテゴリーがUrban PJの場合の色
                                     break;
                                 default:
@@ -1607,7 +1607,7 @@
             const isChecked = this.checked;
 
             // AreaDev カテゴリのポリゴンを取得
-            const areaDevPolygons = window.categoryPolygons?.['AreaDev'];
+            const areaDevPolygons = window.categoryPolygons?.['Area'];
 
             // チェック状態に応じてポリゴンを表示・非表示に切り替え
             if (areaDevPolygons) {
