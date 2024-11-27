@@ -50,7 +50,6 @@
         
         .menu-button,
         .save-button,
-
         .reset-button {
             margin: 0 5px;
             padding: 5px 10px;
@@ -75,7 +74,6 @@
 
         .menu-button:hover,
         .save-button:hover,
-
         .reset-button:hover {
             background-color: #ddd;
         }
@@ -89,13 +87,11 @@
             left: 5%;
             background: rgba(255, 255, 255, 0.3); /* 半透明 */
             backdrop-filter: blur(5px);
-
             border-radius: 8px;
             padding: 20px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
             z-index: 1001;
             font-size: 12px;
-
             top: 60px; /* menu-container (30px) + margin (10px) を考慮 */
             transform: translateY(-20px); /* 初期状態で少し上に隠しておく */
             opacity: 0; /* 初期は非表示 */
@@ -138,8 +134,7 @@
         .scale-radio,
         .circle-radio {
             border: none;
-            margin-bottom: 0px;
-          
+            margin-bottom: 0px;          
             /*　radio items の割り付けグリッド４分割　*/
             display: grid;
             grid-template-columns: repeat(4, 1fr); /* 横に2分割 */
@@ -150,7 +145,7 @@
         .a-radio,
         .sc-radio,
         .cc-radio {
-          border: none;
+            border: none;
             padding: 3px 6px;
             border-radius: 50px;
             display: inline-flex;
@@ -208,21 +203,20 @@
         }
         /* radio */
 
+
         /* checkbox */
         .category-checkbox {
             border: none;
-            margin-bottom: 5px;
-            
+            margin-bottom: 5px;            
             /*　checkbox　item の均等割り付け　*/
             display: grid;
             grid-template-columns: repeat(4, 1fr); /* 横に2分割 */
             grid-template-rows: repeat(1, 1fr);    /* 縦に2分割 */
-            gap: 0px;                             /* 各アイテム間のスペース */
-     
+            gap: 0px;                             /* 各アイテム間のスペース */     
         }
 
         .c-checkbox {
-          border: none!important;
+            border: none!important;
             padding: 4px 6px;
             border-radius: 10px;
             cursor: pointer;
@@ -271,9 +265,9 @@
             padding: 0 8px;
         }
         /* checkbox */
+
         
-        /* area list */
-      
+        /* area list */      
         #area-list-container {
             max-height: 200px;
             overflow-y: auto;
@@ -291,7 +285,6 @@
             transition: max-height 0.7s ease-out, opacity 0.7s ease-out; /* max-heightとopacityにトランジションを設定 */
         }
 
-
         .country-layer label,
         .region-layer label,
         .admin-layer label,
@@ -302,8 +295,7 @@
         .child-container.open {
             max-height: 200px; /* 任意の高さに設定（十分大きな値にする） */
             opacity: 1; /* 表示させる */
-        }
-            
+        }            
         
         .country-layer {
             margin: 0 0 4px 0; /* Countryレイヤーのインデント */  
@@ -326,10 +318,7 @@
         .local-layer {
             margin: 0 0 0px 20px; /* Local Divisionレイヤーのインデント */
         }
-
-    
-        /* aria list */
-    
+        /* aria list */    
         /* -------- Conditions to here --------*/
 
 
@@ -349,12 +338,10 @@
             z-index: 1001;
             font-size: 12px;
         }
-
         
         #listMenu::-webkit-scrollbar {
         display: none;
         }
-
 
         /*Category 1 毎 のコンテナ*/
         .layer-group {
@@ -424,8 +411,8 @@
             transform: translate(-50%, -50%);
             color: white;
         }
-
         /* -------- PJ List to here --------*/
+
 
         #map {
             position: absolute;
@@ -433,8 +420,6 @@
             width: 100%;
             top: 40px; /* menu-container の高さ分だけ下にずらす */
         }
-
-
 
         .leaflet-popup-content {
             user-select: text;
@@ -1456,99 +1441,104 @@
 
 
 
-            // トグル管理のコードをここに追加
-            function setupToggle(containerId) {
-                const container = document.getElementById(containerId);
+                // トグル管理のコードをここに追加
+                function setupToggle(containerId) {
+                    const container = document.getElementById(containerId);
 
-                // トグルアイコンのクリックイベントを設定
-                container.addEventListener('click', (event) => {
-                    if (event.target.classList.contains('toggle-icon')) {
-                        const toggleIcon = event.target;
-                        const childContainer = toggleIcon.closest('div').querySelector('.list-child-container');
+                    // トグルアイコンのクリックイベントを設定
+                    container.addEventListener('click', (event) => {
+                        if (event.target.classList.contains('toggle-icon')) {
+                            const toggleIcon = event.target;
+                            const childContainer = toggleIcon.closest('div').querySelector('.list-child-container');
 
-                        // 開閉状態を切り替え
-                        if (childContainer.classList.contains('open')) {
-                            childContainer.classList.remove('open');
-                        } else {
-                            childContainer.classList.add('open');
+                            // 開閉状態を切り替え
+                            if (childContainer.classList.contains('open')) {
+                                childContainer.classList.remove('open');
+                            } else {
+                                childContainer.classList.add('open');
+                            }
+
+                            // アイコンの向きを切り替え
+                            toggleIcon.classList.toggle('fa-caret-up', !childContainer.classList.contains('open'));
+                            toggleIcon.classList.toggle('fa-caret-down', childContainer.classList.contains('open'));
                         }
+                    });
 
-                        // アイコンの向きを切り替え
-                        toggleIcon.classList.toggle('fa-caret-up', !childContainer.classList.contains('open'));
-                        toggleIcon.classList.toggle('fa-caret-down', childContainer.classList.contains('open'));
-                    }
-                });
+                    // チェックボックスの設定
+                    container.addEventListener('change', (event) => {
+                        if (event.target.type === 'checkbox') {
+                            const checkbox = event.target;
+                            const isChecked = checkbox.checked;
 
-                // チェックボックスの設定
-                container.addEventListener('change', (event) => {
-                    if (event.target.type === 'checkbox') {
-                        const checkbox = event.target;
-                        const isChecked = checkbox.checked;
+                            // 子要素のチェックボックスに状態を同期
+                            const childCheckboxes = checkbox.closest('div').querySelectorAll('.child-container input[type="checkbox"]');
+                            childCheckboxes.forEach(cb => {
+                                cb.checked = isChecked;
+                                cb.dispatchEvent(new Event('change')); // 子要素にも変更を伝える
+                            });
+                        }
+                    });
+                }              
+            };
+            reader.readAsArrayBuffer(file);
+        
 
-                        // 子要素のチェックボックスに状態を同期
-                        const childCheckboxes = checkbox.closest('div').querySelectorAll('.child-container input[type="checkbox"]');
-                        childCheckboxes.forEach(cb => {
-                            cb.checked = isChecked;
-                            cb.dispatchEvent(new Event('change')); // 子要素にも変更を伝える
+
+
+
+
+          
+            function createLayer(className, name, items, parentElement) {
+                const layerDiv = document.createElement('div');
+                layerDiv.className = className;
+
+                // トグルアイコンの作成
+                const toggleIcon = document.createElement('i');
+                toggleIcon.classList.add('toggle-icon', 'fa', 'fa-caret-down');
+
+                // 子要素コンテナ（.list-child-container）
+                const childContainer = document.createElement('div');
+                childContainer.classList.add('list-child-container');
+
+                // トグルアイコンのクリックイベントで開閉
+                toggleIcon.addEventListener('click', () => {
+                    const isOpen = childContainer.classList.contains('open');
+
+                    if (isOpen) {
+                        // 閉じるアニメーション
+                        childContainer.style.maxHeight = `${childContainer.scrollHeight}px`; // 現在の高さを固定
+                        requestAnimationFrame(() => {
+                            childContainer.style.maxHeight = '0'; // 高さを0に設定
+                        });
+                    } else {
+                        // 開くアニメーション
+                        childContainer.style.maxHeight = '0'; // 初期状態
+                        requestAnimationFrame(() => {
+                            childContainer.style.maxHeight = `${childContainer.scrollHeight}px`; // コンテンツの高さまで拡張
                         });
                     }
+
+                    // 開閉状態を切り替え
+                    childContainer.classList.toggle('open', !isOpen);
+
+                    // アイコンの切り替え
+                    toggleIcon.classList.toggle('fa-caret-up', !isOpen);
+                    toggleIcon.classList.toggle('fa-caret-down', isOpen);
                 });
-            }              
-        };
-        reader.readAsArrayBuffer(file);
-        
-          
-        function createLayer(className, name, items, parentElement) {
-            const layerDiv = document.createElement('div');
-            layerDiv.className = className;
 
-            // トグルアイコンの作成
-            const toggleIcon = document.createElement('i');
-            toggleIcon.classList.add('toggle-icon', 'fa', 'fa-caret-down');
+                // レイヤーを親要素に追加
+                layerDiv.appendChild(toggleIcon);
+                layerDiv.appendChild(childContainer);
+                parentElement.appendChild(layerDiv);
 
-            // 子要素コンテナ（.list-child-container）
-            const childContainer = document.createElement('div');
-            childContainer.classList.add('list-child-container');
+                return childContainer;
+            }
 
-            // トグルアイコンのクリックイベントで開閉
-            toggleIcon.addEventListener('click', () => {
-                const isOpen = childContainer.classList.contains('open');
-
-                if (isOpen) {
-                    // 閉じるアニメーション
-                    childContainer.style.maxHeight = `${childContainer.scrollHeight}px`; // 現在の高さを固定
-                    requestAnimationFrame(() => {
-                        childContainer.style.maxHeight = '0'; // 高さを0に設定
-                    });
-                } else {
-                    // 開くアニメーション
-                    childContainer.style.maxHeight = '0'; // 初期状態
-                    requestAnimationFrame(() => {
-                        childContainer.style.maxHeight = `${childContainer.scrollHeight}px`; // コンテンツの高さまで拡張
-                    });
-                }
-
-                // 開閉状態を切り替え
-                childContainer.classList.toggle('open', !isOpen);
-
-                // アイコンの切り替え
-                toggleIcon.classList.toggle('fa-caret-up', !isOpen);
-                toggleIcon.classList.toggle('fa-caret-down', isOpen);
-            });
-
-            // レイヤーを親要素に追加
-            layerDiv.appendChild(toggleIcon);
-            layerDiv.appendChild(childContainer);
-            parentElement.appendChild(layerDiv);
-
-            return childContainer;
-        }
-
-                generateListMenuData(); // 仮: `#listMenu` のデータ生成関数
-                generateAreaListData(); // 仮: `#area-list-container` のデータ生成関数              
-                // `#listMenu` と `#area-list-container` のトグル管理を設定
-                setupToggle('listMenu');
-                setupToggle('area-list-container');
+            generateListMenuData(); // 仮: `#listMenu` のデータ生成関数
+            generateAreaListData(); // 仮: `#area-list-container` のデータ生成関数              
+            // `#listMenu` と `#area-list-container` のトグル管理を設定
+            setupToggle('listMenu');
+            setupToggle('area-list-container');
         }); 
       
       
