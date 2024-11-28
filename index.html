@@ -130,30 +130,30 @@
             font-size: 12px;
         }
       
-    .button-container {
-        display: flex;
-        justify-content: space-around; /* ボタンを均等配置 */
-        align-items: center; /* ボタンを垂直方向に中央揃え */
-        margin-bottom: 20px; /* 上下の余白を追加 */
-    } 
-      
-    .jump-button {
-        height: 25px;
-        width: 80px;
-        padding: 5px 10px;
-        border: none;
-        border-radius: 12px;
-        background-color: rgba(159, 159, 159, 0.3);
-        color: #333;
-        font-size: 12px;
-        cursor: pointer;
-        transition: background-color 0.3s;      
-    }
+        .button-container {
+            display: flex;
+            justify-content: space-around; /* ボタンを均等配置 */
+            align-items: center; /* ボタンを垂直方向に中央揃え */
+            margin-bottom: 20px; /* 上下の余白を追加 */
+        } 
 
-    .jump-button:hover {
-        background-color: #00258F85;
-        color: white;
-    }      
+        .jump-button {
+            height: 25px;
+            width: 80px;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 12px;
+            background-color: rgba(159, 159, 159, 0.3);
+            color: #333;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s;      
+        }
+
+        .jump-button:hover {
+            background-color: #00258F85;
+            color: white;
+        }      
 
         /* radio */
         .scale-radio,
@@ -438,6 +438,28 @@
             width: 100%;
             top: 40px; /* menu-container の高さ分だけ下にずらす */
         }
+      
+
+    /* カスタムCSSをここに記述 */
+    .leaflet-control-zoom {
+        background-color: rgba(255, 255, 255, 0.8) !important;
+        border-radius: 5px !important;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    .leaflet-control-zoom a {
+        color: #333 !important;
+        font-size: 18px !important;
+        line-height: 26px !important;
+        text-align: center !important;
+    }
+
+    .leaflet-control-zoom a:hover {
+        background-color: #f0f0f0 !important;
+    }
+
+
+      
 
         .leaflet-popup-content {
             user-select: text;
@@ -699,7 +721,10 @@
         // デバイスに適したズームレベルで地図を初期化
         var map = L.map('map', { zoomControl: false }).setView([21.03966820428092, 105.86461819490408], initialZoom);
 
-      
+        // カスタムズームコントロールを右下に追加
+        // L.control.zoom({
+        //    position: 'bottomright' // 右下に配置
+        // }).addTo(map);        
       
         // ダブルクリックズームを無効化
         map.doubleClickZoom.disable();
