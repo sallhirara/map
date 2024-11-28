@@ -679,17 +679,35 @@
 
         // ウィンドウのサイズが変更された時にメニューの高さを調整
         window.addEventListener('resize', adjustMenuHeight);
-
-
-        // 地図の初期化
+      
         // ユーザーがモバイルデバイスを使用しているかを判定
         const isMobile = /Mobi|Android|iPhone|iPad|iPod/.test(navigator.userAgent);
 
         // デバイスに応じた初期ズームレベルを設定
         const initialZoom = isMobile ? 11 : 12;
 
+      
+        // 地図の初期化
         // デバイスに適したズームレベルで地図を初期化
         var map = L.map('map', { zoomControl: false }).setView([21.03966820428092, 105.86461819490408], initialZoom);
+
+      
+      
+        // ダブルクリックズームを無効化
+        map.doubleClickZoom.disable();
+      
+        // ダブルクリックされた場所を地図の中心にスムーズに移動
+        map.on('dblclick', function(e) {
+            const latlng = e.latlng; // ダブルクリックされた位置の緯度経度
+
+            // アニメーション付きで移動
+            map.flyTo(latlng, map.getZoom(), {
+                animate: true,
+                duration: 0.7 // アニメーションの持続時間（秒）
+            });
+        });
+
+
 
         // Hanoi, HCMC, Vietnam の座標
         const locations = {
@@ -775,6 +793,19 @@
         // 現在の円を保持する変数
         let currentCircle = centerCircle;
 
+         
+        // 中心マーカー追加
+        var centerMarker = L.marker(map.getCenter(), {
+            icon: L.divIcon({
+                className: 'fa-icon-marker',
+                html: '<i class="fa-solid fa-bullseye" style="color: blue; font-size: 10px; opacity: 0.5;"></i>',
+                iconAnchor: [6, 8.5]
+            })
+        }).addTo(map);
+
+
+      
+
         // ラジオボタンの変更イベントを追加
         document.querySelectorAll('#circle-radio input[type="radio"]').forEach(radio => {
             radio.addEventListener('change', function () {
@@ -812,15 +843,16 @@
             });
         });
 
-        // 地図の移動にアニメーション付きで円を追従させる
-        map.on('moveend', function () {
-            smoothlyMoveCircle(currentCircle, map.getCenter());
+        // 地図の移動やズーム後にアニメーション付きで円とマーカーを追従
+        map.on('moveend zoomend', function () { // "zoomed" を "zoomend" に修正
+            // 地図の中心座標を一度だけ取得
+            const newCenter = map.getCenter();
+
+            smoothlyMoveCircle(currentCircle, newCenter);
+            smoothlyMoveMarker(centerMarker, newCenter);    
         });
 
-        // ズーム時にも対応
-        map.on('zoomend', function () {
-            smoothlyMoveCircle(currentCircle, map.getCenter());
-        });
+
 
         // 滑らかに円を移動させる関数（既存）
         function smoothlyMoveCircle(circle, newLatLng, duration = 1000) {
@@ -847,7 +879,36 @@
             }
             requestAnimationFrame(animateMove);
         }
+      
+function smoothlyMoveMarker(marker, newLatLng, duration = 1000) {
+    const startLatLng = marker.getLatLng();
+    const startTime = performance.now();
 
+    function animateMove() {
+        const currentTime = performance.now();
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+
+        const easedProgress = easeInOutQuad(progress);
+        const interpolatedLat = startLatLng.lat + easedProgress * (newLatLng.lat - startLatLng.lat);
+        const interpolatedLng = startLatLng.lng + easedProgress * (newLatLng.lng - startLatLng.lng);
+
+        marker.setLatLng([interpolatedLat, interpolatedLng]);
+
+        if (progress < 1) {
+            requestAnimationFrame(animateMove);
+        } else {
+            // 最終的な位置を強制設定
+            marker.setLatLng(newLatLng);
+        }
+    }
+
+    requestAnimationFrame(animateMove);
+}
+
+
+      
+      
         // イージング関数（既存）
         function easeInOutQuad(t) {
             return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
