@@ -129,21 +129,44 @@
             border: none;
             font-size: 12px;
         }
+      
+    .button-container {
+        display: flex;
+        justify-content: space-around; /* ボタンを均等配置 */
+        align-items: center; /* ボタンを垂直方向に中央揃え */
+        margin-bottm: 20px; /* 上下の余白を追加 */
+    } 
+      
+    .jump-button {
+        height: 25px;
+        width: 88px;
+        padding: 5px 10px;
+        border: none;
+        border-radius: 12px;
+        background-color: rgba(159, 159, 159, 0.3);
+        color: #333;
+        font-size: 12px;
+        cursor: pointer;
+        transition: background-color 0.3s;      
+    }
+
+    .jump-button:hover {
+        background-color: #00258F85;
+        color: white;
+    }      
 
         /* radio */
-        .area-radio,
         .scale-radio,
         .circle-radio {
             border: none;
             margin-bottom: 0px;          
             /*　radio items の割り付けグリッド４分割　*/
             display: grid;
-            grid-template-columns: repeat(4, 1fr); /* 横に2分割 */
+            grid-template-columns: repeat(4, 1fr); /* 横に4分割 */
             grid-template-rows: repeat(1, 1fr);    /* 縦に2分割 */
             gap: 0px;                             /* 各アイテム間のスペース */             
         }
 
-        .a-radio,
         .sc-radio,
         .cc-radio {
             border: none;
@@ -156,16 +179,13 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        .a-radio:hover,
         .sc-radio:hover,
         .cc-radio:hover,
-        .a-radio:focus-within,
         .sc-radio:focus-within,
         .cc-radio:focus-within {
             background: rgba(159, 159, 159, 0.3); /* $secondary color in RGBA */
         }
 
-        .a-radio input,
         .sc-radio input,
         .cc-radio input {
             vertical-align: middle;
@@ -182,19 +202,16 @@
             pointer-events: none;
         }
 
-        .a-radio input:focus,
         .sc-radio input:focus,
         .cc-radio input:focus {
             outline: none;
         }
 
-        .a-radio input:checked,
         .sc-radio input:checked,
         .cc-radio input:checked {
             box-shadow: inset 0 0 0 5px #00258F85; /* $primary color */
         }
 
-        .a-radio span,
         .sc-radio span,
         .cc-radio span {
             vertical-align: middle;
@@ -478,20 +495,11 @@
     <!--- Conditions -->
     <div id="conditions" class="mega-menu">
         <!-- radio button for center -->
-        <div id="area-radio" class="area-radio">
-
-            <label for="hn-area" class="a-radio">
-                <input type="radio" id="hn-area" name="selector1" tabindex="1" checked>
-                <span>Hanoi</span>
-            </label>
-            <label for="hcm-area" class="a-radio">
-                <input type="radio" id="hcm-area" name="selector1" tabindex="2">
-                <span>HCMC</span>
-            </label>
-            <label for="vn-area" class="a-radio">
-                <input type="radio" id="vn-area" name="selector1" tabindex="3">
-                <span>Vietnam</span>
-            </label>
+        <div id="area-buttons" class="button-container">
+            <button class="jump-button" onclick="jumpToLocation('hn-area')">Hanoi</button>
+            <button class="jump-button" onclick="jumpToLocation('hcm-area')">HCMC</button>
+            <button class="jump-button" onclick="jumpToLocation('hp-area')">Hai Phong</button>
+            <button class="jump-button" onclick="jumpToLocation('vn-area')">Vietnam</button>
         </div>
         <!-- radio butto- for center-->
 
@@ -709,25 +717,23 @@
 
 
 
-        // Hanoi, HCMC, Vietnam の座標
-        const locations = {
-            'hn-area': { coords: [21.03966820428092, 105.86461819490408], zoom: initialZoom }, // Hanoi
-            'hcm-area': { coords: [10.787176769219485, 106.69384890636728], zoom: initialZoom }, // HCMC
-            'vn-area': { coords: [15.9265619930092, 105.9142312190458], zoom: 6 } // Vietnam（広域表示）
-        };
+        function jumpToLocation(areaId) {
+            const locations = {
+                'hn-area': { coords: [21.03966820428092, 105.86461819490408], zoom: 12 }, // Hanoi
+                'hcm-area': { coords: [10.787176769219485, 106.69384890636728], zoom: 12 }, // HCMC
+                'hp-area': { coords: [20.847679772548155, 106.69874274275475], zoom: 12}, // Hai Phong
+                'vn-area': { coords: [15.9265619930092, 105.9142312190458], zoom: 6 } // Vietnam (wide view)
+            };
 
-        // ラジオボタンにイベントリスナーを追加して地図の中心を変更
-        document.getElementById('area-radio').addEventListener('change', function(event) {
-            if (event.target && event.target.type === 'radio') {
-                const selectedLocation = locations[event.target.id];
-                if (selectedLocation) {
-                    map.setView(selectedLocation.coords, selectedLocation.zoom, {
-                        animate: true,
-                        duration: 1.5 // アニメーションの持続時間（秒）
-                    });
-                }
+            const location = locations[areaId];
+            if (location) {
+                map.flyTo(location.coords, location.zoom, {
+                    animate: true,
+                    duration: 1.5 // Animation duration in seconds
+                });
             }
-        });
+        }
+
 
       
         
