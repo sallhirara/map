@@ -880,31 +880,31 @@
             requestAnimationFrame(animateMove);
         }
       
-function smoothlyMoveMarker(marker, newLatLng, duration = 1000) {
-    const startLatLng = marker.getLatLng();
-    const startTime = performance.now();
+        function smoothlyMoveMarker(marker, newLatLng, duration = 1000) {
+            const startLatLng = marker.getLatLng();
+            const startTime = performance.now();
 
-    function animateMove() {
-        const currentTime = performance.now();
-        const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / duration, 1);
+            function animateMove() {
+                const currentTime = performance.now();
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
 
-        const easedProgress = easeInOutQuad(progress);
-        const interpolatedLat = startLatLng.lat + easedProgress * (newLatLng.lat - startLatLng.lat);
-        const interpolatedLng = startLatLng.lng + easedProgress * (newLatLng.lng - startLatLng.lng);
+                const easedProgress = easeInOutQuad(progress);
+                const interpolatedLat = startLatLng.lat + easedProgress * (newLatLng.lat - startLatLng.lat);
+                const interpolatedLng = startLatLng.lng + easedProgress * (newLatLng.lng - startLatLng.lng);
 
-        marker.setLatLng([interpolatedLat, interpolatedLng]);
+                marker.setLatLng([interpolatedLat, interpolatedLng]);
 
-        if (progress < 1) {
+                if (progress < 1) {
+                    requestAnimationFrame(animateMove);
+                } else {
+                    // 最終的な位置を強制設定
+                    marker.setLatLng(newLatLng);
+                }
+            }
+
             requestAnimationFrame(animateMove);
-        } else {
-            // 最終的な位置を強制設定
-            marker.setLatLng(newLatLng);
         }
-    }
-
-    requestAnimationFrame(animateMove);
-}
 
 
       
