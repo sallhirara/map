@@ -1153,7 +1153,7 @@
 
 
         // 滑らかに円を移動させる関数（既存）
-        function smoothlyMoveCircle(circle, newLatLng, duration = 1000) {
+        function smoothlyMoveCircle(circle, newLatLng, duration = 700) {
             const startLatLng = circle.getLatLng();
             const startTime = performance.now();
 
@@ -1178,7 +1178,7 @@
             requestAnimationFrame(animateMove);
         }
       
-        function smoothlyMoveMarker(marker, newLatLng, duration = 1000) {
+        function smoothlyMoveMarker(marker, newLatLng, duration = 700) {
             const startLatLng = marker.getLatLng();
             const startTime = performance.now();
 
