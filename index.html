@@ -8,6 +8,7 @@
     <title>Mapping system</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.5.1/nouislider.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
     <style>
         * {
@@ -222,6 +223,14 @@
             line-height: 16px;
             padding: 0 8px;
         }
+      
+        .statusLabels {
+            display: flex;
+            justify-content: flex-start; /* Align content to the left */
+            text-align: left; /* Ensure text aligns to the left */
+            margin: 12px 0 5px 5px; /* Adjust margins as needed */
+            color: #333;
+        }
         /* radio */
 
 
@@ -349,6 +358,39 @@
             margin: 0 0 0px 20px; /* Local Divisionレイヤーのインデント */
         }
         /* aria list */    
+      
+      
+        /* slider */
+       #price-slider {
+            margin: 10px 0px 30px 5px;
+            height: 10px; /* スライダーバーの高さを変更 */
+            width: 95%;
+            background-color: transparent;
+        }
+
+      
+        .noUi-connect {
+            background: #00258F85; /* 選択範囲の色を変更 */
+        }  
+        .noUi-handle {
+            background: #00258F85;
+            border: 2px solid #ffffff;
+            width: 20px !important;
+            height: 20px !important;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+        }          
+      
+        /* スライダーの現在の範囲ラベル */
+        .slider-value-labels {
+            color: #333;
+            text-align: left;
+            margin: 15px 0 12px 5px;
+        }
+      
+        /* sloder */      
+      
         /* -------- Conditions to here --------*/
 
 
@@ -579,6 +621,7 @@
         <!-- radio button for circle-->      
       
         <!-- check box -->
+        <label id="categoryCheckboxLabel" class=statusLabels>Project Categories</label>
         <div id="category-checkbox" class="category-checkbox">
             <label for="primary-category" class="c-checkbox">
                 <input type="checkbox" id="primary-category" name="selector" tabindex="1" checked>
@@ -613,6 +656,7 @@
         <!-- check box -->
   
         <!-- Condo status box -->
+        <label id="condoStatus" class=statusLabels>Status : Condominium PJ / Construction PJ</label>
         <div id="status-checkbox" class="status-checkbox">
             <label for="prep-category" class="st-checkbox">
                 <input type="checkbox" id="prep-category" name="selector" tabindex="1" checked>
@@ -635,6 +679,7 @@
         <!-- Condo status box -->  
 
         <!-- ECOBA status box -->
+        <!--<label id="constructionStatus" class=statusLabels>PJ Status - Construction</label>-->
         <div id="status-checkbox" class="status-checkbox">
             <label for="preBid-category" class="st-checkbox">
                 <input type="checkbox" id="preBid-category" name="selector" tabindex="1" checked>
@@ -655,6 +700,14 @@
             </label>                    
         </div>
         <!-- ECOBA status box -->    
+
+        <!-- slider -->
+        <div class="slider-value-labels">
+            Price Range: <span id="sliderValueMin">$500</span> - <span id="sliderValueMax">$1,000</span>
+        </div>
+        <div id="price-slider"　calss="slider"></div>
+        <!-- slider -->
+
   
         <!-- Area list container-->
         <div id="area-list-container" class="area-list-container">
@@ -672,9 +725,31 @@
     <div id="map"></div>
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.5.1/nouislider.min.js"></script> <!-- for slider-->
     <script>
         
-        
+        // スライダーを実装
+        var slider = document.getElementById('price-slider');
+        noUiSlider.create(slider, {
+          start: [0, 1500],
+          connect: true,
+          range: {
+            'min': 0,
+            'max': 10000
+          }
+        });      
+
+        // 現在の範囲を表示するラベル
+        var valueMinLabel = document.getElementById('sliderValueMin');
+        var valueMaxLabel = document.getElementById('sliderValueMax');
+
+        // スライダーの値が変更されたときにラベルを更新
+        slider.noUiSlider.on('update', function (values, handle) {
+            valueMinLabel.textContent = Math.round(values[0]);
+            valueMaxLabel.textContent = Math.round(values[1]);
+        });   
+      
+      
         function toggleMenu(menuId, button) {
             const menu = document.getElementById(menuId);
 
