@@ -563,7 +563,8 @@
         .polygon-popup a:hover {
             color: none; /* オレンジ色に変更 */
             text-decoration: none;
-        }        
+        }    
+      
 
     </style>
 </head>
@@ -743,7 +744,9 @@
     </div>
 
     <!-- PJ List -->
-    <div id="listMenu" class="mega-menu"></div>
+    <div id="listMenu" class="mega-menu">
+       <input type="text" id="pjSearch" placeholder="Search Projects..." style="width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px;">
+    </div>
   
     <div class="menu" id="menu"></div> <!-- Project Listをクリックした際に開くメニュー -->
     
@@ -2006,6 +2009,84 @@
                 });
             }
         });
+        
+function addSearchBar() {
+    const listMenu = document.getElementById('listMenu');
+
+    // 検索窓がすでに存在している場合は何もしない
+    if (document.getElementById('pjSearch')) return;
+
+    const searchBar = document.createElement('input');
+    searchBar.type = 'text';
+    searchBar.id = 'pjSearch';
+    searchBar.placeholder = 'Search Projects...';
+
+    // デザインを変更
+    searchBar.style.cssText = `
+        width: 100%;
+        padding: 12px;              /* 余白を広く */
+        margin-bottom: 15px;        /* 下部の余白 */
+        border: 1px solid #999;     /* 境界線の色を薄く */
+        border-radius: 20px;        /* 丸みを追加 */
+        background-color: #f9f9f9;  /* 背景色を淡いグレーに */
+        font-size: 16px;            /* テキストサイズ */
+        color: #333;                /* テキスト色 */
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* 影を追加 */
+        transition: box-shadow 0.3s, border-color 0.3s; /* ホバー時のアニメーション */
+    `;
+
+    // ホバーとフォーカス時の効果を追加
+    searchBar.addEventListener('focus', () => {
+        searchBar.style.borderColor = '#4a90e2';  /* フォーカス時の境界線の色 */
+        searchBar.style.boxShadow = '0px 4px 8px rgba(74, 144, 226, 0.2)'; /* フォーカス時の影 */
+    });
+
+    searchBar.addEventListener('blur', () => {
+        searchBar.style.borderColor = '#aaa'; /* 通常時の境界線の色 */
+        searchBar.style.boxShadow = '0px 2px 4px rgba(0, 0, 0, 0.1)'; /* 通常時の影 */
+    });
+
+    // リストメニューの最初に検索窓を追加
+    listMenu.insertBefore(searchBar, listMenu.firstChild);
+
+    // イベントリスナーを再追加
+    searchBar.addEventListener('input', function () {
+        const searchTerm = this.value.toLowerCase();
+        const items = document.querySelectorAll('#listMenu .individual-icon-container');
+
+        items.forEach(item => {
+            const projectName = item.textContent.toLowerCase();
+            if (projectName.includes(searchTerm)) {
+                item.style.display = ''; // Show the item
+            } else {
+                item.style.display = 'none'; // Hide the item
+            }
+        });
+    });
+}
+
+
+document.getElementById('fileUpload').addEventListener('change', function (evt) {
+    var file = evt.target.files[0];
+    if (!file) return;
+
+    var reader = new FileReader();
+    reader.onload = function (e) {
+        var data = new Uint8Array(e.target.result);
+        var workbook = XLSX.read(data, { type: 'array' });
+        var firstSheetName = workbook.SheetNames[0];
+        var worksheet = workbook.Sheets[firstSheetName];
+        var jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+        // データを使った処理
+        // ここで#listMenuの中身を更新する処理が入る
+
+        // 検索窓を再追加
+        addSearchBar();
+    };
+    reader.readAsArrayBuffer(file);
+});
+        
       
       
         // 画面ローテーションでリロード
