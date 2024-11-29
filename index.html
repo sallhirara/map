@@ -920,11 +920,27 @@
       
 
         // MapTilerタイルレイヤーの設定
-        var mapTilerApiKey = 'Sv80uSRLZxFEwRiW17Cg';
-        L.tileLayer(`https://api.maptiler.com/maps/basic/{z}/{x}/{y}.png?key=${mapTilerApiKey}`, {
-            attribution: '&copy; <a href="https://www.maptiler.com/copyright/">MapTiler</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-            maxZoom: 18
-        }).addTo(map);
+var mapTilerApiKey = 'Sv80uSRLZxFEwRiW17Cg';
+
+// Street View タイルレイヤー
+var streetLayer = L.tileLayer(`https://api.maptiler.com/maps/basic/{z}/{x}/{y}.png?key=${mapTilerApiKey}`, {
+    attribution: '&copy; <a href="https://www.maptiler.com/copyright/">MapTiler</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    maxZoom: 18
+}).addTo(map);
+
+// Aerial View (Satellite) タイルレイヤー
+var aerialLayer = L.tileLayer(`https://api.maptiler.com/maps/hybrid/{z}/{x}/{y}.jpg?key=${mapTilerApiKey}`, {
+    attribution: '&copy; <a href="https://www.maptiler.com/copyright/">MapTiler</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    maxZoom: 18
+});
+
+// ベースマップ切り替えコントロール
+var baseMaps = {
+    "Street View": streetLayer,
+    "Aerial View (Satellite)": aerialLayer
+};
+L.control.layers(baseMaps).addTo(map);
+
 
         // Category 1の値に基づくアイコンURLを定義
         var categoryIcons = {
