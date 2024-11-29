@@ -934,13 +934,45 @@ var aerialLayer = L.tileLayer(`https://api.maptiler.com/maps/hybrid/{z}/{x}/{y}.
     maxZoom: 18
 });
 
-// ベースマップ切り替えコントロール
-var baseMaps = {
-    "Street View": streetLayer,
-    "Aerial View (Satellite)": aerialLayer
-};
-L.control.layers(baseMaps).addTo(map);
+// 地図切り替えボタン用のコンテナを作成
+var mapToggleContainer = L.control({ position: 'topright' });
 
+mapToggleContainer.onAdd = function () {
+    var div = L.DomUtil.create('div', 'map-toggle-container');
+    div.innerHTML = `
+        <img id="mapToggleIcon" src="https://img.icons8.com/?size=100&id=2m4kkop8aUO5&format=png&color=000000" 
+            style="width: 40px; height: 40px; cursor: pointer;" title="Switch to Street View" />
+    `;
+    return div;
+};
+
+mapToggleContainer.addTo(map);
+
+// 現在のレイヤーを追跡
+var currentLayer = streetLayer;
+
+// 地図切り替えイベント
+document.getElementById('mapToggleIcon').addEventListener('click', function () {
+    if (currentLayer === streetLayer) {
+        // Aerial View に切り替え
+        map.removeLayer(streetLayer);
+        aerialLayer.addTo(map);
+        currentLayer = aerialLayer;
+
+        // アイコンを変更
+        this.src = "https://img.icons8.com/?size=100&id=YLlkKxgG5qUc&format=png&color=000000";
+        this.title = "Switch to Street View";
+    } else {
+        // Street View に切り替え
+        map.removeLayer(aerialLayer);
+        streetLayer.addTo(map);
+        currentLayer = streetLayer;
+
+        // アイコンを変更
+        this.src = "https://img.icons8.com/?size=100&id=2m4kkop8aUO5&format=png&color=000000";
+        this.title = "Switch to Aerial View";
+    }
+});
 
         // Category 1の値に基づくアイコンURLを定義
         var categoryIcons = {
