@@ -350,6 +350,7 @@
             color: #333;
         }
 
+      
         .admin-layer {
             margin: 0 0 0px 15px; /* Administrative Divisionレイヤーのインデント */
         }
@@ -395,6 +396,19 @@
 
 
         /* -------- PJ List from here --------*/
+#pjSearch {
+    border: 1px solid #aaa; /* 通常時 */
+    border-radius: 20px; /* 丸み */
+    transition: border 0.3s; /* アニメーション */
+    outline: none; /* デフォルトのoutlineを無効化 */
+    font-size: 16px !important;
+}
+
+#pjSearch:focus {
+    border: 3px solid #4a90e2; /* フォーカス時の太さと色 */
+}
+            
+      
         #listMenu {
             display: none;
             position: absolute;
