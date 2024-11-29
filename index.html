@@ -159,12 +159,15 @@
         .scale-radio,
         .circle-radio {
             border: none;
-            margin-bottom: 0px;          
             /*　radio items の割り付けグリッド４分割　*/
             display: grid;
             grid-template-columns: repeat(4, 1fr); /* 横に4分割 */
             grid-template-rows: repeat(1, 1fr);    /* 縦に2分割 */
             gap: 0px;                             /* 各アイテム間のスペース */             
+        }
+      
+        .circle-radio {
+          margin-bottom: 10px;
         }
 
         .sc-radio,
@@ -223,9 +226,10 @@
 
 
         /* checkbox */
-        .category-checkbox {
+        .category-checkbox,
+        .status-checkbox {
             border: none;
-            margin-bottom: 5px;            
+            margin-bottom: 10px;            
             /*　checkbox　item の均等割り付け　*/
             display: grid;
             grid-template-columns: repeat(4, 1fr); /* 横に2分割 */
@@ -233,7 +237,8 @@
             gap: 0px;                             /* 各アイテム間のスペース */     
         }
 
-        .c-checkbox {
+        .c-checkbox,
+        .st-checkbox {
             border: none!important;
             padding: 4px 6px;
             border-radius: 10px;
@@ -244,12 +249,15 @@
         }
 
         .c-checkbox:hover,
-        .c-checkbox:focus-within {
+        .st-checkbox:hover,
+        .c-checkbox:focus-within,
+        .st-checkbox:focus-within {
             background: rgba(159, 159, 159, 0.3); /* $secondary color in RGBA */
             border-radius: 10px !important;
         }
 
-        .c-checkbox input {
+        .c-checkbox input,
+        .st-checkbox input {
             vertical-align: middle !important;
             width: 16px !important;
             height: 16px !important;
@@ -264,19 +272,23 @@
             pointer-events: none !important;
         }
 
-        .c-checkbox input:focus {
+        .c-checkbox input:focus,
+        .st-checkbox input:focus {
             outline: none !important;
         }
 
-        .c-checkbox input:checked {
+        .c-checkbox input:checked,
+        .st-checkbox input:checked {
             box-shadow: inset 0 0 0 10px #00258F85 !important; /* $primary color */
         }
 
-        .c-checkbox input[type="checkbox"]:checked::before {
+        .c-checkbox input[type="checkbox"]:checked::before,
+        .st-checkbox input[type="checkbox"]:checked::before {
             color: lightgray !important;
         }        
 
-        .c-checkbox span {
+        .c-checkbox span,
+        .st-checkbox span {
             vertical-align: middle;
             display: inline-block;
             line-height: 16px;
@@ -440,26 +452,23 @@
         }
       
 
-    /* カスタムCSSをここに記述 */
-    .leaflet-control-zoom {
-        background-color: rgba(255, 255, 255, 0.8) !important;
-        border-radius: 5px !important;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3) !important;
-    }
+        /* カスタムCSSをここに記述 */
+        .leaflet-control-zoom {
+            background-color: rgba(255, 255, 255, 0.8) !important;
+            border-radius: 5px !important;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3) !important;
+        }
 
-    .leaflet-control-zoom a {
-        color: #333 !important;
-        font-size: 18px !important;
-        line-height: 26px !important;
-        text-align: center !important;
-    }
+        .leaflet-control-zoom a {
+            color: #333 !important;
+            font-size: 18px !important;
+            line-height: 26px !important;
+            text-align: center !important;
+        }
 
-    .leaflet-control-zoom a:hover {
-        background-color: #f0f0f0 !important;
-    }
-
-
-      
+        .leaflet-control-zoom a:hover {
+            background-color: #f0f0f0 !important;
+        }
 
         .leaflet-popup-content {
             user-select: text;
@@ -569,8 +578,6 @@
         </div>
         <!-- radio button for circle-->      
       
-        <br>
-      
         <!-- check box -->
         <div id="category-checkbox" class="category-checkbox">
             <label for="primary-category" class="c-checkbox">
@@ -604,7 +611,51 @@
             </label>            
         </div>
         <!-- check box -->
-      
+  
+        <!-- Condo status box -->
+        <div id="status-checkbox" class="status-checkbox">
+            <label for="prep-category" class="st-checkbox">
+                <input type="checkbox" id="prep-category" name="selector" tabindex="1" checked>
+                <span>Prep</span>
+            </label>
+            </label>
+            <label for="active-category" class="st-checkbox">
+                <input type="checkbox" id="active-category" name="selector" tabindex="2" checked>
+                <span>Active</span>
+            </label>            
+            <label for="soldOut-category" class="st-checkbox">
+                <input type="checkbox" id="soldOut-category" name="selector" tabindex="3" checked>
+                <span>sold</span>
+            </label>
+            <label for="poused-category" class="st-checkbox">
+                <input type="checkbox" id="poused-category" name="selector" tabindex="4" checked>
+                <span>Paused</span>
+            </label>                    
+        </div>
+        <!-- Condo status box -->  
+
+        <!-- ECOBA status box -->
+        <div id="status-checkbox" class="status-checkbox">
+            <label for="preBid-category" class="st-checkbox">
+                <input type="checkbox" id="preBid-category" name="selector" tabindex="1" checked>
+                <span>PreBid</span>
+            </label>
+            </label>
+            <label for="tender-category" class="st-checkbox">
+                <input type="checkbox" id="tender-category" name="selector" tabindex="2" checked>
+                <span>Tender</span>
+            </label>            
+            <label for="constr-category" class="st-checkbox">
+                <input type="checkbox" id="constr-category" name="selector" tabindex="3" checked>
+                <span>Constr</span>
+            </label>
+            <label for="handoff-category" class="st-checkbox">
+                <input type="checkbox" id="handoff-category" name="selector" tabindex="4" checked>
+                <span>Handoff</span>
+            </label>                    
+        </div>
+        <!-- ECOBA status box -->    
+  
         <!-- Area list container-->
         <div id="area-list-container" class="area-list-container">
         </div>
@@ -864,12 +915,18 @@
                 }
 
                 if (newRadius > 0) {
-                    // 半径を変更し、円を表示
+                    // 半径を変更し、円とマーカーを表示
                     currentCircle.setRadius(newRadius);
                     currentCircle.setStyle({ opacity: 0.5, fillOpacity: 0.1 });
+                    if (!map.hasLayer(centerMarker)) {
+                        centerMarker.addTo(map); // マーカーを表示
+                    }
                 } else {
-                    // 非表示の場合は透明に設定
+                    // 非表示の場合は透明に設定し、マーカーを非表示
                     currentCircle.setStyle({ opacity: 0, fillOpacity: 0 });
+                    if (map.hasLayer(centerMarker)) {
+                        map.removeLayer(centerMarker); // マーカーを非表示
+                    }
                 }
             });
         });
