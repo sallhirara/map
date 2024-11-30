@@ -680,7 +680,6 @@
                 <input type="checkbox" id="primary-category" name="selector" tabindex="1" checked>
                 <span>Primary</span>
             </label>
-            </label>
             <label for="areaDev-category" class="c-checkbox">
                 <input type="checkbox" id="areaDev-category" name="selector" tabindex="2" checked>
                 <span>Area</span>
@@ -1094,10 +1093,10 @@
 
         // Category 1の値に基づくアイコンURLを定義
         var categoryIcons = {
-            "HC PJ": "https://img.icons8.com/?size=100&id=bnfp2fmtrh0g&format=png&color=FF0062", // 新規検討案件のアイコン
+            "Haseko": "https://img.icons8.com/?size=100&id=bnfp2fmtrh0g&format=png&color=FF0062", // 新規検討案件のアイコン
             "PJ Site": "https://img.icons8.com/?size=100&id=ipgAkdE46kxu&format=png&color=000000", // サイトのアイコン          
             "Area": "https://img.icons8.com/?size=100&id=bnfp2fmtrh0g&format=png&color=05227AA8", // 面開発案件のアイコン
-            "ECOBA PJ": "https://img.icons8.com/?size=100&id=42P5zkOQICqY&format=png&color=000000", // ECOBAのアイコン
+            "Ecoba": "https://img.icons8.com/?size=100&id=42P5zkOQICqY&format=png&color=000000", // ECOBAのアイコン
             "Condominium": "https://img.icons8.com/?size=100&id=uRRFz0DH6uYw&format=png&color=000000", // Condominiumのアイコン
             "Others": "https://img.icons8.com/?size=100&id=bnfp2fmtrh0g&format=png&color=8A8A02A8" // 新規検討案件のアイコン
         };
@@ -1397,7 +1396,7 @@
                         iconSize = [37, 37]; // HC PJのアイコンサイズを小さく
                     } else if (category === "Area") {
                         iconSize = [0, 0]; // Urban PJのアイコン
-                    } else if (category === "ECOBA PJ") {
+                    } else if (category === "Ecoba") {
                         iconSize = [20, 20]; // ECIOBA PJのアイコンサイズを小さく
                     } else if (category === "Condominium") {
                         iconSize = [20, 20]; // Condominiumのアイコンサイズを小さく
@@ -1942,65 +1941,68 @@
       
       
 
-        // #conditions内のチェックボックスを#PJ List内の関連する親チェックボックスと連動させる
-        document.querySelectorAll('#conditions .c-checkbox input[type="checkbox"]').forEach(conditionCheckbox => {
-            conditionCheckbox.addEventListener('change', function() {
-                const isChecked = this.checked;
+// #conditions内のチェックボックスを#pjList内の要素とマーカーに連動させる
+document.querySelectorAll('#conditions .c-checkbox input[type="checkbox"]').forEach(conditionCheckbox => {
+    conditionCheckbox.addEventListener('change', function() {
+        const isChecked = this.checked;
 
-                // 各条件のチェックボックスIDに応じた親チェックボックスを探して連動させる
-                let parentCheckboxId;
-                switch (this.id) {
-                    case 'primary-category':
-                        parentCheckboxId = 'togglePrimary';
-                        break;
-                    case 'condo-category':
-                        parentCheckboxId = 'toggleCondominium';
-                        break;
-                    case 'ecoba-category':
-                        parentCheckboxId = 'toggleECOBA PJ';
-                        break;
-                    case 'hc-category':
-                        parentCheckboxId = 'toggleHC PJ';
-                        break;
-                    case 'areaDev-category':
-                        parentCheckboxId = 'toggleUrban PJ';
-                        break; 
-                    case 'site-category':
-                        parentCheckboxId = 'toggleSite PJ';
-                        break;
-                    case 'other-category':
-                        parentCheckboxId = 'toggleOther PJ';
-                        break;                                                                       
-                    default:
-                        return; // マッチするものがない場合は処理を中断
-                }
+        // 各条件のチェックボックスIDに応じたカテゴリ名を取得 (エクセルの入力も影響)
+        let category;
+        switch (this.id) {
+            case 'primary-category':
+                category = 'Primary';
+                break;
+            case 'condo-category':
+                category = 'Condominium';
+                break;
+            case 'ecoba-category':
+                category = 'Ecoba';
+                break;
+            case 'hc-category':
+                category = 'Haseko';
+                break;
+            case 'areaDev-category':
+                category = 'Area';
+                break;
+            case 'site-category':
+                category = 'PJ Site';
+                break;
+            case 'other-category':
+                category = 'Others';
+                break;
+            default:
+                return; // マッチするものがない場合は処理を中断
+        }
 
-                // 親チェックボックスを見つけて、その状態を更新
-                const parentCheckbox = document.getElementById(parentCheckboxId);
-                if (parentCheckbox) {
-                    parentCheckbox.checked = isChecked;
+        // #pjList内の該当カテゴリの要素を取得して表示・非表示を切り替え
+        const parentElement = document.querySelector(`#pjList .layer-group#categoryContainer${category}`);
+        if (parentElement) {
+            parentElement.style.display = isChecked ? 'block' : 'none';
+        }
 
-                    // 親チェックボックスの変更に応じて、その下層のチェックボックスも連動させる
-                    const individualCheckboxes = parentCheckbox.closest('.layer-group').querySelectorAll('.individual-icon-container input[type="checkbox"]');
-                    individualCheckboxes.forEach(individualCheckbox => {
-                        individualCheckbox.checked = isChecked;
-
-                        // マーカーの表示・非表示を同期
-                        const category = individualCheckbox.dataset.category || parentCheckboxId.replace('toggle', '').trim();
-                        const name = individualCheckbox.labels[0]?.textContent.trim(); // ラベルからプロジェクト名を取得
-                        const marker = window.categoryMarkers[category]?.find(m => m.getPopup().getContent().includes(name));
-
-                        if (marker) {
-                            if (isChecked) {
-                                marker.addTo(map);
-                            } else {
-                                map.removeLayer(marker);
-                            }
-                        }
-                    });
+        // マーカーの表示・非表示を制御
+        if (window.categoryMarkers && window.categoryMarkers[category]) {
+            window.categoryMarkers[category].forEach(marker => {
+                if (isChecked) {
+                    marker.addTo(map); // マーカーを表示
+                } else {
+                    map.removeLayer(marker); // マーカーを非表示
                 }
             });
-        });
+        }
+
+        // ポリゴンの表示・非表示も制御（必要に応じて）
+        if (window.categoryPolygons && window.categoryPolygons[category]) {
+            window.categoryPolygons[category].forEach(polygon => {
+                if (isChecked) {
+                    polygon.addTo(map); // ポリゴンを表示
+                } else {
+                    map.removeLayer(polygon); // ポリゴンを非表示
+                }
+            });
+        }
+    });
+});
 
         // areaDev-category チェックボックスの変更イベントを設定
         document.getElementById('areaDev-category').addEventListener('change', function () {
