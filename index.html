@@ -87,11 +87,9 @@
             max-width: 500px;
             overflow-y: hidden;
             left: 5%;
-            background: rgba(255, 255, 255, 0.3); /* 半透明 */
-            backdrop-filter: blur(5px);
+
             border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            padding: 0px;
             z-index: 1001;
             font-size: 12px;
             top: 60px; /* menu-container (30px) + margin (10px) を考慮 */
@@ -118,17 +116,22 @@
 
         /* -------- Summary from here --------*/
         #summary {
-            border: none;
             padding: 20px;
             font-size: 12px;
+            background: rgba(255, 255, 255, 0.3); /* 半透明 */
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
         }
         /* -------- Summary to here --------*/
 
 
         /* -------- Conditions from here --------*/
         #conditions {
-            border: none;
+            padding: 20px;
             font-size: 12px;
+            background: rgba(255, 255, 255, 0.3); /* 半透明 */
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
         }
       
         .button-container {
@@ -396,40 +399,47 @@
 
 
         /* -------- PJ List from here --------*/
-#pjSearch {
-    border: 1px solid #aaa; /* 通常時 */
-    border-radius: 20px; /* 丸み */
-    padding: 5px 15px !important;
-    transition: border 0.3s; /* アニメーション */
-    outline: none; /* デフォルトのoutlineを無効化 */
-    font-size: 16px !important;
-    border-radius: 20px !important;
-}
-
-#pjSearch:focus {
-    border: 3px solid #4a90e2; /* フォーカス時の太さと色 */
-}
-            
-      
         #listMenu {
-            display: none;
+            border: none;
+            font-size: 12px;
+        }
+
+        #pjSearch {
+            width: 100%; /* 幅を親要素に合わせる */
+            padding: 10px; /* 内側の余白 */
+            font-size: 14px; /* フォントサイズ */
+            border: 2px solid #ccc; /* ボーダー色 */
+            border-radius: 8px; /* 角を丸める */
+            background-color: #f9f9f9; /* 背景色 */
+            outline: none; /* フォーカス時の青い枠を消す */
+            transition: border-color 0.3s ease; /* フォーカス時のボーダー色をアニメーション */
+        }
+
+        #pjSearch:focus {
+            border-color: #00258F; /* フォーカス時のボーダー色 */
+            background-color: #fff; /* フォーカス時の背景色 */
+        }        
+
+        #pjList {
+            display: block;
             position: absolute;
-            width: 90%;
-            max-width: 500px;
+            width: 100%;
+            max-height: 100%;
             overflow-y: auto;
-            left: 5%;
             background: rgba(255, 255, 255, 0.3);
             backdrop-filter: blur(5px);
+            transition: none;
             border-radius: 8px;
-            padding: 20px 26px;
+            padding: 20px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
             z-index: 1001;
             font-size: 12px;
         }
         
-        #listMenu::-webkit-scrollbar {
+        #pjList::-webkit-scrollbar {
         display: none;
         }
+
 
         /*Category 1 毎 のコンテナ*/
         .layer-group {
@@ -761,11 +771,14 @@
 
     <!-- PJ List -->
     <div id="listMenu" class="mega-menu">
-       <input type="text" id="pjSearch" placeholder="Search Projects..." style="width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px;">
+        <input type="text" id="pjSearch" placeholder="Search Projects..." 
+               style="width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px;">
+
+        <div class="pjList" id="pjList"></div> <!-- Project Listをクリックした際に開くメニュー -->
+    
     </div>
   
-    <div class="menu" id="menu"></div> <!-- Project Listをクリックした際に開くメニュー -->
-    
+
     
     <div id="map"></div>
 
@@ -807,7 +820,7 @@
                     menu.style.top = "60px"; // 初期位置にリセット（menu-container の下）
                     adjustMenuHeight(); // メニュー高さを再計算
                     adjustMenuPositions(); // メニュー位置の再調整
-                }, 0);
+                }, 500);
             } else {
                 menu.style.display = 'block';
                 setTimeout(() => {
@@ -821,7 +834,7 @@
         }
       
         function adjustMenuHeight() {
-            const menu = document.querySelector('.menu');
+            const pjList = document.getElementById('pjList');
             const listMenu = document.getElementById('listMenu');
             const summary = document.getElementById('summary');
             const conditions = document.getElementById('conditions');
@@ -849,7 +862,7 @@
             if (conditionsHeight > 0) {
                 newHeight -= conditionsHeight;
             }
-            menu.style.height = `${newHeight}px`;
+            listMenu.style.height = `${newHeight}px`;
 
             adjustMenuPositions();
         }
@@ -1258,7 +1271,7 @@
                     });
                 }
                 window.categoryMarkers = {};
-                document.getElementById('listMenu').innerHTML = '';
+                document.getElementById('pjList').innerHTML = '';
 
                 // jsonDataを使ってカテゴリー別にチェックボックスとマーカーを作成
                 jsonData.forEach(function(item, index) {
@@ -1489,16 +1502,7 @@
                         });
                     });
       
-
-
-
-
-
-
-
-
-                  
-       
+    
                   
                     // For area-list-container                   
                     // エリアリストコンテナをクリア
@@ -1683,7 +1687,7 @@
                         mainCategoryDiv.appendChild(categoryCheckbox);
                         mainCategoryDiv.appendChild(categoryText);
                         categoryContainer.appendChild(mainCategoryDiv);
-                        document.getElementById('listMenu').appendChild(categoryContainer);
+                        document.getElementById('pjList').appendChild(categoryContainer);
 
                         // チェックボックスの状態によってマーカーを表示・非表示にするイベントリスナー
                         categoryCheckbox.addEventListener('change', function(e) {
@@ -1821,8 +1825,6 @@
                     window.categoryMarkers[category].push(marker);
                     console.log('window.categoryMarkers:', window.categoryMarkers);
                 }      
-              
-
 
 
                 // トグル管理のコードをここに追加
@@ -1865,10 +1867,22 @@
                 }              
             };
             reader.readAsArrayBuffer(file);
-        
 
 
+            // 検索窓
+            document.getElementById('pjSearch').addEventListener('input', function() {
+                        const searchValue = this.value.toLowerCase(); // Convert input to lowercase for case-insensitive search
+                        const projectItems = document.querySelectorAll('#pjList .individual-icon-container'); // All project containers
 
+                        projectItems.forEach(item => {
+                            const projectName = item.textContent.trim().toLowerCase(); // Get the project name
+                            if (projectName.includes(searchValue)) {
+                                item.style.display = 'block'; // Show matching projects
+                            } else {
+                                item.style.display = 'none'; // Hide non-matching projects
+                            }
+                        });
+                    });
 
 
           
@@ -1918,10 +1932,10 @@
                 return childContainer;
             }
 
-            generateListMenuData(); // 仮: `#listMenu` のデータ生成関数
+            generatepjListData(); // 仮: `#pjList` のデータ生成関数
             generateAreaListData(); // 仮: `#area-list-container` のデータ生成関数              
-            // `#listMenu` と `#area-list-container` のトグル管理を設定
-            setupToggle('listMenu');
+            // `#pjList` と `#area-list-container` のトグル管理を設定
+            setupToggle('pjList');
             setupToggle('area-list-container');
         }); 
       
@@ -2026,83 +2040,7 @@
             }
         });
         
-function addSearchBar() {
-    const listMenu = document.getElementById('listMenu');
 
-    // 検索窓がすでに存在している場合は何もしない
-    if (document.getElementById('pjSearch')) return;
-
-    const searchBar = document.createElement('input');
-    searchBar.type = 'text';
-    searchBar.id = 'pjSearch';
-    searchBar.placeholder = 'Search Projects...';
-
-    // デザインを変更
-    searchBar.style.cssText = `
-        width: 100%;
-        padding: 5px 15px;              /* 余白を広く */
-        margin-bottom: 15px;        /* 下部の余白 */
-        border: 1px solid #999;     /* 境界線の色を薄く */
-        border-radius: 20px;        /* 丸みを追加 */
-        background-color: #f9f9f9;  /* 背景色を淡いグレーに */
-        font-size: 16px;            /* テキストサイズ */
-        color: #333;                /* テキスト色 */
-        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* 影を追加 */
-        transition: box-shadow 0.3s, border-color 0.3s; /* ホバー時のアニメーション */
-    `;
-
-    // ホバーとフォーカス時の効果を追加
-    searchBar.addEventListener('focus', () => {
-        searchBar.style.borderColor = '#4a90e2';  /* フォーカス時の境界線の色 */
-        searchBar.style.boxShadow = '0px 4px 8px rgba(74, 144, 226, 0.2)'; /* フォーカス時の影 */
-    });
-
-    searchBar.addEventListener('blur', () => {
-        searchBar.style.borderColor = '#aaa'; /* 通常時の境界線の色 */
-        searchBar.style.boxShadow = '0px 2px 4px rgba(0, 0, 0, 0.1)'; /* 通常時の影 */
-    });
-
-    // リストメニューの最初に検索窓を追加
-    listMenu.insertBefore(searchBar, listMenu.firstChild);
-
-    // イベントリスナーを再追加
-    searchBar.addEventListener('input', function () {
-        const searchTerm = this.value.toLowerCase();
-        const items = document.querySelectorAll('#listMenu .individual-icon-container');
-
-        items.forEach(item => {
-            const projectName = item.textContent.toLowerCase();
-            if (projectName.includes(searchTerm)) {
-                item.style.display = ''; // Show the item
-            } else {
-                item.style.display = 'none'; // Hide the item
-            }
-        });
-    });
-}
-
-
-document.getElementById('fileUpload').addEventListener('change', function (evt) {
-    var file = evt.target.files[0];
-    if (!file) return;
-
-    var reader = new FileReader();
-    reader.onload = function (e) {
-        var data = new Uint8Array(e.target.result);
-        var workbook = XLSX.read(data, { type: 'array' });
-        var firstSheetName = workbook.SheetNames[0];
-        var worksheet = workbook.Sheets[firstSheetName];
-        var jsonData = XLSX.utils.sheet_to_json(worksheet);
-
-        // データを使った処理
-        // ここで#listMenuの中身を更新する処理が入る
-
-        // 検索窓を再追加
-        addSearchBar();
-    };
-    reader.readAsArrayBuffer(file);
-});
-        
       
       
         // 画面ローテーションでリロード
