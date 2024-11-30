@@ -2003,44 +2003,6 @@ document.querySelectorAll('#conditions .c-checkbox input[type="checkbox"]').forE
         }
     });
 });
-
-        // areaDev-category チェックボックスの変更イベントを設定
-        document.getElementById('areaDev-category').addEventListener('change', function () {
-            const isChecked = this.checked;
-
-            // AreaDev カテゴリのポリゴンを取得
-            const areaDevPolygons = window.categoryPolygons?.['Area'];
-
-            // チェック状態に応じてポリゴンを表示・非表示に切り替え
-            if (areaDevPolygons) {
-                areaDevPolygons.forEach(polygon => {
-                    if (isChecked) {
-                        polygon.addTo(map); // 表示
-                    } else {
-                        map.removeLayer(polygon); // 非表示
-                    }
-                });
-            }
-        });     
-            
-        // site-category チェックボックスの変更イベントを設定
-        document.getElementById('site-category').addEventListener('change', function () {
-            const isChecked = this.checked;
-
-            // PJ Site カテゴリのポリゴンを取得
-            const sitePolygons = window.categoryPolygons?.['PJ Site'];
-
-            // チェック状態に応じてポリゴンを表示・非表示に切り替え
-            if (sitePolygons) {
-                sitePolygons.forEach(polygon => {
-                    if (isChecked) {
-                        polygon.addTo(map); // 表示
-                    } else {
-                        map.removeLayer(polygon); // 非表示
-                    }
-                });
-            }
-        });
         
 
       
