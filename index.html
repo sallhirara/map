@@ -1871,18 +1871,18 @@
 
             // 検索窓
             document.getElementById('pjSearch').addEventListener('input', function() {
-                        const searchValue = this.value.toLowerCase(); // Convert input to lowercase for case-insensitive search
-                        const projectItems = document.querySelectorAll('#pjList .individual-icon-container'); // All project containers
+                const searchValue = this.value.toLowerCase(); // Convert input to lowercase for case-insensitive search
+                const projectItems = document.querySelectorAll('#pjList .individual-icon-container'); // All project containers
 
-                        projectItems.forEach(item => {
-                            const projectName = item.textContent.trim().toLowerCase(); // Get the project name
-                            if (projectName.includes(searchValue)) {
-                                item.style.display = 'block'; // Show matching projects
-                            } else {
-                                item.style.display = 'none'; // Hide non-matching projects
-                            }
-                        });
-                    });
+                projectItems.forEach(item => {
+                    const projectName = item.textContent.trim().toLowerCase(); // Get the project name
+                    if (projectName.includes(searchValue)) {
+                        item.style.display = 'block'; // Show matching projects
+                    } else {
+                        item.style.display = 'none'; // Hide non-matching projects
+                    }
+                });
+            });
 
 
           
