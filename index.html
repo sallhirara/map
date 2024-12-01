@@ -396,7 +396,7 @@
         .slider-value-labels {
             color: #333;
             text-align: left;
-            margin: 15px 0 12px 5px;
+            margin: 10px 0 12px 5px;
         }
       
         /* sloder */      
@@ -735,6 +735,16 @@
         </div>
         <!-- Condo status box -->  
 
+        <!-- slider -->
+        <div id="condo-price-slider" class="condo-price-slider">
+            <div class="slider-value-labels">
+                Price Range: <span id="sliderValueMin">$500</span> - <span id="sliderValueMax">$1,000</span>
+            </div>
+            <div id="price-slider"　calss="slider"></div>
+        </div>
+        <!-- slider -->
+
+
         <!-- ECOBA status box -->
         <!--<label id="constructionStatus" class=statusLabels>PJ Status - Construction</label>-->
         <label id="ecobaStatus" class=statusLabels>Status : Construction PJ</label>        
@@ -758,15 +768,6 @@
             </label>                    
         </div>
         <!-- ECOBA status box -->    
-
-        <!-- slider -->
-        <div id="condo-price-slider" class="condo-price-slider">
-            <div class="slider-value-labels">
-                Price Range: <span id="sliderValueMin">$500</span> - <span id="sliderValueMax">$1,000</span>
-            </div>
-            <div id="price-slider"　calss="slider"></div>
-        </div>
-        <!-- slider -->
 
   
         <!-- Area list container-->
@@ -809,8 +810,17 @@
         // condo-checkboxでcondoStatus / ecoba-checkboxでecobaStatus制御
         document.addEventListener('DOMContentLoaded', function () {
             const categories = [
-                { checkboxId: 'condo-category', statusId: 'condoStatus', checkboxGroupId: 'condoStatus-checkbox' },
-                { checkboxId: 'ecoba-category', statusId: 'ecobaStatus', checkboxGroupId: 'ecobaStatus-checkbox' }
+                {
+                    checkboxId: 'condo-category',
+                    statusId: 'condoStatus',
+                    checkboxGroupId: 'condoStatus-checkbox',
+                    additionalElementId: 'condo-price-slider' // Add the slider control
+                },
+                {
+                    checkboxId: 'ecoba-category',
+                    statusId: 'ecobaStatus',
+                    checkboxGroupId: 'ecobaStatus-checkbox'
+                }
             ];
 
             // Function to update the visibility of elements based on the checkbox state
@@ -818,6 +828,9 @@
                 const checkbox = document.getElementById(category.checkboxId);
                 const statusElement = document.getElementById(category.statusId);
                 const checkboxGroupElement = document.getElementById(category.checkboxGroupId);
+                const additionalElement = category.additionalElementId
+                    ? document.getElementById(category.additionalElementId)
+                    : null; // Additional element like the slider
 
                 if (!checkbox || !statusElement || !checkboxGroupElement) {
                     console.error(`Elements for ${category.checkboxId} not found.`);
@@ -827,6 +840,11 @@
                 const isChecked = checkbox.checked;
                 statusElement.classList.toggle('hidden', !isChecked);
                 checkboxGroupElement.classList.toggle('hidden', !isChecked);
+
+                // Handle additional element visibility (like the slider)
+                if (additionalElement) {
+                    additionalElement.classList.toggle('hidden', !isChecked);
+                }
 
                 // Adjust #listMenu height dynamically
                 adjustMenuHeight();
