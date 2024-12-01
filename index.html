@@ -1884,7 +1884,21 @@
                 });
             });
 
-          
+            document.getElementById('pjListToggleIcon').addEventListener('click', function () {
+    const pjListContainer = document.getElementById('pjList');
+    const individualContainers = pjListContainer.querySelectorAll('.individual-icon-container');
+    const isOpen = this.classList.contains('fa-angles-up'); // Check the current state of the icon
+
+    // Toggle the display of each tab
+    individualContainers.forEach(container => {
+        container.style.display = isOpen ? 'none' : 'block';
+    });
+
+    // Update the icon to reflect the current state
+    this.classList.toggle('fa-angles-up', !isOpen);
+    this.classList.toggle('fa-angles-down', isOpen);
+});
+            
             function createLayer(className, name, items, parentElement) {
                 const layerDiv = document.createElement('div');
                 layerDiv.className = className;
