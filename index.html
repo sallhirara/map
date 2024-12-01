@@ -250,6 +250,11 @@
             gap: 0px;                             /* 各アイテム間のスペース */     
         }
 
+        /* condo, ecobaStatus-checkboxでstatus制御*/
+        .hidden {
+            display: none !important;
+        }
+
         .c-checkbox,
         .st-checkbox {
             border: none!important;
@@ -755,10 +760,12 @@
         <!-- ECOBA status box -->    
 
         <!-- slider -->
-        <div class="slider-value-labels">
-            Price Range: <span id="sliderValueMin">$500</span> - <span id="sliderValueMax">$1,000</span>
+        <div id="condo-price-slider" class="condo-price-slider">
+            <div class="slider-value-labels">
+                Price Range: <span id="sliderValueMin">$500</span> - <span id="sliderValueMax">$1,000</span>
+            </div>
+            <div id="price-slider"　calss="slider"></div>
         </div>
-        <div id="price-slider"　calss="slider"></div>
         <!-- slider -->
 
   
@@ -818,8 +825,11 @@
                 }
 
                 const isChecked = checkbox.checked;
-                statusElement.style.display = isChecked ? 'block' : 'none';
-                checkboxGroupElement.style.display = isChecked ? 'block' : 'none';
+                statusElement.classList.toggle('hidden', !isChecked);
+                checkboxGroupElement.classList.toggle('hidden', !isChecked);
+
+                // Adjust #listMenu height dynamically
+                adjustMenuHeight();
             }
 
             // Initialize and add event listeners
