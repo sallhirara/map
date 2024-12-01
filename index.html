@@ -239,7 +239,8 @@
 
         /* checkbox */
         .category-checkbox,
-        .status-checkbox {
+        .condoStatus-checkbox,
+        .ecobaStatus-checkbox {
             border: none;
             margin-bottom: 10px;            
             /*　checkbox　item の均等割り付け　*/
@@ -707,8 +708,8 @@
         <!-- check box -->
   
         <!-- Condo status box -->
-        <label id="condoStatus" class=statusLabels>Status : Condominium PJ / Construction PJ</label>
-        <div id="status-checkbox" class="status-checkbox">
+        <label id="condoStatus" class=statusLabels>Status : Condominium PJ</label>
+        <div id="condoStatus-checkbox" class="condoStatus-checkbox">
             <label for="prep-category" class="st-checkbox">
                 <input type="checkbox" id="prep-category" name="selector" tabindex="1" checked>
                 <span>Prep</span>
@@ -731,7 +732,8 @@
 
         <!-- ECOBA status box -->
         <!--<label id="constructionStatus" class=statusLabels>PJ Status - Construction</label>-->
-        <div id="status-checkbox" class="status-checkbox">
+        <label id="ecobaStatus" class=statusLabels>Status : Construction PJ</label>        
+        <div id="ecobaStatus-checkbox" class="ecobaStatus-checkbox">
             <label for="preBid-category" class="st-checkbox">
                 <input type="checkbox" id="preBid-category" name="selector" tabindex="1" checked>
                 <span>PreBid</span>
@@ -796,6 +798,39 @@
             'max': 10000
           }
         });      
+
+        // condo-checkboxでcondoStatus / ecoba-checkboxでecobaStatus制御
+        document.addEventListener('DOMContentLoaded', function () {
+            const categories = [
+                { checkboxId: 'condo-category', statusId: 'condoStatus', checkboxGroupId: 'condoStatus-checkbox' },
+                { checkboxId: 'ecoba-category', statusId: 'ecobaStatus', checkboxGroupId: 'ecobaStatus-checkbox' }
+            ];
+
+            // Function to update the visibility of elements based on the checkbox state
+            function updateVisibility(category) {
+                const checkbox = document.getElementById(category.checkboxId);
+                const statusElement = document.getElementById(category.statusId);
+                const checkboxGroupElement = document.getElementById(category.checkboxGroupId);
+
+                if (!checkbox || !statusElement || !checkboxGroupElement) {
+                    console.error(`Elements for ${category.checkboxId} not found.`);
+                    return;
+                }
+
+                const isChecked = checkbox.checked;
+                statusElement.style.display = isChecked ? 'block' : 'none';
+                checkboxGroupElement.style.display = isChecked ? 'block' : 'none';
+            }
+
+            // Initialize and add event listeners
+            categories.forEach(category => {
+                const checkbox = document.getElementById(category.checkboxId);
+                if (checkbox) {
+                    updateVisibility(category); // Initialize visibility
+                    checkbox.addEventListener('change', () => updateVisibility(category));
+                }
+            });
+        });
 
         // 現在の範囲を表示するラベル
         var valueMinLabel = document.getElementById('sliderValueMin');
@@ -1868,6 +1903,24 @@
             };
             reader.readAsArrayBuffer(file);
 
+            // condoのチェックボックスでcondoのstatus制御
+            document.getElementById('condo-category').addEventListener('change', function () {
+                const condoStatus = document.getElementById('condoStatus');
+                if (this.checked) {
+                    condoStatus.style.display = 'block'; // Show the condoStatus element
+                } else {
+                    condoStatus.style.display = 'none'; // Hide the condoStatus element
+                }
+            });
+
+            // Initialize the visibility on page load
+            document.addEventListener('DOMContentLoaded', function () {
+                const condoCategory = document.getElementById('condo-category');
+                const condoStatus = document.getElementById('condoStatus');
+                condoStatus.style.display = condoCategory.checked ? 'block' : 'none';
+            });
+
+            
 
             // 検索窓
             document.getElementById('pjSearch').addEventListener('input', function() {
@@ -1884,20 +1937,21 @@
                 });
             });
 
+            //　全開閉トグル
             document.getElementById('pjListToggleIcon').addEventListener('click', function () {
-    const pjListContainer = document.getElementById('pjList');
-    const individualContainers = pjListContainer.querySelectorAll('.individual-icon-container');
-    const isOpen = this.classList.contains('fa-angles-up'); // Check the current state of the icon
+                const pjListContainer = document.getElementById('pjList');
+                const individualContainers = pjListContainer.querySelectorAll('.individual-icon-container');
+                const isOpen = this.classList.contains('fa-angles-up'); // Check the current state of the icon
 
-    // Toggle the display of each tab
-    individualContainers.forEach(container => {
-        container.style.display = isOpen ? 'none' : 'block';
-    });
+                // Toggle the display of each tab
+                individualContainers.forEach(container => {
+                    container.style.display = isOpen ? 'none' : 'block';
+                });
 
-    // Update the icon to reflect the current state
-    this.classList.toggle('fa-angles-up', !isOpen);
-    this.classList.toggle('fa-angles-down', isOpen);
-});
+                // Update the icon to reflect the current state
+                this.classList.toggle('fa-angles-up', !isOpen);
+                this.classList.toggle('fa-angles-down', isOpen);
+            });
             
             function createLayer(className, name, items, parentElement) {
                 const layerDiv = document.createElement('div');
