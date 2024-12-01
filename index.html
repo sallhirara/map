@@ -404,8 +404,7 @@
             font-size: 12px;
         }
 
-        #pjSearch {
-            width: 90% !important; /* 幅を親要素に合わせる */
+        #pjSearch { /* style は Javascriptで設定*/
             padding: 5px 15px !important; /* 内側の余白 */
             font-size: 16px !important; /* フォントサイズ */
             border: 1px solid #ccc; /* ボーダー色 */
@@ -770,9 +769,11 @@
 
     <!-- PJ List -->
     <div id="listMenu" class="mega-menu">
-        <input type="text" id="pjSearch" placeholder="Search Projects..." 
-               style="width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px;">
-
+        <div style="position: relative; display: flex; align-items: center; gap: 10px;">
+            <input type="text" id="pjSearch" placeholder="Search Projects..." 
+                   style="width: calc(100% - 60px); padding: 8px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px;">
+            <i id="pjListToggleIcon" class="fa-solid fa-angles-down" style="margin-bottom: 10px; cursor: pointer; font-size: 18px;"></i>
+        </div>
         <div class="pjList" id="pjList"></div> <!-- Project Listをクリックした際に開くメニュー -->
     
     </div>
@@ -1882,7 +1883,6 @@
                     }
                 });
             });
-
 
           
             function createLayer(className, name, items, parentElement) {
