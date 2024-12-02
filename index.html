@@ -719,7 +719,7 @@
             </label>
             <label for="site-category" class="c-checkbox">
                 <input type="checkbox" id="site-category" name="selector" tabindex="4" checked>
-                <span>PJ Site</span>
+                <span>Site</span>
             </label>                        
             <label for="ecoba-category" class="c-checkbox">
                 <input type="checkbox" id="ecoba-category" name="selector" tabindex="5" checked>
@@ -1183,7 +1183,7 @@
         // Category 1の値に基づくアイコンURLを定義
         var categoryIcons = {
             "Haseko": "https://img.icons8.com/?size=100&id=uRRFz0DH6uYw&format=png&color=000000", // 新規検討案件のアイコン
-            "PJ Site": "https://img.icons8.com/?size=100&id=ipgAkdE46kxu&format=png&color=000000", // サイトのアイコン          
+            "Site": "https://img.icons8.com/?size=100&id=ipgAkdE46kxu&format=png&color=000000", // サイトのアイコン          
             "Area": "https://img.icons8.com/?size=100&id=bnfp2fmtrh0g&format=png&color=05227AA8", // 面開発案件のアイコン
             "Ecoba": "https://img.icons8.com/?size=100&id=59830&format=png&color=47A174A8", // ECOBAのアイコン
             "Condominium": "https://img.icons8.com/?size=100&id=24801&format=png&color=FF2E1754", // Condominiumのアイコン
@@ -1479,7 +1479,7 @@
                     var iconSize;
                     if (category === "Primary") {
                         iconSize = [20, 20];
-                    } else if (category === "PJ Site") {
+                    } else if (category === "Site") {
                         iconSize = [0, 0]; 
                     } else if (category === "Haseko") {
                         iconSize = [20, 20];
@@ -2086,7 +2086,7 @@
                         category = 'Area';
                         break;
                     case 'site-category':
-                        category = 'PJ Site';
+                        category = 'Site';
                         break;
                     case 'other-category':
                         category = 'Others';
