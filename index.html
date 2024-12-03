@@ -85,7 +85,7 @@
             position: absolute;
             width: 90%;
             max-width: 500px;
-            overflow: hidden;
+            overflow-y: hidden;
             left: 5%;
 
             border-radius: 8px;
@@ -159,7 +159,7 @@
             color: white;
         }      
 
-        /* radio */
+        /* radio */     
         .scale-radio,
         .circle-radio {
             border: none;
@@ -389,6 +389,7 @@
       
         /* slider */
        #price-slider {
+            display: none;
             margin: 10px 0px 30px 5px;
             height: 10px; /* スライダーバーの高さを変更 */
             width: 95%;
@@ -411,6 +412,7 @@
       
         /* スライダーの現在の範囲ラベル */
         .slider-value-labels {
+            display: none;
             color: #333;
             text-align: left;
             margin: 10px 0 12px 5px;
@@ -658,6 +660,13 @@
         </div>
         <!-- radio butto- for center-->
 
+      
+        <!-- Area list container -->
+        <div id="area-list-container" class="area-list-container">
+        </div>
+        <!-- Area List container -->    
+      
+      
         <!-- radio button for scale -->
         <div id="scale-radio" class="scale-radio">
 
@@ -793,12 +802,6 @@
         </div>
         <!-- slider -->
 
-
-  
-        <!-- Area list container-->
-        <div id="area-list-container" class="area-list-container">
-        </div>
-        <!-- Area List -->
       
     </div>
 
@@ -1514,7 +1517,7 @@
                             // カテゴリー1の値に基づいて色を決定
                             var fillColor;
                             switch (category) {
-                                case 'Site':
+                                case 'PJ Site':
                                     fillColor = '#FF0062A8'; // カテゴリーがPrimaryの場合の色
                                     break;
                                 case 'Haseko':
