@@ -326,13 +326,17 @@
         #area-list-container {
             max-height: 170px;
             overflow-y: auto;
-            padding: 0 6px;
+            padding: 6px 6px 0 6px;
             -ms-overflow-style: none;  /* IEとEdgeでスクロールバーを非表示 */
-            scrollbar-width: none;  /* Firefoxでスクロールバーを非表示 */          
+            scrollbar-width: none;  /* Firefoxでスクロールバーを非表示 */ 
+                
         }  
       
         #area-list-container:has(*) {
             margin-bottom: 15px;
+            background-color: rgba(227, 227, 227, 0.3);
+            box-shadow: inset 0 2px 30px rgba(0, 0, 0, 0.1); /* Recessed shadow */
+            border-radius: 8px; /* Rounded corners */     
         }
     
         /* 残りのチェックボックススタイルはc-checkbox, st-checkboxで記載 */
@@ -409,7 +413,7 @@
             width: 20px !important;
             height: 20px !important;
             border-radius: 50%;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);a
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
             cursor: pointer;
         }          
       
