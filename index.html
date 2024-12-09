@@ -1053,7 +1053,7 @@
             "Area": "https://img.icons8.com/?size=100&id=bnfp2fmtrh0g&format=png&color=05227AA8", // 面開発案件のアイコン
             "Ecoba": "https://img.icons8.com/?size=100&id=59830&format=png&color=4BAA8EA8", // ECOBAのアイコン
             "Condominium": "https://img.icons8.com/?size=100&id=24801&format=png&color=FF2E1754", // Condominiumのアイコン
-            "Others": "https://img.icons8.com/?size=100&id=bnfp2fmtrh0g&format=png&color=8A8A02A8" // 新規検討案件のアイコン
+            "Others": "https://img.icons8.com/?size=100&id=bnfp2fmtrh0g&format=png&color=0046b099" // 新規検討案件のアイコン
         };
 
         
@@ -2003,6 +2003,27 @@
             let visibleMarkers = 0;
             let visiblePolygons = 0;
 
+            // カテゴリーごとの色
+            const categoryColors = {
+                "Primary": "rgba(66, 18, 0, 0.6)",
+                "Haseko": "rgba(255, 8, 0)",
+                "Area": "rgba(247, 218, 0, 0.6)",
+                "Site": "rgba(255, 206, 86, 0.6)",
+                "Ecoba": "rgba(65, 150, 100, 0.46)",
+                "Condominium": "rgba(255, 169, 148, 0.6)",
+                "Others": "rgba(0, 70, 176, 0.6)",
+            };
+
+            const categoryBorderColors = {
+                "Primary": "rgba(66, 18, 0, 0.8)",
+                "Haseko": "rgba(255, 8, 0)",
+                "Area": "rgba(247, 218, 0, 0.8)",
+                "Site": "rgba(255, 206, 86, 0.8)",
+                "Ecoba": "rgba(65, 150, 100, 0.8)",
+                "Condominium": "rgba(255, 169, 148, 0.8)",
+                "Others": "rgba(0, 70, 176, 0.8)",
+            };
+
             // マーカーの集計（表示中のものだけカウント）
             if (window.categoryMarkers) {
                 Object.keys(window.categoryMarkers).forEach(category => {
@@ -2036,15 +2057,15 @@
                     {
                         label: 'Markers',
                         data: markerData,
-                        backgroundColor: categories.map((_, i) => `rgba(${100 + i * 50}, ${50 + i * 40}, 150, 0.6)`),
-                        borderColor: categories.map((_, i) => `rgba(${100 + i * 50}, ${50 + i * 40}, 150, 1)`),
+                        backgroundColor: categories.map(category => categoryColors[category] || "rgba(200, 200, 200, 0.6)"),
+                        borderColor: categories.map(category => categoryBorderColors[category] || "rgba(200, 200, 200, 1)"),
                         borderWidth: 1,
                     },
                     {
                         label: 'Polygons',
                         data: polygonData,
-                        backgroundColor: categories.map((_, i) => `rgba(${50 + i * 40}, ${100 + i * 50}, 200, 0.6)`),
-                        borderColor: categories.map((_, i) => `rgba(${50 + i * 40}, ${100 + i * 50}, 200, 1)`),
+                        backgroundColor: categories.map(category => categoryColors[category] || "rgba(200, 200, 200, 0.6)"),
+                        borderColor: categories.map(category => categoryBorderColors[category] || "rgba(200, 200, 200, 1)"),
                         borderWidth: 1,
                     },
                 ],
@@ -2080,9 +2101,9 @@
                         },
                     },
                 });
-
             }
         }
+
 
         function bindSummaryUpdate() {
             const conditionCheckboxes = document.querySelectorAll('#conditions input[type="checkbox"]');
