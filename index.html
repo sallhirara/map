@@ -326,7 +326,7 @@
         #area-list-container {
             max-height: 170px;
             overflow-y: auto;
-            padding: 6px 6px 0 6px;
+            padding: 10px 6px 0 6px;
             -ms-overflow-style: none;  /* IEとEdgeでスクロールバーを非表示 */
             scrollbar-width: none;  /* Firefoxでスクロールバーを非表示 */ 
                 
@@ -392,40 +392,7 @@
             margin: 0 0 0px 20px; /* Local Divisionレイヤーのインデント */
         }
         /* aria list */    
-      
-      
-        /* slider */
-       #price-slider {
-            display: none;
-            margin: 10px 0px 30px 5px;
-            height: 10px; /* スライダーバーの高さを変更 */
-            width: 95%;
-            background-color: transparent;
-        }
-
-      
-        .noUi-connect {
-            background: #1D60B1A7; /* 選択範囲の色を変更 */
-        }  
-        .noUi-handle {
-            background: #1D60B1A7;
-            border: 2px solid #ffffff;
-            width: 20px !important;
-            height: 20px !important;
-            border-radius: 50%;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-            cursor: pointer;
-        }          
-      
-        /* スライダーの現在の範囲ラベル */
-        .slider-value-labels {
-            display: none;
-            color: #333;
-            text-align: left;
-            margin: 10px 0 12px 5px;
-        }
-      
-        /* sloder */      
+       
       
         /* -------- Conditions to here --------*/
 
@@ -644,17 +611,20 @@
     </div>
     <!-- Summary -->
     <div id="summary" class="mega-menu">
-        <div id="numberofPJ" class="numberofPJ"></div>
-        <ul>
-            <li>Number of PJ</li>
-            <li>Number of Units</li>
-            <br>
-            <li>Average Unit Price</li>
-            <li>Highest Price</li>
-            <li>Lowest Price</li>
-            <li>Middle Price</li>
-        </ul>
+      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+          <!-- 左側 -->
+          <div style="flex: 1; text-align: left; padding-right: 10px; border-right: 1px solid #ccc;">
+              <h2 style="margin: 0; font-size: 20px;">Total</h2>
+              <p style="margin: 5px 0;"><strong>Markers:</strong> <span id="totalMarkers">0</span></p>
+              <p style="margin: 5px 0;"><strong>Polygons:</strong> <span id="totalPolygons">0</span></p>
+          </div>
+          <!-- 右側 -->
+          <div style="flex: 2; text-align: center; padding-left: 10px;">
+              <canvas id="categoryChart" width="300" height="300"></canvas>
+          </div>
+      </div>
     </div>
+
 
     <!--- Conditions -->
     <div id="conditions" class="mega-menu">
@@ -752,63 +722,6 @@
         </div>
         <!-- check box -->
 
-
-        <!-- ECOBA status box -->
-        <!--<label id="constructionStatus" class=statusLabels>PJ Status - Construction</label>-->
-        <label id="ecobaStatus" class=statusLabels>Status : Ecoba PJ</label>        
-        <div id="ecobaStatus-checkbox" class="ecobaStatus-checkbox">
-            <label for="preBid-category" class="st-checkbox">
-                <input type="checkbox" id="preBid-category" name="selector" tabindex="1" checked>
-                <span>PreBid</span>
-            </label>
-            </label>
-            <label for="tender-category" class="st-checkbox">
-                <input type="checkbox" id="tender-category" name="selector" tabindex="2" checked>
-                <span>Tender</span>
-            </label>            
-            <label for="constr-category" class="st-checkbox">
-                <input type="checkbox" id="constr-category" name="selector" tabindex="3" checked>
-                <span>Constr</span>
-            </label>
-            <label for="Comp-category" class="st-checkbox">
-                <input type="checkbox" id="Comp-category" name="selector" tabindex="4" checked>
-                <span>Comp</span>
-            </label>                    
-        </div>
-        <!-- ECOBA status box -->    
-
-        <!-- Condo status box -->
-        <label id="condoStatus" class=statusLabels>Status : Condominium PJ</label>
-        <div id="condoStatus-checkbox" class="condoStatus-checkbox">
-            <label for="prep-category" class="st-checkbox">
-                <input type="checkbox" id="prep-category" name="selector" tabindex="1" checked>
-                <span>Prep</span>
-            </label>
-            </label>
-            <label for="active-category" class="st-checkbox">
-                <input type="checkbox" id="active-category" name="selector" tabindex="2" checked>
-                <span>Active</span>
-            </label>            
-            <label for="soldOut-category" class="st-checkbox">
-                <input type="checkbox" id="soldOut-category" name="selector" tabindex="3" checked>
-                <span>sold</span>
-            </label>
-            <label for="poused-category" class="st-checkbox">
-                <input type="checkbox" id="poused-category" name="selector" tabindex="4" checked>
-                <span>Paused</span>
-            </label>                    
-        </div>
-        <!-- Condo status box -->  
-
-        <!-- slider -->
-        <div id="condo-price-slider" class="condo-price-slider">
-            <div class="slider-value-labels">
-                Price Range: <span id="sliderValueMin">$500</span> - <span id="sliderValueMax">$1,000</span>
-            </div>
-            <div id="price-slider"　calss="slider"></div>
-        </div>
-        <!-- slider -->
-
       
     </div>
 
@@ -829,81 +742,8 @@
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.5.1/nouislider.min.js"></script> <!-- for slider-->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        
-        // スライダーを実装
-        var slider = document.getElementById('price-slider');
-        noUiSlider.create(slider, {
-          start: [0, 1500],
-          connect: true,
-          range: {
-            'min': 0,
-            'max': 10000
-          }
-        });      
-
-        // condo-checkboxでcondoStatus / ecoba-checkboxでecobaStatus制御
-        document.addEventListener('DOMContentLoaded', function () {
-            const categories = [
-                {
-                    checkboxId: 'condo-category',
-                    statusId: 'condoStatus',
-                    checkboxGroupId: 'condoStatus-checkbox',
-                    additionalElementId: 'condo-price-slider' // Add the slider control
-                },
-                {
-                    checkboxId: 'ecoba-category',
-                    statusId: 'ecobaStatus',
-                    checkboxGroupId: 'ecobaStatus-checkbox'
-                }
-            ];
-
-            // Function to update the visibility of elements based on the checkbox state
-            function updateVisibility(category) {
-                const checkbox = document.getElementById(category.checkboxId);
-                const statusElement = document.getElementById(category.statusId);
-                const checkboxGroupElement = document.getElementById(category.checkboxGroupId);
-                const additionalElement = category.additionalElementId
-                    ? document.getElementById(category.additionalElementId)
-                    : null; // Additional element like the slider
-
-                if (!checkbox || !statusElement || !checkboxGroupElement) {
-                    console.error(`Elements for ${category.checkboxId} not found.`);
-                    return;
-                }
-
-                const isChecked = checkbox.checked;
-                statusElement.classList.toggle('hidden', !isChecked);
-                checkboxGroupElement.classList.toggle('hidden', !isChecked);
-
-                // Handle additional element visibility (like the slider)
-                if (additionalElement) {
-                    additionalElement.classList.toggle('hidden', !isChecked);
-                }
-
-                // Adjust #listMenu height dynamically
-                adjustMenuHeight();
-            }
-
-            // Initialize and add event listeners
-            categories.forEach(category => {
-                const checkbox = document.getElementById(category.checkboxId);
-                if (checkbox) {
-                    updateVisibility(category); // Initialize visibility
-                    checkbox.addEventListener('change', () => updateVisibility(category));
-                }
-            });
-        });
-
-        // 現在の範囲を表示するラベル
-        var valueMinLabel = document.getElementById('sliderValueMin');
-        var valueMaxLabel = document.getElementById('sliderValueMax');
-
-        // スライダーの値が変更されたときにラベルを更新
-        slider.noUiSlider.on('update', function (values, handle) {
-            valueMinLabel.textContent = Math.round(values[0]);
-            valueMaxLabel.textContent = Math.round(values[1]);
-        });   
       
       
         function toggleMenu(menuId, button) {
@@ -2135,8 +1975,117 @@
             });
         });
         
+let categoryChart; // グラフを管理する変数
 
-      
+function updateSummary() {
+    const markerCounts = {};
+    const polygonCounts = {};
+    let visibleMarkers = 0;
+    let visiblePolygons = 0;
+
+    // マーカーの集計（表示中のものだけカウント）
+    if (window.categoryMarkers) {
+        Object.keys(window.categoryMarkers).forEach(category => {
+            const visible = window.categoryMarkers[category].filter(marker => map.hasLayer(marker));
+            markerCounts[category] = visible.length;
+            visibleMarkers += visible.length;
+        });
+    }
+
+    // ポリゴンの集計（表示中のものだけカウント）
+    if (window.categoryPolygons) {
+        Object.keys(window.categoryPolygons).forEach(category => {
+            const visible = window.categoryPolygons[category].filter(polygon => map.hasLayer(polygon));
+            polygonCounts[category] = visible.length;
+            visiblePolygons += visible.length;
+        });
+    }
+
+    // Totalを表示
+    document.getElementById('totalMarkers').textContent = visibleMarkers;
+    document.getElementById('totalPolygons').textContent = visiblePolygons;
+
+    // グラフデータの更新
+    const categories = Object.keys(markerCounts);
+    const markerData = categories.map(category => markerCounts[category]);
+    const polygonData = categories.map(category => polygonCounts[category] || 0);
+
+    const chartData = {
+        labels: categories,
+        datasets: [
+            {
+                label: 'Markers',
+                data: markerData,
+                backgroundColor: categories.map((_, i) => `rgba(${100 + i * 50}, ${50 + i * 40}, 150, 0.6)`),
+                borderColor: categories.map((_, i) => `rgba(${100 + i * 50}, ${50 + i * 40}, 150, 1)`),
+                borderWidth: 1,
+            },
+            {
+                label: 'Polygons',
+                data: polygonData,
+                backgroundColor: categories.map((_, i) => `rgba(${50 + i * 40}, ${100 + i * 50}, 200, 0.6)`),
+                borderColor: categories.map((_, i) => `rgba(${50 + i * 40}, ${100 + i * 50}, 200, 1)`),
+                borderWidth: 1,
+            },
+        ],
+    };
+
+    // グラフを更新または作成
+    if (categoryChart) {
+        categoryChart.data = chartData;
+        categoryChart.update();
+    } else {
+        const ctx = document.getElementById('categoryChart').getContext('2d');
+        categoryChart = new Chart(ctx, {
+            type: 'pie',
+            data: chartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false, // 固定サイズにする
+                plugins: {
+                    tooltip: {
+                        enabled: true,
+                        callbacks: {
+                            label: function (context) {
+                                const label = context.label || '';
+                                const value = context.raw || 0;
+                                const datasetLabel = context.dataset.label || '';
+                                return `${label}: ${value} (${datasetLabel})`;
+                            },
+                        },
+                    },
+                    legend: {
+                        display: false, // 凡例非表示
+                    },
+                },
+            },
+        });
+    }
+}
+
+function bindSummaryUpdate() {
+    const conditionCheckboxes = document.querySelectorAll('#conditions input[type="checkbox"]');
+    const pjListCheckboxes = document.querySelectorAll('#pjList input[type="checkbox"]');
+
+    // Conditionsチェックボックスの変更
+    conditionCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', updateSummary);
+    });
+
+    // pjList内のチェックボックスの変更
+    pjListCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', updateSummary);
+    });
+}
+
+document.getElementById('fileUpload').addEventListener('change', () => {
+    setTimeout(() => {
+        bindSummaryUpdate(); // 新しいチェックボックスにバインド
+        updateSummary(); // 初回のSummary更新
+    }, 500);
+});
+
+
       
         // 画面ローテーションでリロード
         function handleOrientationChange() {
