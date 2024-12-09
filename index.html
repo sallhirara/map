@@ -125,13 +125,13 @@
       
 #categoryChart {
     width: 100%;
-    max-width: 300px;
-    height: 200px;
+    max-width: 500px;
+    height: 150px;
 }
 
 @media (max-width: 768px) {
     #categoryChart {
-        max-width: 200px;
+        max-width: 300px;
         height: 100px;
     }
 }
@@ -629,10 +629,10 @@
     <div id="summary" class="mega-menu">
       <div style="display: flex; justify-content: space-between; align-items: flex-start;">
           <!-- 左側 -->
-          <div style="flex: 1; text-align: left; padding-right: 10px; border-right: 1px solid #ccc;">
-              <h2 style="margin: 0; font-size: 20px;">Total</h2>
-              <p style="margin: 5px 0;"><strong>Markers:</strong> <span id="totalMarkers">0</span></p>
-              <p style="margin: 5px 0;"><strong>Polygons:</strong> <span id="totalPolygons">0</span></p>
+          <div id="totalSummary" style="padding: 10px; text-align: left;">
+              <h4 style="margin: 0 0 20px; font-size: 28px;">Total</h4>
+              <p style="margin: 5px 0; font-size: 18px;">Markers: <span id="totalMarkers" style="font-weight: bold;">0</span></p>
+              <p style="margin: 5px 0; font-size: 18px;">Polygons: <span id="totalPolygons" style="font-weight: bold;">0</span></p>
           </div>
           <!-- 右側 -->
           <div style="flex: 2; text-align: center; padding-left: 10px;">
@@ -1990,117 +1990,121 @@
                 }
             });
         });
-        
-let categoryChart; // グラフを管理する変数
 
-function updateSummary() {
-    const markerCounts = {};
-    const polygonCounts = {};
-    let visibleMarkers = 0;
-    let visiblePolygons = 0;
+      
+      
+      
+        // ここからSummaryの表示      
+        let categoryChart; // グラフを管理する変数
 
-    // マーカーの集計（表示中のものだけカウント）
-    if (window.categoryMarkers) {
-        Object.keys(window.categoryMarkers).forEach(category => {
-            const visible = window.categoryMarkers[category].filter(marker => map.hasLayer(marker));
-            markerCounts[category] = visible.length;
-            visibleMarkers += visible.length;
-        });
-    }
+        function updateSummary() {
+            const markerCounts = {};
+            const polygonCounts = {};
+            let visibleMarkers = 0;
+            let visiblePolygons = 0;
 
-    // ポリゴンの集計（表示中のものだけカウント）
-    if (window.categoryPolygons) {
-        Object.keys(window.categoryPolygons).forEach(category => {
-            const visible = window.categoryPolygons[category].filter(polygon => map.hasLayer(polygon));
-            polygonCounts[category] = visible.length;
-            visiblePolygons += visible.length;
-        });
-    }
+            // マーカーの集計（表示中のものだけカウント）
+            if (window.categoryMarkers) {
+                Object.keys(window.categoryMarkers).forEach(category => {
+                    const visible = window.categoryMarkers[category].filter(marker => map.hasLayer(marker));
+                    markerCounts[category] = visible.length;
+                    visibleMarkers += visible.length;
+                });
+            }
 
-    // Totalを表示
-    document.getElementById('totalMarkers').textContent = visibleMarkers;
-    document.getElementById('totalPolygons').textContent = visiblePolygons;
+            // ポリゴンの集計（表示中のものだけカウント）
+            if (window.categoryPolygons) {
+                Object.keys(window.categoryPolygons).forEach(category => {
+                    const visible = window.categoryPolygons[category].filter(polygon => map.hasLayer(polygon));
+                    polygonCounts[category] = visible.length;
+                    visiblePolygons += visible.length;
+                });
+            }
 
-    // グラフデータの更新
-    const categories = Object.keys(markerCounts);
-    const markerData = categories.map(category => markerCounts[category]);
-    const polygonData = categories.map(category => polygonCounts[category] || 0);
+            // Totalを表示
+            document.getElementById('totalMarkers').textContent = visibleMarkers;
+            document.getElementById('totalPolygons').textContent = visiblePolygons;
 
-    const chartData = {
-        labels: categories,
-        datasets: [
-            {
-                label: 'Markers',
-                data: markerData,
-                backgroundColor: categories.map((_, i) => `rgba(${100 + i * 50}, ${50 + i * 40}, 150, 0.6)`),
-                borderColor: categories.map((_, i) => `rgba(${100 + i * 50}, ${50 + i * 40}, 150, 1)`),
-                borderWidth: 1,
-            },
-            {
-                label: 'Polygons',
-                data: polygonData,
-                backgroundColor: categories.map((_, i) => `rgba(${50 + i * 40}, ${100 + i * 50}, 200, 0.6)`),
-                borderColor: categories.map((_, i) => `rgba(${50 + i * 40}, ${100 + i * 50}, 200, 1)`),
-                borderWidth: 1,
-            },
-        ],
-    };
+            // グラフデータの更新
+            const categories = Object.keys(markerCounts);
+            const markerData = categories.map(category => markerCounts[category]);
+            const polygonData = categories.map(category => polygonCounts[category] || 0);
 
-    // グラフを更新または作成
-    if (categoryChart) {
-        categoryChart.data = chartData;
-        categoryChart.update();
-    } else {
-        const ctx = document.getElementById('categoryChart').getContext('2d');
-        categoryChart = new Chart(ctx, {
-            type: 'pie',
-            data: chartData,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false, // 親要素に合わせる
-                plugins: {
-                    tooltip: {
-                        enabled: true,
-                        callbacks: {
-                            label: function (context) {
-                                const label = context.label || '';
-                                const value = context.raw || 0;
-                                const datasetLabel = context.dataset.label || '';
-                                return `${label}: ${value} (${datasetLabel})`;
+            const chartData = {
+                labels: categories,
+                datasets: [
+                    {
+                        label: 'Markers',
+                        data: markerData,
+                        backgroundColor: categories.map((_, i) => `rgba(${100 + i * 50}, ${50 + i * 40}, 150, 0.6)`),
+                        borderColor: categories.map((_, i) => `rgba(${100 + i * 50}, ${50 + i * 40}, 150, 1)`),
+                        borderWidth: 1,
+                    },
+                    {
+                        label: 'Polygons',
+                        data: polygonData,
+                        backgroundColor: categories.map((_, i) => `rgba(${50 + i * 40}, ${100 + i * 50}, 200, 0.6)`),
+                        borderColor: categories.map((_, i) => `rgba(${50 + i * 40}, ${100 + i * 50}, 200, 1)`),
+                        borderWidth: 1,
+                    },
+                ],
+            };
+
+            // グラフを更新または作成
+            if (categoryChart) {
+                categoryChart.data = chartData;
+                categoryChart.update();
+            } else {
+                const ctx = document.getElementById('categoryChart').getContext('2d');
+                categoryChart = new Chart(ctx, {
+                    type: 'pie',
+                    data: chartData,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false, // 親要素に合わせる
+                        plugins: {
+                            tooltip: {
+                                enabled: true,
+                                callbacks: {
+                                    label: function (context) {
+                                        const label = context.label || '';
+                                        const value = context.raw || 0;
+                                        const datasetLabel = context.dataset.label || '';
+                                        return `${label}: ${value} (${datasetLabel})`;
+                                    },
+                                },
+                            },
+                            legend: {
+                                display: false, // 凡例非表示
                             },
                         },
                     },
-                    legend: {
-                        display: false, // 凡例非表示
-                    },
-                },
-            },
+                });
+
+            }
+        }
+
+        function bindSummaryUpdate() {
+            const conditionCheckboxes = document.querySelectorAll('#conditions input[type="checkbox"]');
+            const pjListCheckboxes = document.querySelectorAll('#pjList input[type="checkbox"]');
+
+            // Conditionsチェックボックスの変更
+            conditionCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', updateSummary);
+            });
+
+            // pjList内のチェックボックスの変更
+            pjListCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', updateSummary);
+            });
+        }
+
+        document.getElementById('fileUpload').addEventListener('change', () => {
+            setTimeout(() => {
+                bindSummaryUpdate(); // 新しいチェックボックスにバインド
+                updateSummary(); // 初回のSummary更新
+            }, 500);
         });
-
-    }
-}
-
-function bindSummaryUpdate() {
-    const conditionCheckboxes = document.querySelectorAll('#conditions input[type="checkbox"]');
-    const pjListCheckboxes = document.querySelectorAll('#pjList input[type="checkbox"]');
-
-    // Conditionsチェックボックスの変更
-    conditionCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', updateSummary);
-    });
-
-    // pjList内のチェックボックスの変更
-    pjListCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', updateSummary);
-    });
-}
-
-document.getElementById('fileUpload').addEventListener('change', () => {
-    setTimeout(() => {
-        bindSummaryUpdate(); // 新しいチェックボックスにバインド
-        updateSummary(); // 初回のSummary更新
-    }, 500);
-});
 
 
       
