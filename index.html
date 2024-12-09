@@ -122,6 +122,22 @@
             backdrop-filter: blur(5px);
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
         }
+      
+#categoryChart {
+    width: 100%;
+    max-width: 300px;
+    height: 200px;
+}
+
+@media (max-width: 768px) {
+    #categoryChart {
+        max-width: 100px;
+        height: 100px;
+    }
+}
+
+
+      
         /* -------- Summary to here --------*/
 
 
@@ -620,7 +636,7 @@
           </div>
           <!-- 右側 -->
           <div style="flex: 2; text-align: center; padding-left: 10px;">
-              <canvas id="categoryChart" width="300" height="300"></canvas>
+              <canvas id="categoryChart"></canvas>
           </div>
       </div>
     </div>
@@ -2041,7 +2057,7 @@ function updateSummary() {
             data: chartData,
             options: {
                 responsive: true,
-                maintainAspectRatio: false, // 固定サイズにする
+                maintainAspectRatio: false, // 親要素に合わせる
                 plugins: {
                     tooltip: {
                         enabled: true,
@@ -2060,6 +2076,7 @@ function updateSummary() {
                 },
             },
         });
+
     }
 }
 
